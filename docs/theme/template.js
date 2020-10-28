@@ -23,13 +23,13 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 <body>
 <header>
   <a href="./index.html" class="left">microJam - Tufte Style</a>
-  <span class="right"><a href="./about.html">About</a> | <a href="https://github.com/goessner/microjam-tufte">Source</a></span>
+  <span class="right"><a href="./index.html">About</a> | <a href="https://github.com/dmitrijLo/HMI">Source</a></span>
 </header>
 <main>
 ${data.content}
 </main>
 <footer>
-  <span class="left">&copy; microJam</span>
+  <span class="left">&copy; Dmitrij</span>
   <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
   <span class="right"
         title="toggle light/dark theme"
