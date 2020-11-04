@@ -3,11 +3,11 @@ class HMI extends HTMLElement {
         super();
         this._root = this.attachShadow({mode: 'open'});
         this._inputs = [];
-        this._model = {};
+        this._model = window;
     }
 
     get model() { return this._model; }
-    set model(object) { return this._model = Object.create(object); }
+    set model(key) { return this._model = this.model[key]; }
 
     get inputs() { return this._inputs; }
     set inputs(input) { return this._inputs.push(input); }
@@ -15,45 +15,68 @@ class HMI extends HTMLElement {
     connectedCallback() {
         //console.log(this.createGui().querySelector('.hmi-cb'))
         this.init();
+
         //this.setPosition();
         //console.log(this.getLastElementNode(this._root).querySelector('.hmi-input'))
     }
 
-    async init() {
-        let innerHTML = await this.innerHTML;
+    init() {
+        let innerHTML = this.innerHTML;
         innerHTML = JSON.parse(innerHTML);
-        
+        console.log(innerHTML);
         const gui = this.createGui();
         const style = document.createElement('style')
         style.textContent = HMI.template(this.setPosition());
-        let _model = window[innerHTML.model];
+        //evaluate userinput.control and set this.model equal to users object 
+        let keys = innerHTML.control.split('.');
+        keys.forEach(key => this.model = key);
+        console.log(this.model);
 
-        innerHTML.addInput.forEach(elem => this.inputs = elem);
-
-        this.inputs.forEach(input => {
-            const value = this.getValue(_model, input.param, input.id);
-            if(!input.hasOwnProperty('options')){
-                let options = {}
-                options.value = value;
-                options.label = input.param;
-                input.options = options;
-            } else if(!input.options.label){
-                input.options.label = input.param;
-                input.options.value = value;
-            } else {
-                input.options.value = value;
+        innerHTML.addInput.forEach(elem => {
+            let value;
+            if(Array.isArray(this.model)){
+                this.model.forEach(entry => {
+                    entry.hasOwnProperty(elem.param) ?
+                    entry.hasOwnProperty('id') ?
+                    entry.id === elem.id ?
+                    value = entry[elem.param] : null : null : null; // die anderen Fälle müssen noch implementiert werden
+                })
             }
-
+            if(!elem.hasOwnProperty('options')){
+                elem.options = {}
+                elem.options.label = elem.param;
+            } else if(!elem.options.hasOwnProperty('label')){
+                elem.options.label = elem.param;
+            }
+            elem.options.value = value;
+            this.inputs = elem;
+        });
+     
+        //creates input elements
+        this.inputs.forEach(input => {
             gui.querySelector('.hmi-cb').appendChild(this.createInput(input.options, input.id));
         })
-
         this._root.appendChild(gui);
         this._root.appendChild(style);
-        console.log(gui.querySelector('#A0'))
+        //console.log(gui.querySelector('#A0'))
+        //console.log(innerHTML.on);
+        this.addEvent(innerHTML.on, this.model)
     }
 
-    addEvent() {
-        
+    addEvent(userInput, mod) {
+        const events = ['click', 'change','input'];
+        const target = this._root.querySelector(`#${userInput[0].ref}`);
+        const event = Object.keys(userInput[0]).find(key => {
+            return events.includes(key);
+        })
+        const callback = window[userInput[0][event]];
+
+        target.addEventListener(event, function(){
+            mod[0].x = +target.value;
+            return callback();
+        })
+
+        //console.log(userInput[0].ref);
     }
 
     createGui() {
@@ -128,7 +151,7 @@ class HMI extends HTMLElement {
         return inputBox;
     }
 
-    getValue(obj, param, id = param) {
+    /*getValue(obj, param, id = param) {
         let foundElement;
         let foundFlag = false;
         const initialObject = obj;
@@ -149,7 +172,7 @@ class HMI extends HTMLElement {
             }
         })(initialObject);
         return foundElement;
-    } 
+    }*/
 
     setPosition() {
         //let style = this._root.firstChild;
@@ -170,6 +193,12 @@ class HMI extends HTMLElement {
         previousElementTop += offset;
         hmiTop += offset;
        return previousElementTop - hmiTop;
+    }
+
+    static optionsTemplate() {
+        return {
+            min: null, max: null, step: null, value: null
+        };
     }
 
     static template(position) {

@@ -5,6 +5,8 @@
 
 ### Abstract
 
+Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch eine Benutzerschnittstelle eines meist komplexen Systems verstanden, mit dem ein Mensch interagieren kann. Ein alltägliches Beispiel stellt das Lenkrad zur Steuerung eines Autos dar. Während dieses Beispiel ... befasst sich diese Studienarbeit mit der Programmierung einer JavaScript micro library (zu deutsch Mikrobibliothek)
+
 <canvas id="cv" width="350" height="250"></canvas>
 
 <script>
@@ -74,21 +76,20 @@
 
 <hm-i id='hmi'>
 {
-    "model": "model",
+    "control": "model.nodes",
     "addInput": [
         { "id": "A0", "param": "x", "options":{ "min": 10, "max": 100, "step": 0.5, "label": "r_a [x]" }},
-        { "id": "A0", "param": "y" },
+        { "id": "A0", "param": "y","options":{ "label": "r_a [x]"  }},
         { "id": "B0", "param": "x" },
         { "id": "B0", "param": "y" },
         { "id": "C0", "param": "x" },
         { "id": "C0", "param": "y" }
     ],
     "on": [
-        {"change":"render", "of":"A0", "ref":"x"}
+        {"input":"render", "my":"x", "ref":"A0"}
     ]
 }
 </hm-i>
-
 
 ## TODO
 
