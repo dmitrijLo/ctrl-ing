@@ -3,80 +3,50 @@ class HMI extends HTMLElement {
         super();
         this._root = this.attachShadow({mode: 'open'});
         this._inputs = [];
-        this._model = window;
+        this._reference;
     }
 
-    get model() { return this._model; }
-    set model(key) { return this._model = this.model[key]; }
+    get reference(){ return this._reference; }
+    set reference(ref){return this._reference = window[ref]}
 
     get inputs() { return this._inputs; }
     set inputs(input) { return this._inputs.push(input); }
 
     connectedCallback() {
-        //console.log(this.createGui().querySelector('.hmi-cb'))
+        this.reference = this.getAttribute('ref');
+        this.parseJSON();
         this.init();
 
-        //this.setPosition();
-        //console.log(this.getLastElementNode(this._root).querySelector('.hmi-input'))
+    console.log(document.getElementById('hmi'));
+    console.log(this._root)    
     }
 
     init() {
-        let innerHTML = this.innerHTML;
-        innerHTML = JSON.parse(innerHTML);
-        console.log(innerHTML);
         const gui = this.createGui();
         const style = document.createElement('style')
-        style.textContent = HMI.template(this.setPosition());
-        //evaluate userinput.control and set this.model equal to users object 
-        let keys = innerHTML.control.split('.');
-        keys.forEach(key => this.model = key);
-        console.log(this.model);
+        style.textContent = HMI.template(this.setPosition());        
 
-        innerHTML.addInput.forEach(elem => {
-            let value;
-            if(Array.isArray(this.model)){
-                this.model.forEach(entry => {
-                    entry.hasOwnProperty(elem.param) ?
-                    entry.hasOwnProperty('id') ?
-                    entry.id === elem.id ?
-                    value = entry[elem.param] : null : null : null; // die anderen Fälle müssen noch implementiert werden
-                })
-            }
-            if(!elem.hasOwnProperty('options')){
-                elem.options = {}
-                elem.options.label = elem.param;
-            } else if(!elem.options.hasOwnProperty('label')){
-                elem.options.label = elem.param;
-            }
-            elem.options.value = value;
-            this.inputs = elem;
-        });
-     
-        //creates input elements
+        //creates input elements/events
         this.inputs.forEach(input => {
-            gui.querySelector('.hmi-cb').appendChild(this.createInput(input.options, input.id));
+            gui.querySelector('.hmi-cb').appendChild(this.createInput(input.options));
+            this.addEvent(input, gui);
         })
         this._root.appendChild(gui);
         this._root.appendChild(style);
-        //console.log(gui.querySelector('#A0'))
-        //console.log(innerHTML.on);
-        this.addEvent(innerHTML.on, this.model)
     }
 
-    addEvent(userInput, mod) {
+    addEvent(userInput, element) {
         const events = ['click', 'change','input'];
-        const target = this._root.querySelector(`#${userInput[0].ref}`);
-        const event = Object.keys(userInput[0]).find(key => {
-            return events.includes(key);
-        })
-        const callback = window[userInput[0][event]];
+        const target = element.querySelector(`#${userInput.options.id}`);
+        const event = Object.keys(userInput.on).find(key => events.includes(key))
+        const callback = window[userInput.on[event]];
 
-        target.addEventListener(event, function(){
-            mod[0].x = +target.value;
+        target.addEventListener(event, () => {
+            const paths = userInput.path.split('/');
+            const last = paths.pop();
+            paths.reduce((ref, prop) => ref[prop], this.reference)[last] = +target.value;
             return callback();
         })
-
-        //console.log(userInput[0].ref);
     }
 
     createGui() {
@@ -90,38 +60,20 @@ class HMI extends HTMLElement {
         const contenBox = document.createElement('div');
         contenBox.setAttribute('class', 'hmi-cb');
         
-        //const style = document.createElement('style')
-        //console.log(style.isConnected);
-
-        //this._root.appendChild(style);
-        //console.log(style.isConnected);
-        //this._root.appendChild(wrapper);
         gui.appendChild(folder);
         folder.appendChild(header);
         folder.appendChild(contenBox);
 
         return gui;
     }
-
-    getLastElementNode(parentNode) {
-        let foundElement;
-
-        (function getElement(node) {
-
-            let lastElement = node.lastElementChild;
-            (lastElement === null) ? foundElement = node : getElement(lastElement);
-        })(parentNode);
-
-        return foundElement;
-    }
     
-    createInput(options, id) {
+    createInput(options) {
         const inputBox = document.createElement('div');
         inputBox.setAttribute('class', 'hmi-inputBox');
         const label = document.createElement('div');
         label.setAttribute('class', 'hmi-label');
         label.innerHTML = options.label;
-        delete options.label;
+        //delete options.label;
 
         const inputField = document.createElement('div');
         inputField.setAttribute('class', 'hmi-inputField');
@@ -133,7 +85,6 @@ class HMI extends HTMLElement {
         const input = document.createElement('input');
         input.setAttribute('type', 'number');
         input.setAttribute('class', 'hmi-input');
-        input.setAttribute('id', id);
         Object.keys(options).forEach(key => {
             input.setAttribute(key, options[key])
         })
@@ -151,31 +102,7 @@ class HMI extends HTMLElement {
         return inputBox;
     }
 
-    /*getValue(obj, param, id = param) {
-        let foundElement;
-        let foundFlag = false;
-        const initialObject = obj;
-
-        (function getObject(obj) {
-            if(obj.hasOwnProperty('id') && obj['id'] === id) {
-                foundFlag = true;
-                return foundElement = obj[param];
-            } else if(!foundFlag) {
-                Object.keys(obj).forEach(key => {
-                const currentElement = obj[key];
-                typeof currentElement === 'object'
-                    ? currentElement === initialObject
-                    ? null
-                    : getObject(currentElement)
-                    : null;
-                });
-            }
-        })(initialObject);
-        return foundElement;
-    }*/
-
     setPosition() {
-        //let style = this._root.firstChild;
         const hmi = document.getElementById('hmi');
         let hmiTop = hmi.getBoundingClientRect().top;
         const offset = window.pageYOffset;
@@ -192,13 +119,42 @@ class HMI extends HTMLElement {
 
         previousElementTop += offset;
         hmiTop += offset;
-       return previousElementTop - hmiTop;
+        return previousElementTop - hmiTop;
     }
 
-    static optionsTemplate() {
-        return {
-            min: null, max: null, step: null, value: null
-        };
+    getValue(object, path) {
+        const keys = path.split('/');
+        let foundVal = object;
+        keys.forEach(key => foundVal = foundVal[key]);
+        return foundVal;
+    }
+
+    getID(path) {
+        const keys = path.split('/');
+        return keys.join('-');
+    }
+
+    parseJSON() {
+        try { 
+            const innerHTML = JSON.parse(this.innerHTML); 
+            innerHTML.addInput.forEach(elem => {
+                let param = elem.path.split('/');
+                param = param[param.length - 1];
+                console.log(param);
+                if(!elem.hasOwnProperty('options')){
+                    elem.options = {}
+                    elem.options.label = param;
+                } else if(!elem.options.hasOwnProperty('label')){
+                    elem.options.label = param;
+                }
+            elem.options.value = this.getValue(this.reference, elem.path);
+            elem.options.id = this.getID(elem.path);
+            this.inputs = elem;
+        });
+            return true; 
+        }
+        catch(e) { this._root.innerHTML = e.message; }
+        return false; 
     }
 
     static template(position) {
@@ -282,120 +238,3 @@ class HMI extends HTMLElement {
 }
 
 customElements.define('hm-i', HMI);
-
-/*function HMI(x,y) {
-    
-    let self = Object.create(HMI.prototype);
-    self.queue = [];
-    self.model = [];
-    self.initNode = document.body.childElementCount;
-    self.currentNode;
-
-    let hmi = document.createElement('div');
-    hmi.id = 'hmi'
-    document.body.appendChild(hmi);
-    document.getElementById('hmi').setAttribute('style', `position: absolute; top: ${y}px; left: 70%` );
-    //document.body.children[self.initNode].id = 'hmi';
-    //console.log(document.getElementById('hmi').getBoundingClientRect());
-    self.currentNode = document.body.children[self.initNode];
-    self._createGroup('HMI');
-
-    return self;
-}
-
-HMI.prototype = {
-    addInput: function (object, property, options = {}) {
-        const inputType = typeof object[property];
-        //const htmlNode = document.body.children[this.initNode].lastChild;
-        const attributes = { value: object[property], type: inputType, label: property };
-        Object.assign(attributes, options)
-
-        this.model.push(object);
-        this.queue.push(property);
-        this._createElement(attributes);
-        return this;
-    },
-
-    on: function (event, callback) {
-        const index = this.model.length - 1;
-        const parentNode = this.currentNode.children[index];
-        const targetsKey = this.queue[index];
-        let target = this.model[index];
-        
-        const relatedInputElement = this._getInputElementNode(parentNode);
-        relatedInputElement.addEventListener(event, function(){
-            target[targetsKey] = +relatedInputElement.value;
-            callback();
-        })
-
-        return this;
-    },
-
-    //helper
-
-    _createGroup: function (name) {
-        const div = document.createElement('div');
-        this.currentNode.appendChild(div);
-        const lvl = this._levelUp();
-
-        const label = document.createElement('div');
-        label.className = `hmi-${lvl}-label`;
-        label.innerHTML = name;
-        const content = document.createElement('div');
-        content.className = `hmi-${lvl}-content`
-        //this.currentNode = document.body.children[this.initNode];
-        //this.currentNode = this.currentNode.lastChild;
-
-        this.currentNode.appendChild(label);
-        this.currentNode.appendChild(content);
-
-        this._levelUp();
-    },
-
-    _createElement: function (attr) {
-        console.log(attr)
-        const rememberNode = this.currentNode;
-        this._createGroup(attr.label);
-
-        if(attr.type === "number") {
-            let el = document.createElement('input');
-            this._setAttributes(el, attr);
-            this.currentNode.appendChild(el);
-            this.currentNode = rememberNode;
-            this._levelUp(reset = 2);
-        }
-    },
-    
-    _setAttributes: function (element, attr) {
-        Object.keys(attr).forEach(key => element.setAttribute(key, attr[key]))
-    },
-
-    _getInputElementNode: function (parentNode) {
-        let foundElement;
-
-        (function getElement(node) {
-            node.childNodes.forEach(childNode => {
-                if(childNode.tagName === 'INPUT') {
-                    return foundElement = childNode;
-                }
-                getElement(childNode); })
-        })(parentNode);
-
-        return foundElement;
-    },
-
-    _levelUp: (function() {
-        let lvl = 1;
-        return function(reset = 0) {
-            if(reset != 0){
-                lvl = lvl - reset;
-
-            } else {
-                lvl+=1;
-                this.currentNode = this.currentNode.lastChild;
-            }
-            return `lvl${lvl}`;
-        };
-    })()
-}
-*/

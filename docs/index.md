@@ -35,61 +35,35 @@ Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch 
 
 </script>
 
-<!--
-<script>
-    let hmi = new HMI(600, 100);
-
-    hmi.addInput(model.nodes[0], 'x', {
-        min: 10,
-        max: 100,
-        step: 0.5,
-        label: 'r_a [x]'
-    }).on('change', () => render() )
-    .addInput(model.nodes[0], 'y', {
-        label: 'r_a [y]'
-    })
-    .on('change', () => render() )
-    .addInput(model.nodes[1], 'x', {
-        label: 'r_b [x]'
-    })
-    .on('change', () => render() )
-    .addInput(model.nodes[1], 'y', {
-        label: 'r_b [y]'
-    })
-    .on('change', () => render() )
-    .addInput(model.nodes[2], 'x', {
-        label: 'r_c [x]'
-    })
-    .on('change', () => render() )
-    .addInput(model.nodes[2], 'y', {
-        label: 'r_c [y]'
-    })
-    .on('change', () => render() )
-</script>
-
-<script>
-    let pane = new Tweakpane();
-    pane.addInput(model.nodes[0], 'y');
-</script>
--->
-
-
-<hm-i id='hmi'>
+<hm-i ref="model" id="hmi">
 {
-    "control": "model.nodes",
     "addInput": [
-        { "id": "A0", "param": "x", "options":{ "min": 10, "max": 100, "step": 0.5, "label": "r_a [x]" }},
-        { "id": "A0", "param": "y","options":{ "label": "r_a [x]"  }},
-        { "id": "B0", "param": "x" },
-        { "id": "B0", "param": "y" },
-        { "id": "C0", "param": "x" },
-        { "id": "C0", "param": "y" }
-    ],
-    "on": [
-        {"input":"render", "my":"x", "ref":"A0"}
-    ]
+        { "path":"nodes/0/x", "on":{"input":"render"}, "options":{"label":"A0.x"}}, 
+        { "path":"nodes/0/y", "on":{"input":"render"}, "options":{"label":"A0.y"}}, 
+        { "path":"nodes/1/x", "on":{"input":"render"}, "options":{"label":"B0.x"}}, 
+        { "path":"nodes/1/y", "on":{"input":"render"}, "options":{"label":"B0.y"}}, 
+        { "path":"nodes/2/x", "on":{"input":"render"}, "options":{"label":"C0.x"}}, 
+        { "path":"nodes/2/y", "on":{"input":"render"}, "options":{"label":"C0.y"}} 
+        ]
 }
 </hm-i>
+
+Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:
+
+```HTML
+<hm-i ref="model" id="hmi">
+{
+    "addInput": [
+        { "path":"nodes/0/x", "on":{"input":"render"}, "options":{"label":"A0.x"}}, 
+        { "path":"nodes/0/y", "on":{"input":"render"}, "options":{"label":"A0.y"}}, 
+        { "path":"nodes/1/x", "on":{"input":"render"}, "options":{"label":"B0.x"}}, 
+        { "path":"nodes/1/y", "on":{"input":"render"}, "options":{"label":"B0.y"}}, 
+        { "path":"nodes/2/x", "on":{"input":"render"}, "options":{"label":"C0.x"}}, 
+        { "path":"nodes/2/y", "on":{"input":"render"}, "options":{"label":"C0.y"}} 
+        ]
+}
+</hm-i>
+```
 
 ## TODO
 
