@@ -35,41 +35,43 @@ Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch 
 
 </script>
 
-<hm-i ref="model" id="hmi">
+<hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
-    "addInput": [
-        { "path":"nodes/0/x", "on":{"input":"render"}, "options":{"label":"A0.x"}}, 
-        { "path":"nodes/0/y", "on":{"input":"render"}, "options":{"label":"A0.y"}}, 
-        { "path":"nodes/1/x", "on":{"input":"render"}, "options":{"label":"B0.x"}}, 
-        { "path":"nodes/1/y", "on":{"input":"render"}, "options":{"label":"B0.y"}}, 
-        { "path":"nodes/2/x", "on":{"input":"render"}, "options":{"label":"C0.x"}}, 
-        { "path":"nodes/2/y", "on":{"input":"render"}, "options":{"label":"C0.y"}} 
+    "add": [
+        { "slider":{ },"path":"nodes/0/x","on":{ "input":"render" } }, 
+        { "input":{ "label":"A0.y" },"path":"nodes/0/y","on":{ "input":"render" } }, 
+        { "input":{ "label":"B0.x" },"path":"nodes/1/x","on":{ "input":"render" } }, 
+        { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
+        { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } }, 
+        { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } } 
         ]
 }
 </hm-i>
 
 Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:
 
-```HTML
-<hm-i ref="model" id="hmi">
+```json
+<hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
-    "addInput": [
-        { "path":"nodes/0/x", "on":{"input":"render"}, "options":{"label":"A0.x"}}, 
-        { "path":"nodes/0/y", "on":{"input":"render"}, "options":{"label":"A0.y"}}, 
-        { "path":"nodes/1/x", "on":{"input":"render"}, "options":{"label":"B0.x"}}, 
-        { "path":"nodes/1/y", "on":{"input":"render"}, "options":{"label":"B0.y"}}, 
-        { "path":"nodes/2/x", "on":{"input":"render"}, "options":{"label":"C0.x"}}, 
-        { "path":"nodes/2/y", "on":{"input":"render"}, "options":{"label":"C0.y"}} 
-        ]
+    "add":[
+        { "number":{ "label":"A0.x" },"path":"nodes/0/x","on":{ "input":"render" } },
+        { "number":{ "label":"A0.y" },"path":"nodes/0/y","on":{ "input":"render" } },
+        { "number":{ "label":"B0.x" },"path":"nodes/1/x","on":{ "input":"render" } },
+        { "number":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } },
+        { "number":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } },
+        { "number":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } }
+    ]
 }
 </hm-i>
 ```
 
-## TODO
+## Funktionale Anforderungen
 
-* width/height Einstellungsmöglichkeit
-* Slider
-* Buttons
-* dropdown Listen
-* Checkboxen
-* +/- buttons überdenken...
+* Das Interface muss die nachfolgenden Elemente beinhalten:
+    * Standard Input
+    * Slider
+    * Dropdown Menü
+    * Checkbox
+    * Button
+    * ...?
+* Der Nutzer soll die Möglichkeit haben die Position des Interface alternativ einzustellen.

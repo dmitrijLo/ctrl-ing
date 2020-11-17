@@ -4,21 +4,26 @@ class HMI extends HTMLElement {
         this._root = this.attachShadow({mode: 'open'});
         this._inputs = [];
         this._reference;
+        this._header = '';
     }
 
     get reference(){ return this._reference; }
     set reference(ref){return this._reference = window[ref]}
+
+    get header(){ return this._header; }
+    set header(str){return this._header = str}
 
     get inputs() { return this._inputs; }
     set inputs(input) { return this._inputs.push(input); }
 
     connectedCallback() {
         this.reference = this.getAttribute('ref');
+        this.header = this.getAttribute('header');
         this.parseJSON();
         this.init();
 
-    console.log(document.getElementById('hmi'));
-    console.log(this._root)    
+        console.log(document.getElementById('hmi'));
+        console.log(this._root)    
     }
 
     init() {
@@ -36,17 +41,18 @@ class HMI extends HTMLElement {
     }
 
     addEvent(userInput, element) {
-        const events = ['click', 'change','input'];
-        const target = element.querySelector(`#${userInput.options.id}`);
-        const event = Object.keys(userInput.on).find(key => events.includes(key))
-        const callback = window[userInput.on[event]];
+        const events = ['click', 'change','input'],
+            targets = element.querySelectorAll(`#${userInput.options.id}`),
+            event = Object.keys(userInput.on).find(key => events.includes(key)),
+            callback = window[userInput.on[event]];
 
-        target.addEventListener(event, () => {
-            const paths = userInput.path.split('/');
-            const last = paths.pop();
-            paths.reduce((ref, prop) => ref[prop], this.reference)[last] = +target.value;
-            return callback();
-        })
+        targets.forEach(target => target.addEventListener(event, () => {
+                const paths = userInput.path.split('/');
+                const last = paths.pop();
+                paths.reduce((ref, prop) => ref[prop], this.reference)[last] = +target.value;
+                return callback();
+            })
+        );
     }
 
     createGui() {
@@ -55,7 +61,7 @@ class HMI extends HTMLElement {
         const folder = document.createElement('div');
         folder.setAttribute('class', 'hmi-folder');
         const header = document.createElement('div');
-        header.innerHTML = 'Steuerung eines Dreiecks'
+        header.innerHTML = this.header;
         header.setAttribute('class', 'hmi-header');
         const contenBox = document.createElement('div');
         contenBox.setAttribute('class', 'hmi-cb');
@@ -69,36 +75,42 @@ class HMI extends HTMLElement {
     
     createInput(options) {
         const inputBox = document.createElement('div');
-        inputBox.setAttribute('class', 'hmi-inputBox');
+        inputBox.setAttribute('class', 'hmi-box');
         const label = document.createElement('div');
         label.setAttribute('class', 'hmi-label');
         label.innerHTML = options.label;
-        //delete options.label;
+        delete options.label;
+        const wrapper = document.createElement('div');
+        wrapper.setAttribute('class', 'hmi-wrapper');
 
-        const inputField = document.createElement('div');
-        inputField.setAttribute('class', 'hmi-inputField');
+        const setOptions = (element, type) => {
+            options.type = type;
+            Object.keys(options).forEach(key => {
+                element.setAttribute(key, options[key])
+            });
+        }
+        
+        switch (options.type) {
+            case "input":
+                const input = document.createElement('input');
+                input.setAttribute('class', 'hmi-input');
+                setOptions(input, 'number');
+                wrapper.appendChild(input);
+                break;
+            case "slider":
+                const display = document.createElement('input'),
+                    slider = document.createElement('input');
+                display.setAttribute('class', 'hmi-display');
+                slider.setAttribute('class', 'hmi-slider');
+                setOptions(slider, 'range');
+                setOptions(display, 'number');
+                wrapper.appendChild(display);
+                wrapper.appendChild(slider);
+                break;
+        }
 
-        const plus = document.createElement('div');
-        plus.innerHTML = '+';
-        plus.setAttribute('class', 'hmi-plus');
-
-        const input = document.createElement('input');
-        input.setAttribute('type', 'number');
-        input.setAttribute('class', 'hmi-input');
-        Object.keys(options).forEach(key => {
-            input.setAttribute(key, options[key])
-        })
-
-        const minus = document.createElement('div');
-        minus.innerHTML = '-';
-        minus.setAttribute('class', 'hmi-minus');
-
-        inputField.appendChild(plus);
-        inputField.appendChild(input);
-        inputField.appendChild(minus);
         inputBox.appendChild(label);
-        inputBox.appendChild(inputField);
-
+        inputBox.appendChild(wrapper);
         return inputBox;
     }
 
@@ -135,21 +147,25 @@ class HMI extends HTMLElement {
     }
 
     parseJSON() {
-        try { 
+        try {
+            const types = ['input','slider','dropdown','toggle'];
             const innerHTML = JSON.parse(this.innerHTML); 
-            innerHTML.addInput.forEach(elem => {
+            innerHTML.add.forEach(elem => {
+                const type = Object.keys(elem).find(key => types.includes(key));
                 let param = elem.path.split('/');
                 param = param[param.length - 1];
-                console.log(param);
-                if(!elem.hasOwnProperty('options')){
-                    elem.options = {}
-                    elem.options.label = param;
-                } else if(!elem.options.hasOwnProperty('label')){
-                    elem.options.label = param;
+                Object.defineProperty(elem, 'options',{
+                    value: { type: type, label: param },
+                    writable: true,
+                    enumerable: true,
+                    configurable: true
+                });
+                if(Object.entries(elem[type]) != 0){
+                    Object.assign(elem.options,elem[type]);
                 }
-            elem.options.value = this.getValue(this.reference, elem.path);
-            elem.options.id = this.getID(elem.path);
-            this.inputs = elem;
+                elem.options.value = this.getValue(this.reference, elem.path);
+                elem.options.id = this.getID(elem.path);
+                this.inputs = elem;
         });
             return true; 
         }
@@ -159,16 +175,61 @@ class HMI extends HTMLElement {
 
     static template(position) {
         return `
+            .hmi:hover {
+                -webkit-transform: translate(-0.25rem, -0.25rem);
+                -moz-transform: translate(-0.25rem, -0.25rem);
+                -ms-transform: translate(-0.25rem, -0.25rem);
+                transform: translate(-0.25rem, -0.25rem);
+            }
+
             .hmi {
                 position: relative;
                 top: ${position}px;
                 float: right;
-                background-color: #648181;
+                background-color: var(--bgcol-main);
                 box-sizing: border-box;
                 border: 1px solid black;
-                border-radius: 0px 25px 0px 25px; 
-                box-shadow: 10px 5px 1.5px black;
-                overflow: hidden;
+                /*border-radius: 0px 25px 0px 25px;*/
+                /*box-shadow: 10px 5px 1.5px black;*/
+                /*overflow: hidden;*/
+                -webkit-transition: 200ms -webkit-transform;
+                transition: 200ms transform;
+            }
+
+            *, ::after, ::before {
+                box-sizing: inherit;
+            }
+
+            .hmi::before {
+                z-index: -1;
+            }
+
+            .hmi::after,.hmi::before {
+                content: '';
+                position: absolute;
+                background-color: inherit;
+                border-width: inherit;
+                border-color: inherit;
+                border-radius: inherit;
+                border-style: inherit;
+                top: -1px;
+                left: -1px;
+                width: calc(100% + 2px);
+                height: calc(100% + 2px);
+            }
+
+            .hmi:hover::after {
+                -webkit-transform: translate(0.5rem,0.5rem);
+                -moz-transform: translate(0.5rem,0.5rem);
+                -ms-transform: translate(0.5rem,0.5rem);
+                transform: translate(0.5rem,0.5rem);
+            }
+
+            .hmi::after {
+                z-index: -2;
+                background-color: #10162f;
+                -webkit-transition: inherit;
+                transition: inherit;
             }
 
             .hmi-folder {
@@ -187,26 +248,19 @@ class HMI extends HTMLElement {
                 padding: 0.5em 0px 0.5em 0px;
             }
 
-            .hmi-inputBox {
+            .hmi-box, .hmi-wrapper {
                 display: flex;
                 justify-content: flex-start;
+                width: 100%;
             }
 
-            .hmi-label {
+            .hmi-label, .hmi-display {
                 margin-left: 0.5em;
-                width: 40%;
+                width: 33.3%;
                 border: 1px;
             }
 
-            .hmi-inputField {
-                margin-right: 0.5em;
-                display: flex;
-                justify-content: flex-end;
-                width: 60%;
-    
-            }
-
-            .hmi-inputField, .hmi-label {
+            .hmi-display, .hmi-label {
                 height: auto;
                 color: #1a1a1a;
                 font-family: inherit;
@@ -214,24 +268,34 @@ class HMI extends HTMLElement {
                 padding-bottom: 0.25em;
             }
 
-            .hmi-input {
+            .hmi-input, .hmi-display {
                 color: #1a1a1a;
                 font-family: inherit;
                 font-size: 0.75em;
                 /*padding: 0.15em 0px;*/
+                margin: 0 0.25em 0.25em 0;
                 background-color: #C8D6C7;
                 text-align: center;
                 border: 1px solid #C8D6C7;
                 border-radius: 3px;
-                width: 40%
             }
 
-            .hmi-plus, .hmi-minus {
-                text-align: center;
-                width: 1.25em;
-                border: 1px solid black;
-                border-radius: 25%;   
+            .hmi-slider {
+                width: 66.66%
+            }
 
+            .hmi-input {
+                width: 100%;
+            }
+
+            input[type="number"]::-webkit-outer-spin-button,
+            input[type="number"]::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            input[type="number"] {
+                -moz-appearance: textfield;
             }
         `;
     }

@@ -14,7 +14,6 @@ ${data.tags ? `<meta name="keywords" content="${data.tags.join()}">` : ''}
 ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.css">` : ''}
 <link rel="stylesheet" href="./theme/styles.css">
-<link rel="stylesheet" href="./js/style.css">
 <script src="https://cdn.jsdelivr.net/gh/goessner/g2@v2.5/src/g2.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/goessner/mec2@master/mec2.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tweakpane@1.5.5/dist/tweakpane.min.js"></script>

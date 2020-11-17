@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.18.1/styles/vs2015.min.css">
 
 <link rel="stylesheet" href="./theme/styles.css">
-<link rel="stylesheet" href="./js/style.css">
 <script src="https://cdn.jsdelivr.net/gh/goessner/g2@v2.5/src/g2.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/goessner/mec2@master/mec2.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tweakpane@1.5.5/dist/tweakpane.min.js"></script>
@@ -50,40 +49,45 @@
     render()
 
 </script>
-<hm-i ref="model" id="hmi">
+<hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
-    "addInput": [
-        { "path":"nodes/0/x", "on":{"input":"render"}, "options":{"label":"A0.x"}}, 
-        { "path":"nodes/0/y", "on":{"input":"render"}, "options":{"label":"A0.y"}}, 
-        { "path":"nodes/1/x", "on":{"input":"render"}, "options":{"label":"B0.x"}}, 
-        { "path":"nodes/1/y", "on":{"input":"render"}, "options":{"label":"B0.y"}}, 
-        { "path":"nodes/2/x", "on":{"input":"render"}, "options":{"label":"C0.x"}}, 
-        { "path":"nodes/2/y", "on":{"input":"render"}, "options":{"label":"C0.y"}} 
+    "add": [
+        { "slider":{ },"path":"nodes/0/x","on":{ "input":"render" } }, 
+        { "input":{ "label":"A0.y" },"path":"nodes/0/y","on":{ "input":"render" } }, 
+        { "input":{ "label":"B0.x" },"path":"nodes/1/x","on":{ "input":"render" } }, 
+        { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
+        { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } }, 
+        { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } } 
         ]
 }
 </hm-i>
 <p>Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:</p>
-<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">hm-i</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">"model"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"hmi"</span>&gt;</span>
+<pre><code class="code-line language-json"><div>&lt;hm-i ref=<span class="hljs-string">"model"</span> header=<span class="hljs-string">"Steuerung eines Dreiecks"</span> id=<span class="hljs-string">"hmi"</span>&gt;
 {
-    "addInput": [
-        { "path":"nodes/0/x", "on":{"input":"render"}, "options":{"label":"A0.x"}}, 
-        { "path":"nodes/0/y", "on":{"input":"render"}, "options":{"label":"A0.y"}}, 
-        { "path":"nodes/1/x", "on":{"input":"render"}, "options":{"label":"B0.x"}}, 
-        { "path":"nodes/1/y", "on":{"input":"render"}, "options":{"label":"B0.y"}}, 
-        { "path":"nodes/2/x", "on":{"input":"render"}, "options":{"label":"C0.x"}}, 
-        { "path":"nodes/2/y", "on":{"input":"render"}, "options":{"label":"C0.y"}} 
-        ]
+    <span class="hljs-attr">"add"</span>:[
+        { <span class="hljs-attr">"number"</span>:{ <span class="hljs-attr">"label"</span>:<span class="hljs-string">"A0.x"</span> },<span class="hljs-attr">"path"</span>:<span class="hljs-string">"nodes/0/x"</span>,<span class="hljs-attr">"on"</span>:{ <span class="hljs-attr">"input"</span>:<span class="hljs-string">"render"</span> } },
+        { <span class="hljs-attr">"number"</span>:{ <span class="hljs-attr">"label"</span>:<span class="hljs-string">"A0.y"</span> },<span class="hljs-attr">"path"</span>:<span class="hljs-string">"nodes/0/y"</span>,<span class="hljs-attr">"on"</span>:{ <span class="hljs-attr">"input"</span>:<span class="hljs-string">"render"</span> } },
+        { <span class="hljs-attr">"number"</span>:{ <span class="hljs-attr">"label"</span>:<span class="hljs-string">"B0.x"</span> },<span class="hljs-attr">"path"</span>:<span class="hljs-string">"nodes/1/x"</span>,<span class="hljs-attr">"on"</span>:{ <span class="hljs-attr">"input"</span>:<span class="hljs-string">"render"</span> } },
+        { <span class="hljs-attr">"number"</span>:{ <span class="hljs-attr">"label"</span>:<span class="hljs-string">"B0.y"</span> },<span class="hljs-attr">"path"</span>:<span class="hljs-string">"nodes/1/y"</span>,<span class="hljs-attr">"on"</span>:{ <span class="hljs-attr">"input"</span>:<span class="hljs-string">"render"</span> } },
+        { <span class="hljs-attr">"number"</span>:{ <span class="hljs-attr">"label"</span>:<span class="hljs-string">"C0.x"</span> },<span class="hljs-attr">"path"</span>:<span class="hljs-string">"nodes/2/x"</span>,<span class="hljs-attr">"on"</span>:{ <span class="hljs-attr">"input"</span>:<span class="hljs-string">"render"</span> } },
+        { <span class="hljs-attr">"number"</span>:{ <span class="hljs-attr">"label"</span>:<span class="hljs-string">"C0.y"</span> },<span class="hljs-attr">"path"</span>:<span class="hljs-string">"nodes/2/y"</span>,<span class="hljs-attr">"on"</span>:{ <span class="hljs-attr">"input"</span>:<span class="hljs-string">"render"</span> } }
+    ]
 }
-<span class="hljs-tag">&lt;/<span class="hljs-name">hm-i</span>&gt;</span>
+&lt;/hm-i&gt;
 </div></code></pre>
-<h2 id="todo">TODO</h2>
+<h2 id="funktionale-anforderungen">Funktionale Anforderungen</h2>
 <ul>
-<li>width/height Einstellungsmöglichkeit</li>
+<li>Das Interface muss die nachfolgenden Elemente beinhalten:
+<ul>
+<li>Standard Input</li>
 <li>Slider</li>
-<li>Buttons</li>
-<li>dropdown Listen</li>
-<li>Checkboxen</li>
-<li>+/- buttons überdenken...</li>
+<li>Dropdown Menü</li>
+<li>Checkbox</li>
+<li>Button</li>
+<li>...?</li>
+</ul>
+</li>
+<li>Der Nutzer soll die Möglichkeit haben die Position des Interface alternativ einzustellen.</li>
 </ul>
 
 </main>
