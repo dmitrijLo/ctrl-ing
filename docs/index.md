@@ -5,6 +5,8 @@
 
 ### Abstract
 
+## Einleitung
+
 Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch eine Benutzerschnittstelle eines meist komplexen Systems verstanden, mit dem ein Mensch interagieren kann. Ein alltägliches Beispiel stellt das Lenkrad zur Steuerung eines Autos dar. Während dieses Beispiel ... befasst sich diese Studienarbeit mit der Programmierung einer JavaScript micro library (zu deutsch Mikrobibliothek)
 
 <canvas id="cv" width="350" height="250"></canvas>
@@ -38,8 +40,8 @@ Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch 
 <hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
     "add": [
-        { "slider":{ },"path":"nodes/0/x","on":{ "input":"render" } }, 
-        { "input":{ "label":"A0.y" },"path":"nodes/0/y","on":{ "input":"render" } }, 
+        { "slider":{ },"path":"nodes/0/x","on":{ "input":"render" },"id":"A0x" }, 
+        { "dropdown":{ "label":"A0.y", "low":0, "medium":50, "high":100 },"path":"nodes/0/y","on":{ "input":"render" } }, 
         { "input":{ "label":"B0.x" },"path":"nodes/1/x","on":{ "input":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
         { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } }, 
@@ -71,7 +73,9 @@ Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks ge
     * Standard Input
     * Slider
     * Dropdown Menü
-    * Checkbox
-    * Button
+    * Checkbox (Toggle)
+    * Buttons
+    * Output
+    * constraints/connection
     * ...?
 * Der Nutzer soll die Möglichkeit haben die Position des Interface alternativ einzustellen.

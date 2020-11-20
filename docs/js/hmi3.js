@@ -1,3 +1,82 @@
+class HMIElement {
+    constructor(options,id) {
+        this.options = {};
+        this.id = id;
+        Object.assign(this.options,options);
+        this._element = document.createElement('div');
+        this._element.setAttribute('class', 'hmi-element');
+        this.label = document.createElement('div');
+        this.label.setAttribute('class', 'hmi-label');
+        this.label.innerHTML = options.label;        
+        this.wrapper = document.createElement('div');
+        this.wrapper.setAttribute('class', 'hmi-wrapper');
+        this.display = document.createElement('input');
+        this.display.setAttribute('class', `hmi-input`);
+        delete this.options.label;
+        delete this.options.type;
+    }
+
+    get element(){ return this._element; }
+
+    appendInput(){
+        this.display.setAttribute('id',this.id);
+        this.setOptions(this.display, 'number');
+        this.wrapper.appendChild(this.display);
+        this.element.appendChild(this.label);
+        this.element.appendChild(this.wrapper);
+    }
+
+    appendSlider(){
+        this.slider = document.createElement('input');
+        this.display.setAttribute('class', 'hmi-display');
+        this.display.setAttribute('id',this.id);
+        this.slider.setAttribute('class', 'hmi-slider');
+        this.slider.setAttribute('id',this.id);
+        this.setOptions(this.slider, 'range');
+        this.setOptions(this.display, 'number');
+        this.wrapper.appendChild(this.display);
+        this.wrapper.appendChild(this.slider);
+        this.element.appendChild(this.label);
+        this.element.appendChild(this.wrapper);
+    }
+
+    appendDropdown(){
+        this.dropdown = document.createElement('select');
+        this.dropdown.addEventListener('change', () => {
+            this.display.value = this.dropdown.options[this.dropdown.selectedIndex].value;
+        })
+        const items = Object.keys(this.options);
+        for (let item of items){
+            const option = document.createElement('option');
+            if(item === 'default') {
+                option.selected = true;
+                this.display.value = this.options[item];
+            }
+            option.innerHTML = item;
+            option.value = this.options[item];
+            this.dropdown.appendChild(option);
+        }
+
+        this.display.setAttribute('class', 'hmi-display');
+        this.display.setAttribute('type','number');
+        this.display.setAttribute('id',this.id);
+        this.dropdown.setAttribute('class', 'hmi-dropdown');
+        this.dropdown.setAttribute('id',this.id);
+        this.wrapper.appendChild(this.display);
+        this.wrapper.appendChild(this.dropdown);
+        this.element.appendChild(this.label);
+        this.element.appendChild(this.wrapper);
+        //console.log(this.options);
+    }
+
+    setOptions(element, type){
+        this.options.type = type;
+        Object.keys(this.options).forEach(key => {
+            (key === 'default') ? element.setAttribute('value', this.options[key]) : element.setAttribute(key, this.options[key]);
+        });
+    }
+}
+
 class HMI extends HTMLElement {
     constructor() {
         super();
@@ -22,8 +101,7 @@ class HMI extends HTMLElement {
         this.parseJSON();
         this.init();
 
-        console.log(document.getElementById('hmi'));
-        console.log(this._root)    
+        console.log(this.inputs)    
     }
 
     init() {
@@ -33,8 +111,13 @@ class HMI extends HTMLElement {
 
         //creates input elements/events
         this.inputs.forEach(input => {
-            gui.querySelector('.hmi-cb').appendChild(this.createInput(input.options));
+            const child = new HMIElement(input.options, input.id);
+            (input.options.type === 'input') ? child.appendInput() :
+            (input.options.type === 'slider') ? child.appendSlider() :
+            (input.options.type === 'dropdown') ? child.appendDropdown() : console.log('wrong type');
+            gui.querySelector('.hmi-cb').appendChild(child.element);
             this.addEvent(input, gui);
+            console.log(input)
         })
         this._root.appendChild(gui);
         this._root.appendChild(style);
@@ -42,7 +125,7 @@ class HMI extends HTMLElement {
 
     addEvent(userInput, element) {
         const events = ['click', 'change','input'],
-            targets = element.querySelectorAll(`#${userInput.options.id}`),
+            targets = element.querySelectorAll(`#${userInput.id}`),
             event = Object.keys(userInput.on).find(key => events.includes(key)),
             callback = window[userInput.on[event]];
 
@@ -69,49 +152,7 @@ class HMI extends HTMLElement {
         gui.appendChild(folder);
         folder.appendChild(header);
         folder.appendChild(contenBox);
-
         return gui;
-    }
-    
-    createInput(options) {
-        const inputBox = document.createElement('div');
-        inputBox.setAttribute('class', 'hmi-box');
-        const label = document.createElement('div');
-        label.setAttribute('class', 'hmi-label');
-        label.innerHTML = options.label;
-        delete options.label;
-        const wrapper = document.createElement('div');
-        wrapper.setAttribute('class', 'hmi-wrapper');
-
-        const setOptions = (element, type) => {
-            options.type = type;
-            Object.keys(options).forEach(key => {
-                element.setAttribute(key, options[key])
-            });
-        }
-        
-        switch (options.type) {
-            case "input":
-                const input = document.createElement('input');
-                input.setAttribute('class', 'hmi-input');
-                setOptions(input, 'number');
-                wrapper.appendChild(input);
-                break;
-            case "slider":
-                const display = document.createElement('input'),
-                    slider = document.createElement('input');
-                display.setAttribute('class', 'hmi-display');
-                slider.setAttribute('class', 'hmi-slider');
-                setOptions(slider, 'range');
-                setOptions(display, 'number');
-                wrapper.appendChild(display);
-                wrapper.appendChild(slider);
-                break;
-        }
-
-        inputBox.appendChild(label);
-        inputBox.appendChild(wrapper);
-        return inputBox;
     }
 
     setPosition() {
@@ -160,11 +201,9 @@ class HMI extends HTMLElement {
                     enumerable: true,
                     configurable: true
                 });
-                if(Object.entries(elem[type]) != 0){
-                    Object.assign(elem.options,elem[type]);
-                }
-                elem.options.value = this.getValue(this.reference, elem.path);
-                elem.options.id = this.getID(elem.path);
+                if(Object.entries(elem[type]) != 0) Object.assign(elem.options,elem[type]);
+                if(!elem.hasOwnProperty('id')) elem.id = this.getID(elem.path);
+                elem.options.default = this.getValue(this.reference, elem.path);
                 this.inputs = elem;
         });
             return true; 
@@ -248,7 +287,7 @@ class HMI extends HTMLElement {
                 padding: 0.5em 0px 0.5em 0px;
             }
 
-            .hmi-box, .hmi-wrapper {
+            .hmi-element, .hmi-wrapper {
                 display: flex;
                 justify-content: flex-start;
                 width: 100%;
