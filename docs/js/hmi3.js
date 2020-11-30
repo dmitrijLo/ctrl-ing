@@ -11,7 +11,9 @@ class HMIElement {
         this.wrapper = document.createElement('div');
         this.wrapper.setAttribute('class', 'hmi-wrapper');
         this.display = document.createElement('input');
-        this.display.setAttribute('class', `hmi-input`);
+        this.display.setAttribute('class', 'hmi-display');
+        this.display.setAttribute('id',this.id);
+        this.display.value = this.options.default;
         delete this.options.label;
         delete this.options.type;
     }
@@ -19,7 +21,7 @@ class HMIElement {
     get element(){ return this._element; }
 
     appendInput(){
-        this.display.setAttribute('id',this.id);
+        this.display.setAttribute('class', `hmi-input`);
         this.setOptions(this.display, 'number');
         this.wrapper.appendChild(this.display);
         this.element.appendChild(this.label);
@@ -28,8 +30,6 @@ class HMIElement {
 
     appendSlider(){
         this.slider = document.createElement('input');
-        this.display.setAttribute('class', 'hmi-display');
-        this.display.setAttribute('id',this.id);
         this.slider.setAttribute('class', 'hmi-slider');
         this.slider.setAttribute('id',this.id);
         this.setOptions(this.slider, 'range');
@@ -56,10 +56,7 @@ class HMIElement {
             option.value = this.options[item];
             this.dropdown.appendChild(option);
         }
-
-        this.display.setAttribute('class', 'hmi-display');
-        this.display.setAttribute('type','number');
-        this.display.setAttribute('id',this.id);
+        //this.display.setAttribute('type','number');
         this.dropdown.setAttribute('class', 'hmi-dropdown');
         this.dropdown.setAttribute('id',this.id);
         this.wrapper.appendChild(this.display);
@@ -67,6 +64,28 @@ class HMIElement {
         this.element.appendChild(this.label);
         this.element.appendChild(this.wrapper);
         //console.log(this.options);
+    }
+
+    appendToggle(){
+        const label = document.createElement('label'), input = document.createElement('input');
+        let flag = false;
+        label.setAttribute('data-off',"off");
+        label.setAttribute('data-on', "on" );
+        input.setAttribute('type','checkbox');
+        this.toggle = document.createElement('span');
+        this.toggle.setAttribute('class','hmi-toggle');
+        this.toggle.setAttribute('id',this.id);
+        input.addEventListener('click', () => {
+            flag ? this.display.value = this.options.default : this.display.value = this.options.closed;
+            flag ? this.toggle.value = this.options.default : this.toggle.value = this.options.closed;
+            flag = !flag;
+        })
+        this.toggle.appendChild(input);
+        this.toggle.appendChild(label);
+        this.wrapper.appendChild(this.display);
+        this.wrapper.appendChild(this.toggle);
+        this.element.appendChild(this.label);
+        this.element.appendChild(this.wrapper);
     }
 
     setOptions(element, type){
@@ -111,29 +130,30 @@ class HMI extends HTMLElement {
 
         //creates input elements/events
         this.inputs.forEach(input => {
-            const child = new HMIElement(input.options, input.id);
+            const child = new HMIElement(input.options, input.id, this.reference);
             (input.options.type === 'input') ? child.appendInput() :
             (input.options.type === 'slider') ? child.appendSlider() :
-            (input.options.type === 'dropdown') ? child.appendDropdown() : console.log('wrong type');
+            (input.options.type === 'dropdown') ? child.appendDropdown() :
+            (input.options.type === 'toggle') ? child.appendToggle() : console.log('wrong type');
             gui.querySelector('.hmi-cb').appendChild(child.element);
+            
             this.addEvent(input, gui);
-            console.log(input)
         })
         this._root.appendChild(gui);
         this._root.appendChild(style);
     }
 
     addEvent(userInput, element) {
-        const events = ['click', 'change','input'],
-            targets = element.querySelectorAll(`#${userInput.id}`),
-            event = Object.keys(userInput.on).find(key => events.includes(key)),
-            callback = window[userInput.on[event]];
-
+        const events = ['click', 'change','input'], targets = element.querySelectorAll(`#${userInput.id}`);
+        let event = (userInput.hasOwnProperty('on')) ? Object.keys(userInput.on).find(key => events.includes(key)) : undefined;
+        let callback = (event != undefined) ? window[userInput.on[event]] : undefined;
+        if(callback === undefined) event = 'change';
+        console.log(event);
         targets.forEach(target => target.addEventListener(event, () => {
                 const paths = userInput.path.split('/');
                 const last = paths.pop();
                 paths.reduce((ref, prop) => ref[prop], this.reference)[last] = +target.value;
-                return callback();
+                if(callback != undefined) return callback();
             })
         );
     }
@@ -211,8 +231,11 @@ class HMI extends HTMLElement {
         catch(e) { this._root.innerHTML = e.message; }
         return false; 
     }
-
+doc
     static template(position) {
+        document.documentElement.style.setProperty('--hmi-base-background-color','#fffff8');
+        document.documentElement.style.setProperty('--hmi-base-shadow-color','#10162f');
+
         return `
             .hmi:hover {
                 -webkit-transform: translate(-0.25rem, -0.25rem);
@@ -222,10 +245,13 @@ class HMI extends HTMLElement {
             }
 
             .hmi {
+                color: #1a1a1a;
+                font-family: inherit;
+                font-size: 0.75em;
                 position: relative;
                 top: ${position}px;
                 float: right;
-                background-color: var(--bgcol-main);
+                background-color: var(--hmi-base-background-color);
                 box-sizing: border-box;
                 border: 1px solid black;
                 /*border-radius: 0px 25px 0px 25px;*/
@@ -266,18 +292,18 @@ class HMI extends HTMLElement {
 
             .hmi::after {
                 z-index: -2;
-                background-color: #10162f;
+                background-color: var(--hmi-base-shadow-color);
                 -webkit-transition: inherit;
                 transition: inherit;
             }
 
             .hmi-folder {
-                max-width: 12.5em;
+                max-width: 12.5rem;
             }
 
             .hmi-header {
                 color: #E2DDDB;
-                min-height: 1.25em;
+                min-height: 1.5rem;
                 background-color: #58595B;
                 padding-left: 0.25em;
             }
@@ -285,6 +311,7 @@ class HMI extends HTMLElement {
             .hmi-cb {
                 border-top: 1px solid black;
                 padding: 0.5em 0px 0.5em 0px;
+                word-wrap: anywhere;
             }
 
             .hmi-element, .hmi-wrapper {
@@ -295,22 +322,17 @@ class HMI extends HTMLElement {
 
             .hmi-label, .hmi-display {
                 margin-left: 0.5em;
-                width: 33.3%;
+                width: 40%;
                 border: 1px;
+
             }
 
             .hmi-display, .hmi-label {
                 height: auto;
-                color: #1a1a1a;
-                font-family: inherit;
-                font-size: 1em;
                 padding-bottom: 0.25em;
             }
 
             .hmi-input, .hmi-display {
-                color: #1a1a1a;
-                font-family: inherit;
-                font-size: 0.75em;
                 /*padding: 0.15em 0px;*/
                 margin: 0 0.25em 0.25em 0;
                 background-color: #C8D6C7;
@@ -320,7 +342,7 @@ class HMI extends HTMLElement {
             }
 
             .hmi-slider {
-                width: 66.66%
+                width: 50%
             }
 
             .hmi-input {
@@ -335,6 +357,127 @@ class HMI extends HTMLElement {
 
             input[type="number"] {
                 -moz-appearance: textfield;
+            }
+
+            .hmi-toggle {
+                position:relative;
+                display:inline-block;
+                width:60px;
+                height:25px;
+                background-color:#bbb;
+                -webkit-border-radius:4px;
+                -moz-border-radius:4px;
+                border-radius:4px;
+                text-align:center;
+                align-self:center;
+            }
+            .hmi-toggle input {
+                width:100%;
+                height:100%;
+                margin:0 0;
+                padding:0 0;
+                position:absolute;
+                top:0;
+                right:0;
+                bottom:0;
+                left:0;
+                z-index:2;
+                cursor:pointer;
+                opacity:0;
+                filter:alpha(opacity=0);
+              }
+              .hmi-toggle label {
+                display:block;
+                position:absolute;
+                top:1px;
+                right:1px;
+                bottom:1px;
+                left:1px;
+                
+                background-image:-webkit-linear-gradient(left,#fff 0%,#ddd 50%,#fff 50%,#eee 100%);
+                background-image:-moz-linear-gradient(left,#fff 0%,#ddd 50%,#fff 50%,#eee 100%);
+                background-image:-ms-linear-gradient(left,#fff 0%,#ddd 50%,#fff 50%,#eee 100%);
+                background-image:-o-linear-gradient(left,#fff 0%,#ddd 50%,#fff 50%,#eee 100%);
+                background-image:linear-gradient(left,#fff 0%,#ddd 50%,#fff 50%,#eee 100%);
+                -webkit-box-shadow:2px 0 3px rgba(0,0,0,0.4),
+                    inset -1px 0 1px #888,
+                    inset -5px 0 1px #bbb,
+                    inset -6px 0 0 white;
+                -moz-box-shadow:2px 0 3px rgba(0,0,0,0.4),
+                    inset -1px 0 1px #888,
+                    inset -5px 0 1px #bbb,
+                    inset -6px 0 0 white;
+                box-shadow: 2px 0px 3px rgba(0,0,0,0.4),
+                  inset -1px 0 1px #888,
+                  inset -5px 0 1px #bbb,
+                  inset -6px 0 0 white;
+                -webkit-border-radius:3px;
+                -moz-border-radius:3px;
+                border-radius:3px;
+                font:normal 11px Arial,Sans-Serif;
+                color:#666;
+                text-shadow:1px 0 0 white;
+                cursor:text;
+              }
+              .hmi-toggle label:before {
+                content:attr(data-off);
+                position:absolute;
+                top:6px;
+                right:30px;
+                left:0px;
+                z-index:4;
+              }
+              .hmi-toggle label:after {
+                content:attr(data-on);
+                position:absolute;
+                top: 6px;
+                right:0;
+                left:22px;
+                color:#666;
+                text-shadow:0 -1px 0 #eee;
+              }
+              .hmi-toggle input:checked + label {
+                background-image:-webkit-linear-gradient(left,#eee 0%,#ccc 50%,#fff 50%,#eee 100%);
+                background-image:-moz-linear-gradient(left,#eee 0%,#ccc 50%,#fff 50%,#eee 100%);
+                background-image:-ms-linear-gradient(left,#eee 0%,#ccc 50%,#fff 50%,#eee 100%);
+                background-image:-o-linear-gradient(left,#eee 0%,#ccc 50%,#fff 50%,#eee 100%);
+                background-image:linear-gradient(left,#eee 0%,#ccc 50%,#fff 50%,#eee 100%);
+                -webkit-box-shadow:0 0 1px rgba(0,0,0,0.4),
+                    inset 1px 0 7px -1px #ccc,
+                    inset 5px 0 1px #fafafa,
+                    inset 6px 0 0 white;
+                -moz-box-shadow:0 0 1px rgba(0,0,0,0.4),
+                    inset 1px 0 7px -1px #ccc,
+                    inset 5px 0 1px #fafafa,
+                    inset 6px 0 0 white;
+                box-shadow:0 0 1px rgba(0,0,0,0.4),
+                  inset 1px 0 7px -1px #ccc,
+                  inset 5px 0 1px #fafafa,
+                  inset 6px 0 0 white;
+              }
+              .hmi-toggle input:checked:hover + label {
+                -webkit-box-shadow:0 1px 3px rgba(0,0,0,0.4),
+                    inset 1px 0 7px -1px #ccc,
+                    inset 5px 0 1px #fafafa,
+                    inset 6px 0 0 white;
+                -moz-box-shadow:0 1px 3px rgba(0,0,0,0.4),
+                    inset 1px 0 7px -1px #ccc,
+                    inset 5px 0 1px #fafafa,
+                    inset 6px 0 0 white;
+                box-shadow:1px 0 3px rgba(0,0,0,0.4),
+                  inset 1px 0 7px -1px #ccc,
+                  inset 5px 0 1px #fafafa,
+                  inset 6px 0 0 white;
+              }
+              .hmi-toggle input:checked + label:before {
+                z-index:1;
+                right:25px;
+              }
+              .hmi-toggle input:checked + label:after {
+                left:30px;
+                color:#aaa;
+                text-shadow:none;
+                z-index:4;
             }
         `;
     }

@@ -5,6 +5,35 @@
 
 ### Abstract
 
+## Problemstellung
+
+<aside>
+<g-2 width="250" height="200" x0="30" y0="50" cartesian>
+{ 
+"main": [
+    { "c": "beam", "a": { "pts":[0,50,40,20,100,120], 
+    "fs":"silver", "label":{"str":"b", "off": 5 }}},
+    { "c": "bar", "a": { "x1":0, "y1":0, "x2":0, "y2":50, "label":{"str":"a", "off": -5 }}},
+    { "c": "bar", "a": { "x1":0, "y1":50, "x2":100, "y2":120, "label":{"str":"b", "off": -5 }}},
+    { "c": "bar", "a": { "x1":200, "y1":0, "x2":100, "y2":120, "label":{"str":"b", "off": 5 }}},
+    { "c": "origin","a": {"x": 0,"y": 0,"lw": 1.5}},
+    { "c": "nodfix", "a": { "x":0, "y":0, "label":{"str":"A0", "loc": "sw", "off": 15 } } },
+    { "c": "nodfix", "a": { "x":200, "y":0, "label":{"str":"B0", "loc": "sw", "off": 15 } } },
+    { "c": "nod", "a": { "x":0, "y":50, "label":{"str":"A", "loc": "nw", "off": 5 } } },
+    { "c": "nod", "a": { "x":100, "y":120, "label":{"str":"B", "loc": "ne", "off": 5 } } },
+    { "c": "nod", "a": { "x":40, "y":20, "label":{"str":"K", "loc": "n", "off": 5 } } }
+    ]
+}
+</g-2>
+
+#### **Abb. 1:** Webbasiertes Modell eines Viergelenks mit Koppelpunkt
+
+</aside>
+
+An der Fachhochschule Dortmund vermittelt das Wahlpflichtmodul Web-Kinematik den Studiereden des Fachbereichs Maschinenbau die fundamentalen Grundlagen moderner Webtechnologien. Dabei werden Problemstellungen der technischen Mechanik mittels HTML, CSS und JavaScript in eine einfache Form einer Webanwendung überführt. Abbildung 1 zeigt beispielhaft das webbasierte Modell eines Viergelenkgetriebes, welches einer typischen Aufgabenstellung entspricht. Ist das Modell einmal überführt, lassen sich beispielweise die Geschwindigkeit und Beschleunigung des ebenfalls dargestellten Koppelpunktes analysieren und mittels Vektoren sogar visualisieren.
+
+Die webbasierten Modelle lassen sich mittels interaktiver Elemente steuern, so können unterschiedliche 
+
 ## Einleitung
 
 Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch eine Benutzerschnittstelle eines meist komplexen Systems verstanden, mit dem ein Mensch interagieren kann. Ein alltägliches Beispiel stellt das Lenkrad zur Steuerung eines Autos dar. Während dieses Beispiel ... befasst sich diese Studienarbeit mit der Programmierung einer JavaScript micro library (zu deutsch Mikrobibliothek)
@@ -41,8 +70,8 @@ Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch 
 {
     "add": [
         { "slider":{ },"path":"nodes/0/x","on":{ "input":"render" },"id":"A0x" }, 
-        { "dropdown":{ "label":"A0.y", "low":0, "medium":50, "high":100 },"path":"nodes/0/y","on":{ "input":"render" } }, 
-        { "input":{ "label":"B0.x" },"path":"nodes/1/x","on":{ "input":"render" } }, 
+        { "dropdown":{ "label":"A0.y", "low":0, "medium":75, "high":125 },"path":"nodes/0/y","on":{ "input":"render" } }, 
+        { "toggle":{ "label":"B0.x", "closed": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
         { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } }, 
         { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } } 
