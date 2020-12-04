@@ -77,13 +77,16 @@
 <hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
     "add": [
-        { "slider":{ },"path":"nodes/0/x","on":{ "input":"render" },"id":"A0x" }, 
-        { "dropdown":{ "label":"A0.y", "low":0, "medium":75, "high":125 },"path":"nodes/0/y","on":{ "input":"render" } }, 
+        { "id":"A0x","slider":{ },"path":"nodes/0/x","on":{ "input":"render" } }, 
+        { "id":"A0y","dropdown":{ "label":"A0.y", "low":0, "medium":75, "high":125 },"path":"nodes/0/y","on":{ "input":"render" } }, 
         { "toggle":{ "label":"B0.x", "closed": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
         { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } }, 
         { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } } 
-        ]
+        ],
+    "connect": [
+        { "p1": "A0x", "p2": "A0y" }
+    ]
 }
 </hm-i>
 <p>Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:</p>

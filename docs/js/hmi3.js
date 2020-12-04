@@ -20,8 +20,18 @@ class HMIElement {
 
     get element(){ return this._element; }
 
+    appendCanvas(){
+        this.canvas = document.createElement('canvas');
+        this.canvas.setAttribute('id','hmi-canvas');
+        this.canvas.setAttribute('width','100%');
+        this.canvas.setAttribute('height','100%');
+        this.canvas.setAttribute('style','border-width:1px;border-style:solid;');
+        this.element.appendChild(this.canvas);
+        return this.canvas.getContext('2d');
+    }
+
     appendInput(){
-        this.display.setAttribute('class', `hmi-input`);
+        this.display.setAttribute('class', 'hmi-input');
         this.setOptions(this.display, 'number');
         this.wrapper.appendChild(this.display);
         this.element.appendChild(this.label);
@@ -30,10 +40,13 @@ class HMIElement {
 
     appendSlider(){
         this.slider = document.createElement('input');
+        this.slider.addEventListener('input', () => {
+            this.display.value = this.slider.value;
+        })
         this.slider.setAttribute('class', 'hmi-slider');
         this.slider.setAttribute('id',this.id);
         this.setOptions(this.slider, 'range');
-        this.setOptions(this.display, 'number');
+        //this.setOptions(this.display, 'number');
         this.wrapper.appendChild(this.display);
         this.wrapper.appendChild(this.slider);
         this.element.appendChild(this.label);
@@ -130,15 +143,19 @@ class HMI extends HTMLElement {
 
         //creates input elements/events
         this.inputs.forEach(input => {
-            const child = new HMIElement(input.options, input.id, this.reference);
+            const child = new HMIElement(input.options, input.id);
             (input.options.type === 'input') ? child.appendInput() :
             (input.options.type === 'slider') ? child.appendSlider() :
             (input.options.type === 'dropdown') ? child.appendDropdown() :
             (input.options.type === 'toggle') ? child.appendToggle() : console.log('wrong type');
             gui.querySelector('.hmi-cb').appendChild(child.element);
-            
             this.addEvent(input, gui);
         })
+        //
+        const child = new HMIElement({},{});
+        child.appendCanvas();
+        gui.querySelector('.hmi-cb').appendChild(child.element);
+        //
         this._root.appendChild(gui);
         this._root.appendChild(style);
     }
@@ -231,7 +248,7 @@ class HMI extends HTMLElement {
         catch(e) { this._root.innerHTML = e.message; }
         return false; 
     }
-doc
+
     static template(position) {
         document.documentElement.style.setProperty('--hmi-base-background-color','#fffff8');
         document.documentElement.style.setProperty('--hmi-base-shadow-color','#10162f');
