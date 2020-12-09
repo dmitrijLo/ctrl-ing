@@ -8,13 +8,12 @@
 <meta name="keywords" content="">
 <title>About</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.18.1/styles/vs2015.min.css">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.css">
 <link rel="stylesheet" href="./theme/styles.css">
 <script src="https://cdn.jsdelivr.net/gh/goessner/g2@v2.5/src/g2.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/goessner/mec2@master/mec2.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tweakpane@1.5.5/dist/tweakpane.min.js"></script>
-<script src="./js/hmi3.js"></script>
-<script src="./js/g2.html.js"></script>
 </head>
 <body>
 <header>
@@ -28,8 +27,7 @@
 <g-2 width="250" height="200" x0="30" y0="50" cartesian>
 { 
 "main": [
-    { "c": "beam", "a": { "pts":[0,50,40,20,100,120], 
-    "fs":"silver", "label":{"str":"b", "off": 5 }}},
+    { "c": "beam", "a": { "pts":[0,50,40,20,100,120],"fs":"silver", "label":{"str":"b", "off": 5 }}},
     { "c": "bar", "a": { "x1":0, "y1":0, "x2":0, "y2":50, "label":{"str":"a", "off": -5 }}},
     { "c": "bar", "a": { "x1":0, "y1":50, "x2":100, "y2":120, "label":{"str":"b", "off": -5 }}},
     { "c": "bar", "a": { "x1":200, "y1":0, "x2":100, "y2":120, "label":{"str":"b", "off": 5 }}},
@@ -39,7 +37,7 @@
     { "c": "nod", "a": { "x":0, "y":50, "label":{"str":"A", "loc": "nw", "off": 5 } } },
     { "c": "nod", "a": { "x":100, "y":120, "label":{"str":"B", "loc": "ne", "off": 5 } } },
     { "c": "nod", "a": { "x":40, "y":20, "label":{"str":"K", "loc": "n", "off": 5 } } }
-    ]
+]
 }
 </g-2>
 <h4 id="abb-1-webbasiertes-modell-eines-viergelenks-mit-koppelpunkt"><strong>Abb. 1:</strong> Webbasiertes Modell eines Viergelenks mit Koppelpunkt</h4>
@@ -77,15 +75,15 @@
 <hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
     "add": [
-        { "id":"A0x","slider":{ },"path":"nodes/0/x","on":{ "input":"render" } }, 
-        { "id":"A0y","dropdown":{ "label":"A0.y", "low":0, "medium":75, "high":125 },"path":"nodes/0/y","on":{ "input":"render" } }, 
+        { "id":"A0x","path":"nodes/0/x" }, 
+        { "id":"A0y","path":"nodes/0/y" }, 
         { "toggle":{ "label":"B0.x", "closed": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
-        { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } }, 
-        { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } } 
+        { "id":"C0x","slider":{"min":100,"max":350,"step":0.5,"label":"C0.x"},"path":"nodes/2/x","on":{ "input":"render" } }, 
+        { "id":"C0y","dropdown":{"label":"C0.y","min":-10,"mid":100,"high":200},"path":"nodes/2/y","on":{ "change":"render" } } 
         ],
     "connect": [
-        { "p1": "A0x", "p2": "A0y" }
+        { "p1": "A0x","p2": "A0y","on":{ "input":"render" }, "label":"Punkt A" }
     ]
 }
 </hm-i>
@@ -122,6 +120,8 @@
 
 </main>
 <footer>
+  <script src="./js/hmi3.js"></script>
+  <script src="./js/g2.html.js"></script>
   <span class="left">&copy; Dmitrij</span>
   <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
   <span class="right"

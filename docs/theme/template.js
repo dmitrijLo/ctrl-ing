@@ -17,8 +17,6 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 <script src="https://cdn.jsdelivr.net/gh/goessner/g2@v2.5/src/g2.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/goessner/mec2@master/mec2.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tweakpane@1.5.5/dist/tweakpane.min.js"></script>
-<script src="./js/hmi3.js"></script>
-<script src="./js/g2.html.js"></script>
 </head>
 <body>
 <header>
@@ -29,6 +27,8 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 ${data.content}
 </main>
 <footer>
+  <script src="./js/hmi3.js"></script>
+  <script src="./js/g2.html.js"></script>
   <span class="left">&copy; Dmitrij</span>
   <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
   <span class="right"

@@ -1,6 +1,7 @@
 ---
 "layout": "page",
-"title": "About"
+"title": "About",
+"math": true
 ---
 
 ### Abstract
@@ -11,8 +12,7 @@
 <g-2 width="250" height="200" x0="30" y0="50" cartesian>
 { 
 "main": [
-    { "c": "beam", "a": { "pts":[0,50,40,20,100,120], 
-    "fs":"silver", "label":{"str":"b", "off": 5 }}},
+    { "c": "beam", "a": { "pts":[0,50,40,20,100,120],"fs":"silver", "label":{"str":"b", "off": 5 }}},
     { "c": "bar", "a": { "x1":0, "y1":0, "x2":0, "y2":50, "label":{"str":"a", "off": -5 }}},
     { "c": "bar", "a": { "x1":0, "y1":50, "x2":100, "y2":120, "label":{"str":"b", "off": -5 }}},
     { "c": "bar", "a": { "x1":200, "y1":0, "x2":100, "y2":120, "label":{"str":"b", "off": 5 }}},
@@ -22,7 +22,7 @@
     { "c": "nod", "a": { "x":0, "y":50, "label":{"str":"A", "loc": "nw", "off": 5 } } },
     { "c": "nod", "a": { "x":100, "y":120, "label":{"str":"B", "loc": "ne", "off": 5 } } },
     { "c": "nod", "a": { "x":40, "y":20, "label":{"str":"K", "loc": "n", "off": 5 } } }
-    ]
+]
 }
 </g-2>
 
@@ -69,15 +69,15 @@ Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch 
 <hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
     "add": [
-        { "id":"A0x","slider":{ },"path":"nodes/0/x","on":{ "input":"render" } }, 
-        { "id":"A0y","dropdown":{ "label":"A0.y", "low":0, "medium":75, "high":125 },"path":"nodes/0/y","on":{ "input":"render" } }, 
+        { "id":"A0x","path":"nodes/0/x" }, 
+        { "id":"A0y","path":"nodes/0/y" }, 
         { "toggle":{ "label":"B0.x", "closed": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
-        { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } }, 
-        { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } } 
+        { "id":"C0x","slider":{"min":100,"max":350,"step":0.5,"label":"C0.x"},"path":"nodes/2/x","on":{ "input":"render" } }, 
+        { "id":"C0y","dropdown":{"label":"C0.y","min":-10,"mid":100,"high":200},"path":"nodes/2/y","on":{ "change":"render" } } 
         ],
     "connect": [
-        { "p1": "A0x", "p2": "A0y" }
+        { "p1": "A0x","p2": "A0y","on":{ "input":"render" }, "label":"Punkt A" }
     ]
 }
 </hm-i>
