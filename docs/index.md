@@ -69,8 +69,8 @@ Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch 
 <hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
     "add": [
-        { "id":"A0x","dropdown":{"label":"C0.y","min":-10,"mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
-        { "id":"A0y","slider":{"min":100,"max":350,"step":0.5,"label":"C0.x"},"path":"nodes/0/y","on":{ "change":"render" } }, 
+        { "id":"A0x","dropdown":{"label":"A0.x","min":-10,"mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
+        { "id":"A0y","slider":{"min":100,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
         { "toggle":{ "label":"B0.x", "closed": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
         { "id":"C0x","path":"nodes/2/x" }, 
