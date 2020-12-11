@@ -75,15 +75,15 @@
 <hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
     "add": [
-        { "id":"A0x","path":"nodes/0/x" }, 
-        { "id":"A0y","path":"nodes/0/y" }, 
+        { "id":"A0x","dropdown":{"label":"C0.y","min":-10,"mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
+        { "id":"A0y","slider":{"min":100,"max":350,"step":0.5,"label":"C0.x"},"path":"nodes/0/y","on":{ "change":"render" } }, 
         { "toggle":{ "label":"B0.x", "closed": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
-        { "id":"C0x","slider":{"min":100,"max":350,"step":0.5,"label":"C0.x"},"path":"nodes/2/x","on":{ "input":"render" } }, 
-        { "id":"C0y","dropdown":{"label":"C0.y","min":-10,"mid":100,"high":200},"path":"nodes/2/y","on":{ "change":"render" } } 
+        { "id":"C0x","path":"nodes/2/x" }, 
+        { "id":"C0y","path":"nodes/2/y" } 
         ],
     "connect": [
-        { "p1": "A0x","p2": "A0y","on":{ "input":"render" }, "label":"Punkt A" }
+        { "p1": "C0x","p2": "C0y","on":{ "input":"render" }, "label":"Punkt C" }
     ]
 }
 </hm-i>
