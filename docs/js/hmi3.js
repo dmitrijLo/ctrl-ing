@@ -1,7 +1,8 @@
 class CanvasHandler {
-    constructor(canvas, handle){
-        const resolution = 1/5;
-        this._handle = {x: handle.x * resolution, y: handle.y * resolution, r: 10};
+    constructor(canvas, handle, range){
+        const resolution = ((range.min && range.max) || range.max != undefined) ? { x: 1/(range.max/canvas.width), y: 1/(range.max/canvas.height) } : 
+                            { x: 1/((handle.x+canvas.width)/canvas.width), y: 1/((handle.y + canvas.height)/canvas.height) } ;
+        this._handle = {x: handle.x * resolution.x, y: handle.y * resolution.y, r: 10};
         this.isDragging = false;
         this.dragHandle;
         this.canvas = canvas;
@@ -13,7 +14,8 @@ class CanvasHandler {
     get handle() { return this._handle; }
     set handle(obj) { this._handle.x = obj.x;
                       this._handle.y = obj.y }
-
+    get newPosition() { return {p1: Math.floor((this.handle.x/this.resolution.x)*10)/10, p2: Math.floor((this.handle.y/this.resolution.y)*10)/10}; }
+                
     circlePointCollision(x,y, circle) {
         const dx = circle.x - x,
               dy = circle.y - y,
@@ -22,22 +24,15 @@ class CanvasHandler {
     }
 
     onMouseDown(e) {
+        console.log('Höhe: ',this.canvas.height);
+        console.log('Breite: ',this.canvas.width);
         const x = e.clientX - Math.floor(this.offset.left),
               y = this.canvas.height - (e.clientY - Math.floor(this.offset.top));
         let hand = this.handle;
 
-        console.log('x: ', x)
-        console.log('y: ', y)
-        console.log('clientX: ', e.clientX)
-        console.log('clientY: ', e.clientY)
-        console.log('offsetTop: ', Math.floor(this.offset.top))
-        console.log('e: ', e)
-        //console.log(this.circlePointCollision(x,y,hand))
-
         if(this.circlePointCollision(x, y, hand)) {
             this.handle = { x: x, y: y };
             this.strokeHandle();
-            console.log('handle: ',this.handle)
             this.isDragging = true;
             this.onMouseMoveBinding = this.onMouseMove.bind(this);
             this.onMouseUpBinding = this.onMouseUp.bind(this);
@@ -60,26 +55,15 @@ class CanvasHandler {
     onMouseUp(e) {
         e.target.removeEventListener("mousemove", this.onMouseMoveBinding);
         e.target.removeEventListener("mouseup", this.onMouseUpBinding);
-        //mec.ursprung = {x: handle.A0.x, y: cnv.height - handle.A0.y};
-        //mec._punktBahn = [];
         this.isDragging = false;
         console.log('stop that drag')
     }
 
     strokeHandle() {
-        //console.log(ctx)
         const ctx = this.canvas.getContext('2d');
             ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
             ctx.beginPath();
             ctx.moveTo(0,0);
-                /* if(p1 > targets[0].width) {
-                    ctx.transform(scaleX/2,0,0,1,1,1);
-                }
-                if(p2 >= targets[0].height){
-                    console.log(scaleY)
-                    const scaleY = targets[0].width/p2;
-                    ctx.transform(1,0,0,scaleY/2,1,1);
-                } */
             ctx.lineTo( this.handle.x, this.handle.y );
             ctx.stroke();
             ctx.beginPath();
@@ -91,19 +75,11 @@ class CanvasHandler {
 class HMIElement {
     constructor(options,id) {
         this.options = {};
+        this.label = options.label;
         this.id = id;
         Object.assign(this.options,options);
         this._element = document.createElement('div');
-        this._element.setAttribute('class', 'hmi-element');
-        this.label = document.createElement('div');
-        this.label.setAttribute('class', 'hmi-label');
-        this.label.innerHTML = options.label;        
-        this.wrapper = document.createElement('div');
-        this.wrapper.setAttribute('class', 'hmi-wrapper');
-        //this.display = document.createElement('input');
-        //this.display.setAttribute('class', 'hmi-display');
-        //this.display.setAttribute('id',this.id);
-        //this.display.value = this.options.default;
+        this._element.setAttribute('class', 'hmi-element');  
         delete this.options.label;
         delete this.options.type;
     }
@@ -112,84 +88,100 @@ class HMIElement {
 
     createDisplay(type = 'number', className = 'hmi-display', id = this.id, value = this.options.default){
         const display = document.createElement('input');
-              display.setAttribute('type', type)
-              display.setAttribute('class', className);
-              display.setAttribute('id', id);
-              display.value = value;
+        display.setAttribute('type', type);
+        display.setAttribute('class', className);
+        display.setAttribute('id', id);
+        display.value = value;
         return display;
     }
 
+    createWrapper(className = 'hmi-wrapper') {
+        const wrapper = document.createElement('div');
+        wrapper.setAttribute('class', className);
+        return wrapper;
+    }
+
+    createLabel(className = 'hmi-label', text = this.label) {
+        const label = document.createElement('div');
+        label.setAttribute('class', className);
+        label.innerHTML = text;
+        return label;
+    }
+
+    appendElements(reciever, ...elements) {
+        for (let element of elements){
+            reciever.appendChild(element);
+        } 
+    }
+
     appendCanvas(){
+        function convertRemToPixels(rem) {
+            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+        }
         const displayP1 = this.createDisplay(),
               displayP2 = this.createDisplay(),
+              label = this.createLabel(),
+              displayWrapper = this.createWrapper('hmi-element'),
+              wrapper = this.createWrapper(),
               symbol = document.createElement('div'),
-              displayWrapper = document.createElement('div');
-        const defaultStyle = {canvas: 'width:0;height:0', element:'height:1rem', visible: false};
-        displayWrapper.setAttribute('class', 'hmi-element');      
+              canvas = document.createElement('canvas'),
+              defaultStyle = {canvas: 'width:0;height:0', element:'height:1.25rem', visible: false};
+        canvas.setAttribute('id',this.id);
+        canvas.setAttribute('style',defaultStyle.canvas);
+        canvas.setAttribute('width',`${convertRemToPixels(12)}px`);
+        canvas.setAttribute('height',`${convertRemToPixels(10)}px`);
+        canvas.getContext('2d').translate(0, canvas.height);
+        canvas.getContext('2d').scale(1,-1);
         symbol.setAttribute('class', 'hmi-symbol');
         symbol.innerHTML = "&#9660;";
         symbol.addEventListener('click', () => {
             if(!defaultStyle.visible) {
-                this.canvas.setAttribute('style','width: auto;height: auto;border:1px solid black;');
-                this.element.setAttribute('style','100%')
-                
+                canvas.setAttribute('style','width: auto;height: auto;border:1px solid black;');
+                this.element.setAttribute('style','height:auto')
             } else {
-                this.canvas.setAttribute('style', defaultStyle.canvas);
+                canvas.setAttribute('style', defaultStyle.canvas);
                 this.element.setAttribute('style', defaultStyle.element);
             }
             defaultStyle.visible = !defaultStyle.visible;
         })
+        
         this.element.setAttribute('class','hmi-canvasHandle');
         this.element.setAttribute('style', defaultStyle.element);
-        this.canvas = document.createElement('canvas');
-        this.canvas.setAttribute('id',this.id);
-        this.canvas.setAttribute('style',defaultStyle.canvas);
-        this.canvas.setAttribute('width','150px');
-        this.canvas.setAttribute('height','150px');
-        console.log(this.canvas.height)
-        this.canvas.getContext('2d').translate(0, this.canvas.height);
-        this.canvas.getContext('2d').scale(1,-1);
-        
-        this.wrapper.appendChild(displayP1);
-        this.wrapper.appendChild(displayP2);
-        this.wrapper.appendChild(symbol);
-        displayWrapper.appendChild(this.label);
-        displayWrapper.appendChild(this.wrapper);
-        this.element.appendChild(displayWrapper);
-        this.element.appendChild(this.canvas);
-        //return this.canvas.getContext('2d');
+        this.appendElements(wrapper, displayP1, displayP2, symbol);
+        this.appendElements(displayWrapper, label, wrapper);
+        this.appendElements(this.element, displayWrapper, canvas);
     }
 
     appendInput(){
-        const input = this.createDisplay('number','hmi-input')
-        //this.display.setAttribute('class', 'hmi-input');
-        //this.setOptions(this.display, 'number');
-        this.wrapper.appendChild(input);
-        this.element.appendChild(this.label);
-        this.element.appendChild(this.wrapper);
+        const input = this.createDisplay('number','hmi-input'),
+              wrapper = this.createWrapper(),
+              label = this.createLabel();
+        wrapper.appendChild(input);
+        this.appendElements(this.element, label, wrapper);
     }
 
     appendSlider(){
-        const display = this.createDisplay();
-        this.slider = document.createElement('input');
-        this.slider.addEventListener('input', () => {
-            display.value = this.slider.value;
+        const slider = document.createElement('input'),
+              display = this.createDisplay(),
+              wrapper = this.createWrapper(),
+              label = this.createLabel();
+        slider.addEventListener('input', () => {
+            display.value = slider.value;
         })
-        this.slider.setAttribute('class', 'hmi-slider');
-        this.slider.setAttribute('id',this.id);
-        this.setOptions(this.slider, 'range');
-        //this.setOptions(this.display, 'number');
-        this.wrapper.appendChild(display);
-        this.wrapper.appendChild(this.slider);
-        this.element.appendChild(this.label);
-        this.element.appendChild(this.wrapper);
+        slider.setAttribute('class', 'hmi-slider');
+        slider.setAttribute('id',this.id);
+        this.setOptions(slider, 'range');
+        this.appendElements(wrapper, display, slider);
+        this.appendElements(this.element, label, wrapper);
     }
 
     appendDropdown(){
-        const display = this.createDisplay();
-        this.dropdown = document.createElement('select');
-        this.dropdown.addEventListener('change', () => {
-            display.value = this.dropdown.options[this.dropdown.selectedIndex].value;
+        const dropdown = document.createElement('select'),
+              display = this.createDisplay(),
+              wrapper = this.createWrapper(),
+              label = this.createLabel();
+        dropdown.addEventListener('change', () => {
+            display.value = dropdown.options[dropdown.selectedIndex].value;
         })
         const items = Object.keys(this.options);
         for (let item of items){
@@ -200,39 +192,36 @@ class HMIElement {
             }
             option.innerHTML = item;
             option.value = this.options[item];
-            this.dropdown.appendChild(option);
+            dropdown.appendChild(option);
         }
-        //this.display.setAttribute('type','number');
-        this.dropdown.setAttribute('class', 'hmi-dropdown');
-        this.dropdown.setAttribute('id',this.id);
-        this.wrapper.appendChild(display);
-        this.wrapper.appendChild(this.dropdown);
-        this.element.appendChild(this.label);
-        this.element.appendChild(this.wrapper);
-        //console.log(this.options);
+
+        dropdown.setAttribute('class', 'hmi-dropdown');
+        dropdown.setAttribute('id',this.id);
+        this.appendElements(wrapper,display,dropdown);
+        this.appendElements(this.element,label,wrapper);
     }
 
     appendToggle(){
-        const display = this.createDisplay();
-        const label = document.createElement('label'), input = document.createElement('input');
+        const display = this.createDisplay(),
+              wrapper = this.createWrapper(),
+              label = this.createLabel(),
+              togglelLabel = document.createElement('label'),
+              input = document.createElement('input'),
+              toggle = document.createElement('span');
         let flag = false;
-        label.setAttribute('data-off',"off");
-        label.setAttribute('data-on', "on" );
+        togglelLabel.setAttribute('data-off',"off");
+        togglelLabel.setAttribute('data-on', "on" );
         input.setAttribute('type','checkbox');
-        this.toggle = document.createElement('span');
-        this.toggle.setAttribute('class','hmi-toggle');
-        this.toggle.setAttribute('id',this.id);
+        toggle.setAttribute('class','hmi-toggle');
+        toggle.setAttribute('id',this.id);
         input.addEventListener('click', () => {
             flag ? display.value = this.options.default : display.value = this.options.closed;
-            flag ? this.toggle.value = this.options.default : this.toggle.value = this.options.closed;
+            flag ? toggle.value = this.options.default : toggle.value = this.options.closed;
             flag = !flag;
         })
-        this.toggle.appendChild(input);
-        this.toggle.appendChild(label);
-        this.wrapper.appendChild(display);
-        this.wrapper.appendChild(this.toggle);
-        this.element.appendChild(this.label);
-        this.element.appendChild(this.wrapper);
+        this.appendElements(toggle,input,togglelLabel);
+        this.appendElements(wrapper,display,toggle);
+        this.appendElements(this.element,label,wrapper);
     }
 
     setOptions(element, type){
@@ -266,8 +255,7 @@ class HMI extends HTMLElement {
         this.parseJSON();
         this.init();
         this.offset = this.root.querySelector('.hmi').getBoundingClientRect();
-        this.addEvent(this.inputs);
-        console.log(this.root.querySelector('#A0x-A0y'))    
+        this.addEvent(this.inputs);  
     }
 
     init() {
@@ -295,24 +283,40 @@ class HMI extends HTMLElement {
         
         for (let input of inputs){
             const targets = this.root.querySelectorAll(`#${input.id}`);
-            console.log(targets[0])
             let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : undefined;
             let callback = (event != undefined) ? window[input.func] : undefined;
             if(callback === undefined) event = 'change';
              
             for (let target of targets) {
                 if(target.tagName === 'CANVAS'){
-                    
-                    const [pathsP1, pathsP2] = [input.p1.path.split('/'), input.p2.path.split('/')];
-                    const [lastP1, lastP2] = [pathsP1.pop(), pathsP2.pop()];
-                    const [p1, p2] = [pathsP1.reduce((ref, prop) => ref[prop], this.reference)[lastP1], pathsP2.reduce((ref, prop) => ref[prop], this.reference)[lastP2]];
-                    const cnv = target;
-                    console.log(target)
-                    const ctx = cnv.getContext('2d');
-                    let aaa = new CanvasHandler(cnv, { x:p1, y:p2 });
-                    aaa.strokeHandle();
+                    console.log(input);
+                    const [pathsP1, pathsP2] = [input.p1.path.split('/'), input.p2.path.split('/')],
+                          [lastP1, lastP2] = [pathsP1.pop(), pathsP2.pop()],
+                          [p1, p2] = [pathsP1.reduce((ref, prop) => ref[prop], this.reference)[lastP1], pathsP2.reduce((ref, prop) => ref[prop], this.reference)[lastP2]],
+                          cnv = target,
+                          displayP1 = targets[0],
+                          displayP2 = targets[1],
+                          range = input.hasOwnProperty('min') && input.hasOwnProperty('max') ? { min: input.min, max: input.max } : 
+                                  input.hasOwnProperty('min') ? { min: input.min, max: undefined } : 
+                                  input.hasOwnProperty('max') ? { min: undefined, max: input.max } : { min: undefined, max: undefined },
+                          interactor = new CanvasHandler(cnv, { x:p1, y:p2 }, range),
+                          mouseMove = () => {
+                            [displayP1.value,displayP2.value] = [interactor.newPosition.p1, interactor.newPosition.p2];
+                            pathsP1.reduce((ref, prop) => ref[prop], this.reference)[lastP1] = +interactor.newPosition.p1;
+                            pathsP2.reduce((ref, prop) => ref[prop], this.reference)[lastP2] = +interactor.newPosition.p2;
+                            if(callback != undefined) return callback();
+                          },
+                          mouseUp = () => {
+                            cnv.removeEventListener("mousemove", mouseMove);
+                            cnv.removeEventListener("mouseup", mouseUp);
+                          };
+
+                    [displayP1.value,displayP2.value] = [interactor.newPosition.p1, interactor.newPosition.p2];
+                    interactor.strokeHandle();
                     cnv.addEventListener("mousedown", (e) => {
-                        aaa.onMouseDown(e);
+                        interactor.onMouseDown(e);
+                        cnv.addEventListener("mousemove", mouseMove);
+                        cnv.addEventListener("mouseup", mouseUp);
                     })
                         
                 }else if(input.hasOwnProperty('path')) {
@@ -423,7 +427,6 @@ class HMI extends HTMLElement {
                 delete elem[type];
                 this.inputs = elem;
         };
-            //if(connections != undefined) for (let connection of connections) { this.inputs = connection };
             return true; 
         }
         catch(e) { console.log(e)/* this._root.innerHTML = e.message; */ }
@@ -444,6 +447,7 @@ class HMI extends HTMLElement {
 
             .hmi {
                 display: block;
+                margin-bottom: 0.5em;
                 color: #1a1a1a;
                 font-family: inherit;
                 font-size: 0.75em;
@@ -509,7 +513,7 @@ class HMI extends HTMLElement {
 
             .hmi-cb {
                 border-top: 1px solid black;
-                padding: 0.5em 0px 0.5em 0px;
+                padding-top: 0.5em;
                 word-wrap: anywhere;
             }
 
@@ -519,35 +523,49 @@ class HMI extends HTMLElement {
                 width: 100%;
             }
 
+            .hmi-element {
+                padding-bottom: 0.25rem;
+                padding-right: 0.25em
+            } 
+
+            .hmi-canvasHandle {
+                margin-bottom: 0.25em;
+            }
+
             .hmi-canvasHandle > canvas {
                 width: 100%;
                 height: 7.5rem;
+                cursor: crosshair;
+                margin: 0 0.25em;
             }
 
 
             .hmi-label, .hmi-display {
-                margin-left: 0.5em;
                 width: 40%;
-                border: 1px;
-
             }
 
-            .hmi-display, .hmi-label, .hmi-symbol {
-                height: auto;
-                padding-bottom: 0.25em;
+            .hmi-display, .hmi-label, .hmi-symbol, .hmi-input {
+                height: 1.25rem;
             }
 
-            .hmi-input, .hmi-display, .hmi-symbol {
-                /*padding: 0.15em 0px;*/
-                margin: 0 0.25em 0.25em 0;
+            .hmi-input, .hmi-display {
+                padding: 0.25em 0;
+                margin-right: 0.25em;
                 background-color: #C8D6C7;
                 text-align: center;
                 border: 1px solid #C8D6C7;
                 border-radius: 3px;
             }
+            .hmi-label {
+                margin: 0 .25em;
+            }
             .hmi-symbol {
                 font-size: 0.75em;
                 width: 100%;
+                background-color: #C8D6C7;
+                text-align: center;
+                border: 1px solid #C8D6C7;
+                border-radius: 3px;
             }
             .hmi-slider {
                 width: 50%
@@ -571,7 +589,8 @@ class HMI extends HTMLElement {
                 position:relative;
                 display:inline-block;
                 width:60px;
-                height:25px;
+                height:20px;
+                margin:0 0.75rem;
                 background-color:#bbb;
                 -webkit-border-radius:4px;
                 -moz-border-radius:4px;
@@ -630,7 +649,7 @@ class HMI extends HTMLElement {
               .hmi-toggle label:before {
                 content:attr(data-off);
                 position:absolute;
-                top:6px;
+                top:3px;
                 right:30px;
                 left:0px;
                 z-index:4;
@@ -638,7 +657,7 @@ class HMI extends HTMLElement {
               .hmi-toggle label:after {
                 content:attr(data-on);
                 position:absolute;
-                top: 6px;
+                top: 3px;
                 right:0;
                 left:22px;
                 color:#666;
