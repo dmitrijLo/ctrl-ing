@@ -25,18 +25,121 @@
 ]
 }
 </g-2>
-
-#### **Abb. 1:** Webbasiertes Modell eines Viergelenks mit Koppelpunkt
-
+<h4>Abb. 1: Webbasiertes Modell eines Viergelenks mit Koppelpunkt</h4>
 </aside>
 
-An der Fachhochschule Dortmund vermittelt das Wahlpflichtmodul Web-Kinematik den Studiereden des Fachbereichs Maschinenbau die fundamentalen Grundlagen moderner Webtechnologien. Dabei werden Problemstellungen der technischen Mechanik mittels HTML, CSS und JavaScript in eine einfache Form einer Webanwendung überführt. Abbildung 1 zeigt beispielhaft das webbasierte Modell eines Viergelenkgetriebes, welches einer typischen Aufgabenstellung entspricht. Ist das Modell einmal überführt, lassen sich beispielweise die Geschwindigkeit und Beschleunigung des ebenfalls dargestellten Koppelpunktes analysieren und mittels Vektoren sogar visualisieren.
+An der Fachhochschule Dortmund vermittelt das Wahlpflichtmodul Web-Kinematik den Studiereden des Fachbereichs Maschinenbau die fundamentalen Grundlagen moderner Webtechnologien. Dabei werden Problemstellungen der technischen Mechanik mittels HTML, CSS und JavaScript in eine einfache Form einer Webanwendung überführt. Abbildung 1 zeigt beispielhaft das webbasierte Modell eines Viergelenkgetriebes, welches einer typischen Aufgabenstellung entspricht. Ist das Modell einmal überführt, lassen sich zahlreiche Eigenschaften dessen analysieren. So kann beispielweise die Umlauffähigkeit, die zurückgelegte Bahn einzelner Punkte, die Geschwindigkeit oder Beschleunigung z.B des ebenfalls dargestellten Koppelpunktes oder gar die unterschiedlichen Pole der ebenen Bewegung visualisiert werden.
 
-Die webbasierten Modelle lassen sich mittels interaktiver Elemente steuern, so können unterschiedliche 
+Um das webbasierte Modell hinreichend analysieren zu können bedarf es interaktiver Elemente, die das Steuern und Verstellen des Modells direkt im Webbrowser ermöglichen. Andernfalls ist der häufige Eingriff in den Quelltext erforderlich, was zum einen zu Fehlern führen kann und zum andren beispielsweise während einer Präsentation undenkbar ist.
+
+HTML bietet von sich aus eine Vielzahl an Elementen, welche in Verbindung mit JavaScript die gewünschte Interaktivität gewähren. So lassen sich standardmäßig 
+
+* Eingabefelder
+* Schieberegler
+* Knöpfe
+* Checkboxen
+* Auswahllisten
+* u.v.m
+
+recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiven und vor allem monotonen Code, der stetig mit der Anzahl an Eingabemöglichkeiten wächst. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen $a$, $b$, $c$ und $d$ jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels $\varphi$ der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes.
+
+#### Listing 1: HTML Struktur zur Erzeugung einer Variation an Bedienelementen
+
+```HTML
+<div id="display" class="display">
+    <label for="input-a">Länge a:
+        <input type="number" id="input-a" class="feld" min="10" max="800" step="1" value="">mm
+    </label>
+    <br>
+    <label for="input-b">Länge b:
+        <input type="number" id="input-b" class="feld" min="10" max="800" step="1" value="">mm
+    </label>
+    <br>
+    <label for="input-c">Lände c:
+        <input type="number" id="input-c" class="feld" min="10" max="800" step="1" value="">mm
+    </label>
+    <br>
+    <label for="input-d">Länge d:
+        <input type="number" id="input-d" class="feld" min="10" max="800" step="1" value="">mm
+    </label>
+    <br>
+    <label for="phiSlider">&phiv;:
+        <input type="range" id="phiSlider" class="slider" min="0" max="360">
+        <output id="phiOut" for="phiSlider">0</output>°
+    </label>
+    <br>
+    <label for="speed">Geschwindigkeit:</label>
+    <select id="speed">
+        <option value="0.5">0,5x</option>
+        <option value="1" selected>1x</option>
+        <option value="2">2x</option>
+        <option value="4">4x</option>
+    </select>
+    <br><br>
+    <input type="checkbox" id="velocity">
+    <label for="velocity"> Geschwindigkeit anzeigen</label>
+    <br>
+    <input type="checkbox" id="acceleration">
+    <label for="acceleration"> Beschleunigung anzeigen</label>
+    <br>
+    <input type="checkbox" id="path">
+    <label for="path"> Bahn des Koppelpunktes anzeigen</label>
+    <br>
+    <input type="checkbox" id="releaseK">
+    <label for="releaseK"> Koppelpunkt lösen</label>
+    <br>
+    <input type="checkbox" id="connectK">
+    <label for="connectK"> Koppelpunkt verbinden</label>
+    <br>
+    <button id="startButton">Start</button>
+    <button id="resetButton">Reset</button>
+    <br>
+    <form id="info">
+    </form>   
+</div>
+```
+
+#### Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler
+
+```JavaScript
+// Erstellung der Referenzen zu den jeweiligen HTML-Elementen
+const input_a = document.getElementById('input-a'),
+      input_b = document.getElementById('input-b'),
+      input_c = document.getElementById('input-c'),
+      input_d = document.getElementById('input-d'),
+      phiSlider = document.getElementById('phiSlider'),
+      phiOut = document.getElementById('phiOut'),
+      speed = document.getElementById('speed'),
+      velocity = document.getElementById('velocity'),
+      acceleration = document.getElementById('acceleration'),
+      path = document.getElementById('path'),
+      releaseK = document.getElementById('releaseK'),
+      connectK = document.getElementById('connectK'),
+      info = document.getElementById('info'),
+      startButton = document.getElementById('startButton'),
+      resetButton = document.getElementById('resetButton');
+/*
+Deklaration einiger Event-Funktionen
+*/
+// Erstellung der Event-Handler
+input_a.addEventListener("input", updateInput);
+input_b.addEventListener("input", updateInput);
+input_c.addEventListener("input", updateInput);
+input_d.addEventListener("input", updateInput);
+phiSlider.addEventListener("input", updateSlider);
+speed.addEventListener("change", changeSpeed);
+startButton.addEventListener("click", startStop);
+releaseK.addEventListener("click", function () { /*...*/ });
+resetButton.addEventListener("click",refreshPage);
+```
+
+<!--
 
 ## Einleitung
 
 Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch eine Benutzerschnittstelle eines meist komplexen Systems verstanden, mit dem ein Mensch interagieren kann. Ein alltägliches Beispiel stellt das Lenkrad zur Steuerung eines Autos dar. Während dieses Beispiel ... befasst sich diese Studienarbeit mit der Programmierung einer JavaScript micro library (zu deutsch Mikrobibliothek)
+
+--->
 
 <canvas id="cv" width="350" height="250"></canvas>
 
@@ -84,7 +187,9 @@ Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch 
 
 Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:
 
-```json
+<br><br><br><br>
+
+```JSON
 <hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
 {
     "add":[

@@ -40,12 +40,111 @@
 ]
 }
 </g-2>
-<h4 id="abb-1-webbasiertes-modell-eines-viergelenks-mit-koppelpunkt"><strong>Abb. 1:</strong> Webbasiertes Modell eines Viergelenks mit Koppelpunkt</h4>
+<h4>Abb. 1: Webbasiertes Modell eines Viergelenks mit Koppelpunkt</h4>
 </aside>
-<p>An der Fachhochschule Dortmund vermittelt das Wahlpflichtmodul Web-Kinematik den Studiereden des Fachbereichs Maschinenbau die fundamentalen Grundlagen moderner Webtechnologien. Dabei werden Problemstellungen der technischen Mechanik mittels HTML, CSS und JavaScript in eine einfache Form einer Webanwendung überführt. Abbildung 1 zeigt beispielhaft das webbasierte Modell eines Viergelenkgetriebes, welches einer typischen Aufgabenstellung entspricht. Ist das Modell einmal überführt, lassen sich beispielweise die Geschwindigkeit und Beschleunigung des ebenfalls dargestellten Koppelpunktes analysieren und mittels Vektoren sogar visualisieren.</p>
-<p>Die webbasierten Modelle lassen sich mittels interaktiver Elemente steuern, so können unterschiedliche</p>
-<h2 id="einleitung">Einleitung</h2>
-<p>Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch eine Benutzerschnittstelle eines meist komplexen Systems verstanden, mit dem ein Mensch interagieren kann. Ein alltägliches Beispiel stellt das Lenkrad zur Steuerung eines Autos dar. Während dieses Beispiel ... befasst sich diese Studienarbeit mit der Programmierung einer JavaScript micro library (zu deutsch Mikrobibliothek)</p>
+<p>An der Fachhochschule Dortmund vermittelt das Wahlpflichtmodul Web-Kinematik den Studiereden des Fachbereichs Maschinenbau die fundamentalen Grundlagen moderner Webtechnologien. Dabei werden Problemstellungen der technischen Mechanik mittels HTML, CSS und JavaScript in eine einfache Form einer Webanwendung überführt. Abbildung 1 zeigt beispielhaft das webbasierte Modell eines Viergelenkgetriebes, welches einer typischen Aufgabenstellung entspricht. Ist das Modell einmal überführt, lassen sich zahlreiche Eigenschaften dessen analysieren. So kann beispielweise die Umlauffähigkeit, die zurückgelegte Bahn einzelner Punkte, die Geschwindigkeit oder Beschleunigung z.B des ebenfalls dargestellten Koppelpunktes oder gar die unterschiedlichen Pole der ebenen Bewegung visualisiert werden.</p>
+<p>Um das webbasierte Modell hinreichend analysieren zu können bedarf es interaktiver Elemente, die das Steuern und Verstellen des Modells direkt im Webbrowser ermöglichen. Andernfalls ist der häufige Eingriff in den Quelltext erforderlich, was zum einen zu Fehlern führen kann und zum andren beispielsweise während einer Präsentation undenkbar ist.</p>
+<p>HTML bietet von sich aus eine Vielzahl an Elementen, welche in Verbindung mit JavaScript die gewünschte Interaktivität gewähren. So lassen sich standardmäßig</p>
+<ul>
+<li>Eingabefelder</li>
+<li>Schieberegler</li>
+<li>Knöpfe</li>
+<li>Checkboxen</li>
+<li>Auswahllisten</li>
+<li>u.v.m</li>
+</ul>
+<p>recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiven und vor allem monotonen Code, der stetig mit der Anzahl an Eingabemöglichkeiten wächst. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">b</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">c</span></span></span></span></eq> und <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">d</span></span></span></span></eq> jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span></span></span></span></eq> der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes.</p>
+<h4 id="listing-1-html-struktur-zur-erzeugung-einer-variation-an-bedienelementen">Listing 1: HTML Struktur zur Erzeugung einer Variation an Bedienelementen</h4>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"display"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"display"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"input-a"</span>&gt;</span>Länge a:
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"number"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"input-a"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"feld"</span> <span class="hljs-attr">min</span>=<span class="hljs-string">"10"</span> <span class="hljs-attr">max</span>=<span class="hljs-string">"800"</span> <span class="hljs-attr">step</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>mm
+    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"input-b"</span>&gt;</span>Länge b:
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"number"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"input-b"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"feld"</span> <span class="hljs-attr">min</span>=<span class="hljs-string">"10"</span> <span class="hljs-attr">max</span>=<span class="hljs-string">"800"</span> <span class="hljs-attr">step</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>mm
+    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"input-c"</span>&gt;</span>Lände c:
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"number"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"input-c"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"feld"</span> <span class="hljs-attr">min</span>=<span class="hljs-string">"10"</span> <span class="hljs-attr">max</span>=<span class="hljs-string">"800"</span> <span class="hljs-attr">step</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>mm
+    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"input-d"</span>&gt;</span>Länge d:
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"number"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"input-d"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"feld"</span> <span class="hljs-attr">min</span>=<span class="hljs-string">"10"</span> <span class="hljs-attr">max</span>=<span class="hljs-string">"800"</span> <span class="hljs-attr">step</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>mm
+    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"phiSlider"</span>&gt;</span>&amp;phiv;:
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"range"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"phiSlider"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"slider"</span> <span class="hljs-attr">min</span>=<span class="hljs-string">"0"</span> <span class="hljs-attr">max</span>=<span class="hljs-string">"360"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">output</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"phiOut"</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"phiSlider"</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">output</span>&gt;</span>°
+    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"speed"</span>&gt;</span>Geschwindigkeit:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"speed"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"0.5"</span>&gt;</span>0,5x<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">selected</span>&gt;</span>1x<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"2"</span>&gt;</span>2x<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"4"</span>&gt;</span>4x<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"velocity"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"velocity"</span>&gt;</span> Geschwindigkeit anzeigen<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"acceleration"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"acceleration"</span>&gt;</span> Beschleunigung anzeigen<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"path"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"path"</span>&gt;</span> Bahn des Koppelpunktes anzeigen<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"releaseK"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"releaseK"</span>&gt;</span> Koppelpunkt lösen<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"connectK"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"connectK"</span>&gt;</span> Koppelpunkt verbinden<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"startButton"</span>&gt;</span>Start<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"resetButton"</span>&gt;</span>Reset<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"info"</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>   
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+<h4 id="listing-2-herstellen-der-interaktivit%C3%A4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h4>
+<pre><code class="code-line language-JavaScript"><div><span class="hljs-comment">// Erstellung der Referenzen zu den jeweiligen HTML-Elementen</span>
+<span class="hljs-keyword">const</span> input_a = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input-a'</span>),
+      input_b = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input-b'</span>),
+      input_c = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input-c'</span>),
+      input_d = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input-d'</span>),
+      phiSlider = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'phiSlider'</span>),
+      phiOut = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'phiOut'</span>),
+      speed = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'speed'</span>),
+      velocity = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'velocity'</span>),
+      acceleration = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'acceleration'</span>),
+      path = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'path'</span>),
+      releaseK = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'releaseK'</span>),
+      connectK = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'connectK'</span>),
+      info = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'info'</span>),
+      startButton = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'startButton'</span>),
+      resetButton = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'resetButton'</span>);
+<span class="hljs-comment">/*
+Deklaration einiger Event-Funktionen
+*/</span>
+<span class="hljs-comment">// Erstellung der Event-Handler</span>
+input_a.addEventListener(<span class="hljs-string">"input"</span>, updateInput);
+input_b.addEventListener(<span class="hljs-string">"input"</span>, updateInput);
+input_c.addEventListener(<span class="hljs-string">"input"</span>, updateInput);
+input_d.addEventListener(<span class="hljs-string">"input"</span>, updateInput);
+phiSlider.addEventListener(<span class="hljs-string">"input"</span>, updateSlider);
+speed.addEventListener(<span class="hljs-string">"change"</span>, changeSpeed);
+startButton.addEventListener(<span class="hljs-string">"click"</span>, startStop);
+releaseK.addEventListener(<span class="hljs-string">"click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-comment">/*...*/</span> });
+resetButton.addEventListener(<span class="hljs-string">"click"</span>,refreshPage);
+</div></code></pre>
+<!--
+
+## Einleitung
+
+Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch eine Benutzerschnittstelle eines meist komplexen Systems verstanden, mit dem ein Mensch interagieren kann. Ein alltägliches Beispiel stellt das Lenkrad zur Steuerung eines Autos dar. Während dieses Beispiel ... befasst sich diese Studienarbeit mit der Programmierung einer JavaScript micro library (zu deutsch Mikrobibliothek)
+
+--->
 <p><canvas id="cv" width="350" height="250"></canvas></p>
 <script>
     const ctx = document.getElementById("cv").getContext("2d");
@@ -88,7 +187,8 @@
 }
 </hm-i>
 <p>Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:</p>
-<pre><code class="code-line language-json"><div>&lt;hm-i ref=<span class="hljs-string">"model"</span> header=<span class="hljs-string">"Steuerung eines Dreiecks"</span> id=<span class="hljs-string">"hmi"</span>&gt;
+<p><br><br><br><br></p>
+<pre><code class="code-line language-JSON"><div>&lt;hm-i ref=<span class="hljs-string">"model"</span> header=<span class="hljs-string">"Steuerung eines Dreiecks"</span> id=<span class="hljs-string">"hmi"</span>&gt;
 {
     <span class="hljs-attr">"add"</span>:[
         { <span class="hljs-attr">"input"</span>:{ <span class="hljs-attr">"label"</span>:<span class="hljs-string">"A0.x"</span> },<span class="hljs-attr">"path"</span>:<span class="hljs-string">"nodes/0/x"</span>,<span class="hljs-attr">"on"</span>:{ <span class="hljs-attr">"input"</span>:<span class="hljs-string">"render"</span> } },
