@@ -174,7 +174,7 @@ Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch 
 {
     "add": [
         { "id":"A0x","dropdown":{"label":"A0.x","min":-10,"mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
-        { "id":"A0y","slider":{"min":100,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
+        { "id":"A0y","slider":{"min":50,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
         { "toggle":{ "label":"B0.x", "switchTo": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
         { "id":"C0x","path":"nodes/2/x" }, 
