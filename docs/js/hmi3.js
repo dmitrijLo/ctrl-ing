@@ -1,3 +1,39 @@
+class ObserverList {
+    constructor(){
+        this.observerList = [];
+    }
+    add(obj) { return this.observerList.push(obj); }
+    count() { return this.observerList.length; }
+    get(index) { if( index > -1 && index < this.observerList.length ) return this.observerList[ index ]; }   
+    indexOf(obj, startIndex) {
+        let i = startIndex;
+        while( i < this.observerList.length ){
+          if( this.observerList[i] === obj ){ return i; }
+          i++;
+        }
+        return -1;
+      } 
+      removeAt(index){ this.observerList.splice( index, 1 ); }
+}
+
+class Subject {
+    constructor(){
+        this.observers = new ObserverList();
+    }
+    addObserver(observer) { this.observers.add( observer ); }
+    removeObserver(observer) { this.observers.removeAt(this.observers.indexOf(observer, 0)); }
+    notify(context, key) {
+        const observerCount = this.observers.count();
+        for (let i=0; i < observerCount; i++) {
+            const observer = this.observers.get(i);
+            if(observer.observedValue === key){
+                console.log(observer);
+                observer.update( context );
+            }
+        } 
+    }
+}
+
 class CanvasHandler {
     constructor(canvas, handle, range){
         const resolution = ((range.min && range.max) || range.max != undefined) ? { x: 1/(range.max/canvas.width), y: 1/(range.max/canvas.height) } : 
@@ -86,12 +122,11 @@ class HMIElement {
 
     get element(){ return this._element; }
 
-    createDisplay(type = 'number', className = 'hmi-display', id = this.id, value = this.options.default){
-        const display = document.createElement('input');
-        display.setAttribute('type', type);
-        display.setAttribute('class', className);
-        display.setAttribute('id', id);
-        display.value = value;
+    createDisplay(){
+        const display = document.createElement('input'),
+              attributes = [ { el: display, name: ['type','class','id','value'], val: ['number','hmi-display',this.id,this.options.default || this.options.value ] } ];
+        this.setAttributes(attributes);
+        //display.value = value;
         return display;
     }
 
@@ -108,12 +143,6 @@ class HMIElement {
         return label;
     }
 
-    appendElements(reciever, ...elements) {
-        for (let element of elements){
-            reciever.appendChild(element);
-        } 
-    }
-
     appendCanvas(){
         function convertRemToPixels(rem) {
             return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -125,14 +154,13 @@ class HMIElement {
               wrapper = this.createWrapper(),
               symbol = document.createElement('div'),
               canvas = document.createElement('canvas'),
-              defaultStyle = {canvas: 'width:0;height:0', element:'height:1.25rem', visible: false};
-        canvas.setAttribute('id',this.id);
-        canvas.setAttribute('style',defaultStyle.canvas);
-        canvas.setAttribute('width',`${convertRemToPixels(12)}px`);
-        canvas.setAttribute('height',`${convertRemToPixels(10)}px`);
+              defaultStyle = {canvas: 'width:0;height:0', element:'height:1.25rem', visible: false},
+              attributes = [ { el: canvas, name: ['id','style','width','height'], val: [this.id,defaultStyle.canvas,`${convertRemToPixels(12)}px`,`${convertRemToPixels(10)}px` ] },
+                             { el: this.element, name: ['class','style'], val: ['hmi-canvasHandle',defaultStyle.element] },
+                             { el: symbol, name: ['class'], val: ['hmi-symbol'] } ];
+        this.setAttributes(attributes);
         canvas.getContext('2d').translate(0, canvas.height);
         canvas.getContext('2d').scale(1,-1);
-        symbol.setAttribute('class', 'hmi-symbol');
         symbol.innerHTML = "&#9660;";
         symbol.addEventListener('click', () => {
             if(!defaultStyle.visible) {
@@ -144,18 +172,20 @@ class HMIElement {
             }
             defaultStyle.visible = !defaultStyle.visible;
         })
-        
-        this.element.setAttribute('class','hmi-canvasHandle');
-        this.element.setAttribute('style', defaultStyle.element);
         this.appendElements(wrapper, displayP1, displayP2, symbol);
         this.appendElements(displayWrapper, label, wrapper);
         this.appendElements(this.element, displayWrapper, canvas);
     }
 
     appendInput(){
-        const input = this.createDisplay('number','hmi-input'),
+        const input = this.createDisplay(/* 'number','hmi-input' */),
               wrapper = this.createWrapper(),
-              label = this.createLabel();
+              label = this.createLabel(),
+              attributes = [ { el: input, name : ['type','class'], val: ['number','hmi-input'] } ];
+        input.update = function(value) {
+            this.value = value;
+        }
+        this.setAttributes(attributes);
         wrapper.appendChild(input);
         this.appendElements(this.element, label, wrapper);
     }
@@ -164,13 +194,16 @@ class HMIElement {
         const slider = document.createElement('input'),
               display = this.createDisplay(),
               wrapper = this.createWrapper(),
-              label = this.createLabel();
-        slider.addEventListener('input', () => {
-            display.value = slider.value;
-        })
-        slider.setAttribute('class', 'hmi-slider');
-        slider.setAttribute('id',this.id);
-        this.setOptions(slider, 'range');
+              label = this.createLabel(),
+              attributes = [ { el: slider, name: ['class','id','type','min','max','step','value'], val: ['hmi-slider',this.id,'range',this.options.min || 0,this.options.max || 100,this.options.step || 1,this.options.default || this.options.value ] },
+                             { el: display, name: ['min','max','step'], val: [this.options.min || 0,this.options.max || 100,this.options.step || 1] } ];
+        slider.update = function(value) {
+            this.value = value
+        }
+        display.update = function(value) {
+            this.value = value;
+        }
+        this.setAttributes(attributes);
         this.appendElements(wrapper, display, slider);
         this.appendElements(this.element, label, wrapper);
     }
@@ -179,11 +212,10 @@ class HMIElement {
         const dropdown = document.createElement('select'),
               display = this.createDisplay(),
               wrapper = this.createWrapper(),
-              label = this.createLabel();
-        dropdown.addEventListener('change', () => {
-            display.value = dropdown.options[dropdown.selectedIndex].value;
-        })
-        const items = Object.keys(this.options);
+              label = this.createLabel(),
+              attributes = [ { el: dropdown, name: ['class','id'], val: ['hmi-dropdown',this.id] },
+                             { el: display, name: ['type'], val: [""] } ],
+              items = Reflect.ownKeys(this.options);
         for (let item of items){
             const option = document.createElement('option');
             if(item === 'default') {
@@ -195,8 +227,17 @@ class HMIElement {
             dropdown.appendChild(option);
         }
 
-        dropdown.setAttribute('class', 'hmi-dropdown');
-        dropdown.setAttribute('id',this.id);
+        dropdown.update = function(value) {
+            for (let child of this.children){
+                if(value === +child.value){
+                    child.selected = true;
+                }
+            }
+        }
+        display.update = function(value) {
+            this.value = value;
+        }
+        this.setAttributes(attributes);
         this.appendElements(wrapper,display,dropdown);
         this.appendElements(this.element,label,wrapper);
     }
@@ -207,63 +248,96 @@ class HMIElement {
               label = this.createLabel(),
               togglelLabel = document.createElement('label'),
               input = document.createElement('input'),
-              toggle = document.createElement('span');
-        let flag = false;
-        togglelLabel.setAttribute('data-off',"off");
-        togglelLabel.setAttribute('data-on', "on" );
-        input.setAttribute('type','checkbox');
-        toggle.setAttribute('class','hmi-toggle');
-        toggle.setAttribute('id',this.id);
-        input.addEventListener('click', () => {
-            flag ? display.value = this.options.default : display.value = this.options.closed;
-            flag ? toggle.value = this.options.default : toggle.value = this.options.closed;
-            flag = !flag;
-        })
+              toggle = document.createElement('span'),
+              attributes = [ { el: togglelLabel, name: ["data-off","data-on"], val: ["off","on"] },
+                             { el: input, name: ['type'], val: ['checkbox'] },
+                             { el: display, name: ['type'], val: [''] },
+                             { el: toggle, name: ['class', 'id'], val: ['hmi-toggle', this.id] } ];
+        toggle.default = this.options.default || false;
+        toggle.switchTo = this.options.switchTo || true;
+        toggle.value = toggle.switchTo;
+        toggle.update = function(value){
+            console.log(value)
+            if(value === this.default){
+                this.value = this.switchTo;
+            } else {
+                this.value = this.default;
+            }
+            display.value = value;
+        }
+        display.update = function(){
+            //render()
+        }
+        this.setAttributes(attributes);
         this.appendElements(toggle,input,togglelLabel);
         this.appendElements(wrapper,display,toggle);
         this.appendElements(this.element,label,wrapper);
     }
 
-    setOptions(element, type){
-        this.options.type = type;
-        Object.keys(this.options).forEach(key => {
-            (key === 'default') ? element.setAttribute('value', this.options[key]) : element.setAttribute(key, this.options[key]);
-        });
+    appendElements(reciever, ...elements) {
+        for (let element of elements){
+            reciever.appendChild(element);
+        } 
+    }
+
+    setAttributes(attributes) {
+        for (let attribute of attributes){
+            for (let i = 0; i < attribute.name.length ;i++) {
+                attribute.el.setAttribute(attribute.name[i], attribute.val[i]);
+            }
+        }
     }
 }
 
 class HMI extends HTMLElement {
+    static get observedAttributes() {
+        return ['dirty'];
+      }
     constructor() {
         super();
         this._root = this.attachShadow({mode: 'open'});
         this._inputs = [];
-        this._reference;
+        this._targetObj;
         this._header = '';
     }
 
     get root(){ return this._root; }
-    get reference(){ return this._reference; }
-    set reference(ref){return this._reference = window[ref]; }
+    get targetObj(){ return window[this._targetObj]; }
+    set targetObj(ref) { return this._targetObj = ref; }
     get header(){ return this._header; }
-    set header(str){return this._header = str; }
+    set header(str) { return this._header = str; }
     get inputs() { return this._inputs; }
     set inputs(input) { return this._inputs.push(input); }
+    get dirty() { return this.getAttribute('dirty'); }
+    set dirty(bool) { return this.setAttribute('dirty', bool); }
 
     connectedCallback() {
-        this.reference = this.getAttribute('ref');
+        this.targetObj = this.getAttribute('ref');
         this.header = this.getAttribute('header');
         this.parseJSON();
         this.init();
         this.offset = this.root.querySelector('.hmi').getBoundingClientRect();
-        this.addEvent(this.inputs);  
+        
+        
+
+        this.addEvent(this.inputs);
+
+        
+        
     }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if(this.dirty === "true") {
+            console.log('Custom square element attributes changed.');
+            this.dirty = false;
+        }
+      }
 
     init() {
         const gui = this.createGui();
         const style = document.createElement('style')
         style.textContent = HMI.template(this.setPosition());        
 
-        //creates input elements/events
+        // creates input elements
         for (let input of this.inputs){
             const child = new HMIElement(input.options, input.id);
             (input.options.type === 'input') ? child.appendInput() :
@@ -273,9 +347,16 @@ class HMI extends HTMLElement {
             (input.options.type === 'canvas') ? child.appendCanvas() : console.log('wrong type');
             gui.querySelector('.hmi-cb').appendChild(child.element);
         }
-        
         this._root.appendChild(gui);
         this._root.appendChild(style);
+
+        // set subjects that will notify their observer
+
+        for (let input of this.inputs){
+            const path = input.path || input.p1.path;
+            this.defineSubject(path);
+            if(input.hasOwnProperty('p2')) { this.defineSubject(input.p2.path); }
+        }
     }
 
     addEvent(inputs) {
@@ -290,20 +371,17 @@ class HMI extends HTMLElement {
             for (let target of targets) {
                 if(target.tagName === 'CANVAS'){
                     console.log(input);
-                    const [pathsP1, pathsP2] = [input.p1.path.split('/'), input.p2.path.split('/')],
-                          [lastP1, lastP2] = [pathsP1.pop(), pathsP2.pop()],
-                          [p1, p2] = [pathsP1.reduce((ref, prop) => ref[prop], this.reference)[lastP1], pathsP2.reduce((ref, prop) => ref[prop], this.reference)[lastP2]],
+                    const [p1, p2] = [this.getValue(input.p1.path), this.getValue(input.p2.path)],
+                          [displayP1, displayP2] = [targets[0],targets[1]],
                           cnv = target,
-                          displayP1 = targets[0],
-                          displayP2 = targets[1],
                           range = input.hasOwnProperty('min') && input.hasOwnProperty('max') ? { min: input.min, max: input.max } : 
                                   input.hasOwnProperty('min') ? { min: input.min, max: undefined } : 
                                   input.hasOwnProperty('max') ? { min: undefined, max: input.max } : { min: undefined, max: undefined },
                           interactor = new CanvasHandler(cnv, { x:p1, y:p2 }, range),
                           mouseMove = () => {
                             [displayP1.value,displayP2.value] = [interactor.newPosition.p1, interactor.newPosition.p2];
-                            pathsP1.reduce((ref, prop) => ref[prop], this.reference)[lastP1] = +interactor.newPosition.p1;
-                            pathsP2.reduce((ref, prop) => ref[prop], this.reference)[lastP2] = +interactor.newPosition.p2;
+                            this.setValue(input.p1.path,interactor.newPosition.p1);
+                            this.setValue(input.p2.path,interactor.newPosition.p2);
                             if(callback != undefined) return callback();
                           },
                           mouseUp = () => {
@@ -320,10 +398,9 @@ class HMI extends HTMLElement {
                     })
                         
                 }else if(input.hasOwnProperty('path')) {
+                    this.addObserver(input.path, target);
                     target.addEventListener(event, () => {
-                        const paths = input.path.split('/');
-                        const last = paths.pop();
-                        paths.reduce((ref, prop) => ref[prop], this.reference)[last] = +target.value;
+                        this.setValue(input.path, target.value);
                         if(callback != undefined) return callback();
                     });
                 }
@@ -349,7 +426,7 @@ class HMI extends HTMLElement {
     }
 
     setPosition() {
-        const hmi = document.getElementById('hmi');
+        const hmi = document.getElementById('hmi'); // <-- todo
         let hmiTop = hmi.getBoundingClientRect().top;
         const offset = window.pageYOffset;
         let previousElementTop;
@@ -368,16 +445,75 @@ class HMI extends HTMLElement {
         return previousElementTop - hmiTop;
     }
 
-    getValue(object, path) {
-        const keys = path.split('/');
-        let foundVal = object;
-        keys.forEach(key => foundVal = foundVal[key]);
-        return foundVal;
+    /* getTargetObj(path){
+        const props = path.split('/'); 
+        return props.reduce((ref, prop) => ref[prop], this.targetObj);
+    } */
+
+    getValue(path) {
+        const paths = path.split('/');
+        const last = paths.pop();
+        return paths.reduce((ref, prop) => ref[prop], this.targetObj)[last];
+    }
+
+    setValue(path, newValue) {
+        const paths = path.split('/');
+        const last = paths.pop();
+        paths.reduce((ref, prop) => ref[prop], this.targetObj)[last] = +newValue;
     }
 
     getID(path) {
         const keys = path.split('/');
         return keys.join('-');
+    }
+
+    addObserver(path, observer){
+        const props = path.split('/'),
+              prop = props.pop(),
+              targetObj = props.reduce((ref, prop) => ref[prop], this.targetObj);
+        Object.defineProperty(observer,'observedValue',{ value: prop });
+        targetObj.addObserver(observer);
+        /* for (let observer of observers){
+            //observer.update = fn;
+            targetObj.addObserver(observer);
+        } */
+    }
+
+    defineSubject(path){
+        const props = path.split('/'), 
+              prop = props.pop(),
+              newProp = '_' + prop,
+              targetObj = props.reduce((ref, prop) => ref[prop], this.targetObj);   
+        if(!targetObj.hasOwnProperty('observers')){ this.extend(targetObj, new Subject()); }
+        console.log(targetObj)
+        Object.defineProperties(targetObj, {
+            [newProp]: {
+                value: this.getValue(path),
+                writable: true,
+                enumerable: true,
+                configurable: true
+            },
+            [prop]: {
+                get: function() {
+                    return this[newProp];
+                },
+                set: function(value) {
+                    console.log(`${newProp} changed!`);
+                    this[newProp] = value;
+                    this.notify(value, prop);
+                }
+            }
+        })
+    }
+
+    // Extend an object with an extension
+    extend(obj, extension){
+        const keys = [...Reflect.ownKeys(extension), ...Reflect.ownKeys(Object.getPrototypeOf(extension))];
+        for (let key of keys ){
+            if(key !== 'constructor') {
+                obj[key] = extension[key];
+            }
+        }
     }
 
     parseJSON() {
@@ -418,7 +554,7 @@ class HMI extends HTMLElement {
                 if(!elem.hasOwnProperty('id') && elem.hasOwnProperty('path')) elem.id = this.getID(elem.path);
                 // workaround to create an id for connected points
                 if(!elem.hasOwnProperty('id') && !elem.hasOwnProperty('path')) elem.id = this.getID(`${elem.p1.id}/${elem.p2.id}`);
-                if(elem.hasOwnProperty('path')) elem.options.default = this.getValue(this.reference, elem.path);
+                if(elem.hasOwnProperty('path')) elem.options.default = this.getValue(/* this.target,  */elem.path);
                 for (const event in elem.on){
                     elem.event = event;
                     elem.func = elem.on[event];
