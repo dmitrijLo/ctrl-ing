@@ -27,7 +27,6 @@ class Subject {
         for (let i=0; i < observerCount; i++) {
             const observer = this.observers.get(i);
             if(observer.observedValue === key){
-                console.log(observer);
                 observer.update( context );
             }
         } 
@@ -124,7 +123,7 @@ class HMIElement {
 
     createDisplay(){
         const display = document.createElement('input'),
-              attributes = [ { el: display, name: ['type','class','id','value'], val: ['number','hmi-display',this.id,this.options.default || this.options.value ] } ];
+              attributes = [ { el: display, name: ['type','class','id','value'], val: ['number','hmi-display',this.id,this.options.default || false ] } ];
         this.setAttributes(attributes);
         //display.value = value;
         return display;
@@ -246,10 +245,10 @@ class HMIElement {
         const display = this.createDisplay(),
               wrapper = this.createWrapper(),
               label = this.createLabel(),
-              togglelLabel = document.createElement('label'),
+              slider = document.createElement('span'),
               input = document.createElement('input'),
-              toggle = document.createElement('span'),
-              attributes = [ { el: togglelLabel, name: ["data-off","data-on"], val: ["off","on"] },
+              toggle = document.createElement('div'),
+              attributes = [ { el: slider, name: ['class'], val: ["toggle-slider"] },
                              { el: input, name: ['type'], val: ['checkbox'] },
                              { el: display, name: ['type'], val: [''] },
                              { el: toggle, name: ['class', 'id'], val: ['hmi-toggle', this.id] } ];
@@ -264,12 +263,13 @@ class HMIElement {
                 this.value = this.default;
             }
             display.value = value;
+            this.checked = value;
         }
         display.update = function(){
             //render()
         }
         this.setAttributes(attributes);
-        this.appendElements(toggle,input,togglelLabel);
+        this.appendElements(toggle,input,slider);
         this.appendElements(wrapper,display,toggle);
         this.appendElements(this.element,label,wrapper);
     }
@@ -459,7 +459,8 @@ class HMI extends HTMLElement {
     setValue(path, newValue) {
         const paths = path.split('/');
         const last = paths.pop();
-        paths.reduce((ref, prop) => ref[prop], this.targetObj)[last] = +newValue;
+        if(newValue !== true && newValue !== false) { newValue = +newValue; }
+        paths.reduce((ref, prop) => ref[prop], this.targetObj)[last] = newValue;
     }
 
     getID(path) {
@@ -721,7 +722,72 @@ class HMI extends HTMLElement {
                 -moz-appearance: textfield;
             }
 
-            .hmi-toggle {
+        /* begin toggle styling */
+           .hmi-toggle {
+            position: relative;
+            display: inline-block;
+            width: 10em;
+            /* height: 1.25rem; */
+          }
+          
+          .hmi-toggle input {
+            width:50%;
+            height:100%;
+            margin: 0 0;
+            padding:0 0;
+            position:absolute;
+            top:0;
+            right: 0;
+            bottom:0;
+            left: 1em;
+            z-index:2;
+            cursor:pointer;
+            opacity:0;
+          }
+           
+          .hmi-toggle .toggle-slider { /* Grundfläche */
+            position: absolute;
+            cursor: pointer;
+            top: 0; 
+            left: 1em;
+            width: 2.5rem;
+            height: 1.25rem;
+            background-color: #c32e04; 
+            border-radius: 1em; 
+            transition: all .3s ease-in-out;
+          }
+           
+          .hmi-toggle  .toggle-slider::before {  /* verschiebbarer Button */
+            position: absolute;
+            content: "";
+            height: 1.3em;
+            width: 1.3em;
+            left: .2em;
+            bottom: .2em;
+            background-color: white;
+            border-radius: 50%;
+            transition: all .3s ease-in-out;
+          }
+        .hmi-toggle input:checked + .toggle-slider {
+            background-color: #5a9900;
+            /* green */
+        }
+        
+        .hmi-toggle input:focus + .toggle-slider {
+            background-color: pink;
+            box-shadow: 0 0 1px #5a9900;
+        }
+        
+        .hmi-toggle input:checked + .toggle-slider:before {
+            -webkit-transform: translateX(1.6em);
+            /* Android 4 */
+            -ms-transform: translateX(1.6em);
+            /* IE9 */
+            transform: translateX(1.7em);
+        }
+        /* end toggle styling */
+
+/*             .hmi-toggle {
                 position:relative;
                 display:inline-block;
                 width:60px;
@@ -842,7 +908,7 @@ class HMI extends HTMLElement {
                 text-shadow:none;
                 z-index:4;
             }
-        `;
+ */        `;
     }
 }
 
