@@ -724,22 +724,22 @@ class HMI extends HTMLElement {
 
         /* begin toggle styling */
            .hmi-toggle {
+            width:100%;
+            height:100%;
             position: relative;
             display: inline-block;
-            width: 10em;
-            /* height: 1.25rem; */
           }
           
           .hmi-toggle input {
             width:50%;
             height:100%;
-            margin: 0 0;
+            margin: 0 0 0 1.25em;
             padding:0 0;
             position:absolute;
             top:0;
             right: 0;
             bottom:0;
-            left: 1em;
+            left: 0;
             z-index:2;
             cursor:pointer;
             opacity:0;
@@ -760,10 +760,10 @@ class HMI extends HTMLElement {
           .hmi-toggle  .toggle-slider::before {  /* verschiebbarer Button */
             position: absolute;
             content: "";
-            height: 1.3em;
-            width: 1.3em;
+            height: 1em;
+            width: 1em;
             left: .2em;
-            bottom: .2em;
+            top: .2em;
             background-color: white;
             border-radius: 50%;
             transition: all .3s ease-in-out;
@@ -779,11 +779,11 @@ class HMI extends HTMLElement {
         }
         
         .hmi-toggle input:checked + .toggle-slider:before {
-            -webkit-transform: translateX(1.6em);
+            -webkit-transform: translateX(1.4em);
             /* Android 4 */
-            -ms-transform: translateX(1.6em);
+            -ms-transform: translateX(1.4em);
             /* IE9 */
-            transform: translateX(1.7em);
+            transform: translateX(1.4em);
         }
         /* end toggle styling */
 
