@@ -22,7 +22,7 @@
 </header>
 <main>
 <h3 id="abstract">Abstract</h3>
-<h2 id="problemstellung">Problemstellung</h2>
+<h2 id="einleitung">Einleitung</h2>
 <aside>
 <g-2 width="250" height="200" x0="30" y0="50" cartesian>
 { 
@@ -53,7 +53,126 @@
 <li>Auswahllisten</li>
 <li>u.v.m</li>
 </ul>
-<p>recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiven und vor allem monotonen Code, der stetig mit der Anzahl an Eingabemöglichkeiten wächst. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">b</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">c</span></span></span></span></eq> und <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">d</span></span></span></span></eq> jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span></span></span></span></eq> der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes.</p>
+<p>recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiven und vor allem monotonen Code, der stetig mit der Anzahl an Eingabemöglichkeiten wächst. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">b</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">c</span></span></span></span></eq> und <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">d</span></span></span></span></eq> jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span></span></span></span></eq> der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes. (Code ist auch nicht wiederverwendbar...vlt. noch einfügen...)</p>
+<p>... es darf nicht unerwähnt bleiben, dass bereits einige sogenannter GUI-Bibliotheken existieren. Zwei sehr gute Lösung sind zum einen dat.GUI und zum andren Tweakpane, die im Grunde sehr ähnlich funktionieren. Nach Erstellung einer Instanz der jeweiligen JavaScript-Bibliothek stehen dem Benutzer zahlreiche Funktionen zur Verfügungen, die mit wenigen Zeilen Code ein graphisches Interface implementieren. Verknüpft mit einer beliebigen Variable lässt sich diese manipulieren. Dies soll an einem einfachen Beispiel unter dem Einsatz von <code>tweakpane.js</code> demonstriert werden.</p>
+<p>Angenommen die Eckpunkte eines Dreiecks sollen durch ein Interface verstellbar sein, so kann das Dreieck durch ein Objekt, welches das Array <code>nodes</code> mit allen Eckpunkten beinhaltet, repräsentiert sein. Nach Erstellung einer neuen Instanz der Tweakpane-Klasse in der Konstanten <code>gui</code>, steht nun beispielsweise die Funktion <code>addInput()</code> zur Verfügung, die ein Input-Element erzeugt und das Steuern jener Koordinate ermöglicht. Auf diese Art und Weise lassen sich die einzelnen Koordinaten des Dreiecks, wie in der Auflistung 3 gezeigt, recht einfach mit einem Interface verbinden und ist somit eine saubere Lösung verglichen mit dem Code in Auflistung 1 und 2.</p>
+<h4 id="livebeispiel">Livebeispiel 1:</h4>
+<aside style="max-width:60%; float:left;">
+<h4>Ausgabe:</h4>
+<span id="output"><span>
+</aside>
+<aside>
+<h4>Tweakpane Interface</h4>
+<span id="someContainer"><span>
+</aside>
+<script>
+   const triangle = {
+    nodes: [ {x:75,y:50}, {x:150,y:200}, {x:250,y:10} ]
+}
+const gui = new Tweakpane({container: document.getElementById('someContainer')}); 
+gui.addInput(triangle.nodes[0], 'x', {label: 'A0x'});
+gui.addInput(triangle.nodes[0], 'y', {label: 'A0y'});
+gui.addInput(triangle.nodes[1], 'x', {label: 'B0x'});
+gui.addInput(triangle.nodes[1], 'y', {label: 'B0y'});
+gui.addInput(triangle.nodes[2], 'x', {label: 'C0x'});
+gui.addInput(triangle.nodes[2], 'y', {label: 'C0x'});
+document.getElementById('output').innerHTML = `const triangle = { <br>&nbsp;
+    nodes: [ {x: ${triangle.nodes[0].x}, y: ${triangle.nodes[0].y}}, {x: ${triangle.nodes[1].x}, y: ${triangle.nodes[1].y}}, {x: ${triangle.nodes[2].x}, y: ${triangle.nodes[2].y}} ] <br>} `;
+gui.on('change', () => {
+  document.getElementById('output').innerHTML = `const triangle = { <br>&nbsp;
+    nodes: [ {x: ${triangle.nodes[0].x}, y: ${triangle.nodes[0].y}}, {x: ${triangle.nodes[1].x}, y: ${triangle.nodes[1].y}}, {x: ${triangle.nodes[2].x}, y: ${triangle.nodes[2].y}} ] <br>} `;
+});
+</script>
+<p><br><br><br><br><br><br><br><br></p>
+<p>Aus den eben genannten Gründen beschäftigt sich diese Studienarbeit beschäftigt mit dem Entwurf einer minimalistischen JavaScript-Bibliothek, die dem Anwender die Programmierung einer Steuerung weitgehend abnimmt und die geforderte Interaktivität gewährt.</p>
+<p><br><br><br><br></p>
+<p><canvas id="cv" width="350" height="250"></canvas></p>
+<script>
+    const ctx = document.getElementById("cv").getContext("2d");
+    var model = {
+        "nodes": [
+            { "id": "A0", "x": 75, "y": 50 },
+            { "id": "B0", "x": 150, "y": 200 },
+            { "id": "C0", "x": 250, "y": 10 }
+        ],
+        "constraints": [
+        { "id": "a", "p1": "A0", "p2": "B0" }, 
+        { "id": "b", "p1": "B0", "p2": "C0" }, 
+        { "id": "c", "p1": "C0", "p2": "A0" }
+        ]
+    };
+    mec.model.extend(model);
+    model.init();
+    function render() {
+        const g = g2().del().clr().view({ cartesian: true });
+        model.draw(g);
+        g.exe(ctx);
+    return g;
+    }
+    function start() {
+        console.log('Animation is running!');
+    }
+    render()
+
+
+</script>
+<hm-i ref="model" header="Steuerung eines Dreiecks">
+{
+    "add": [
+        { "id":"A0x","dropdown":{"label":"A0.x","min":-10,"mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
+        { "id":"A0y","slider":{"min":50,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
+        { "toggle":{ "label":"B0.x", "switchTo": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
+        { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
+        { "canvasHandle": { "label":"Punkt C" }, "paths":["nodes/2/x","nodes/2/y"],"on":{ "input":"render" } },
+        { "button": { "label":"Start" }, "on":{ "click":"start" } }
+    ]
+}
+</hm-i>
+<p>Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:</p>
+<p><br><br><br><br></p>
+<pre><code class="code-line language-JSON"><div>&lt;hm-i ref=<span class="hljs-string">&quot;model&quot;</span> header=<span class="hljs-string">&quot;Steuerung eines Dreiecks&quot;</span> id=<span class="hljs-string">&quot;hmi&quot;</span>&gt;
+{
+    <span class="hljs-attr">&quot;add&quot;</span>:[
+        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;A0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/0/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
+        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;A0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/0/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
+        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;B0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/1/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
+        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;B0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/1/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
+        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;C0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/2/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
+        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;C0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/2/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } }
+    ]
+}
+&lt;/hm-i&gt;
+</div></code></pre>
+<h2 id="cumstom-elements">Cumstom Elements</h2>
+<ul>
+<li>
+<h3 id="shadow-dom">Shadow Dom</h3>
+</li>
+</ul>
+<h2 id="bidirektionales-%22eventmanagement%22">Bidirektionales &quot;Eventmanagement&quot;</h2>
+<ul>
+<li>
+<h3 id="observer-design-pattern">Observer Design Pattern</h3>
+</li>
+</ul>
+<h2 id="konkretes-anwendungsbeispiel">Konkretes Anwendungsbeispiel</h2>
+<h2 id="funktionale-anforderungen">Funktionale Anforderungen</h2>
+<ul>
+<li>Das Interface muss die nachfolgenden Elemente beinhalten:
+<ul>
+<li>Standard Input</li>
+<li>Slider</li>
+<li>Dropdown Menü</li>
+<li>Checkbox (Toggle)</li>
+<li>Buttons</li>
+<li>Output</li>
+<li>constraints/connection</li>
+<li>...?</li>
+</ul>
+</li>
+<li>Der Nutzer soll die Möglichkeit haben die Position des Interface alternativ einzustellen.</li>
+</ul>
+<h2 id="anhang">Anhang</h2>
 <h4 id="listing-1-html-struktur-zur-erzeugung-einer-variation-an-bedienelementen">Listing 1: HTML Struktur zur Erzeugung einer Variation an Bedienelementen</h4>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;display&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;display&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;input-a&quot;</span>&gt;</span>Länge a:
@@ -107,7 +226,7 @@
     <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>   
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </div></code></pre>
-<h4 id="listing-2-herstellen-der-interaktivitc3a4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h4>
+<h4 id="listing-2-herstellen-der-interaktivit%C3%A4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h4>
 <pre><code class="code-line language-JavaScript"><div><span class="hljs-comment">// Erstellung der Referenzen zu den jeweiligen HTML-Elementen</span>
 <span class="hljs-keyword">const</span> input_a = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;input-a&#x27;</span>),
       input_b = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;input-b&#x27;</span>),
@@ -138,6 +257,18 @@ startButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,
 releaseK.addEventListener(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-comment">/*...*/</span> });
 resetButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,refreshPage);
 </div></code></pre>
+<h4 id="listing-3-demonstration-von-tweakpanejs">Listing 3: Demonstration von tweakpane.js</h4>
+<pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">const</span> triangle = {
+    <span class="hljs-attr">nodes</span>: [ {<span class="hljs-attr">x</span>:<span class="hljs-number">75</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">50</span>}, {<span class="hljs-attr">x</span>:<span class="hljs-number">150</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">200</span>}, {<span class="hljs-attr">x</span>:<span class="hljs-number">250</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">10</span>} ]
+}
+<span class="hljs-keyword">const</span> gui = <span class="hljs-keyword">new</span> Tweakpane();
+gui.addInput(triangle.nodes[<span class="hljs-number">0</span>], <span class="hljs-string">&#x27;x&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;A0x&#x27;</span>});
+gui.addInput(triangle.nodes[<span class="hljs-number">0</span>], <span class="hljs-string">&#x27;y&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;A0y&#x27;</span>});
+gui.addInput(triangle.nodes[<span class="hljs-number">1</span>], <span class="hljs-string">&#x27;x&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;B0x&#x27;</span>});
+gui.addInput(triangle.nodes[<span class="hljs-number">1</span>], <span class="hljs-string">&#x27;y&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;B0y&#x27;</span>});
+gui.addInput(triangle.nodes[<span class="hljs-number">2</span>], <span class="hljs-string">&#x27;x&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;C0x&#x27;</span>});
+gui.addInput(triangle.nodes[<span class="hljs-number">2</span>], <span class="hljs-string">&#x27;y&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;C0x&#x27;</span>});
+</div></code></pre>
 <!--
 
 ## Einleitung
@@ -145,80 +276,6 @@ resetButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,
 Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch eine Benutzerschnittstelle eines meist komplexen Systems verstanden, mit dem ein Mensch interagieren kann. Ein alltägliches Beispiel stellt das Lenkrad zur Steuerung eines Autos dar. Während dieses Beispiel ... befasst sich diese Studienarbeit mit der Programmierung einer JavaScript micro library (zu deutsch Mikrobibliothek)
 
 --->
-<p><canvas id="cv" width="350" height="250"></canvas></p>
-<script>
-    const ctx = document.getElementById("cv").getContext("2d");
-    var model = {
-        "nodes": [
-            { "id": "A0", "x": 75, "y": 50 },
-            { "id": "B0", "x": 150, "y": 200 },
-            { "id": "C0", "x": 250, "y": 10 }
-        ],
-        "constraints": [
-        { "id": "a", "p1": "A0", "p2": "B0" }, 
-        { "id": "b", "p1": "B0", "p2": "C0" }, 
-        { "id": "c", "p1": "C0", "p2": "A0" }
-        ]
-    };
-    mec.model.extend(model);
-    model.init();
-    function render() {
-        const g = g2().del().clr().view({ cartesian: true });
-        model.draw(g);
-        g.exe(ctx);
-    return g;
-    }
-    render()
-
-
-</script>
-<hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
-{
-    "add": [
-        { "id":"A0x","dropdown":{"label":"A0.x","min":-10,"mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
-        { "id":"A0y","slider":{"min":50,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
-        { "toggle":{ "label":"B0.x", "switchTo": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
-        { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
-        { "id":"C0x","path":"nodes/2/x" }, 
-        { "id":"C0y","path":"nodes/2/y" } 
-        ],
-    "connect": [
-        { "p1": "C0x","p2": "C0y","on":{ "input":"render" }, "label":"Punkt C" }
-    ]
-}
-</hm-i>
-<p>Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:</p>
-<p><br><br><br><br></p>
-<pre><code class="code-line language-JSON"><div>&lt;hm-i ref=<span class="hljs-string">&quot;model&quot;</span> header=<span class="hljs-string">&quot;Steuerung eines Dreiecks&quot;</span> id=<span class="hljs-string">&quot;hmi&quot;</span>&gt;
-{
-    <span class="hljs-attr">&quot;add&quot;</span>:[
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;A0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/0/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;A0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/0/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;B0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/1/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;B0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/1/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;C0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/2/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;C0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/2/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } }
-    ]
-}
-&lt;/hm-i&gt;
-</div></code></pre>
-<h2 id="funktionale-anforderungen">Funktionale Anforderungen</h2>
-<ul>
-<li>Das Interface muss die nachfolgenden Elemente beinhalten:
-<ul>
-<li>Standard Input</li>
-<li>Slider</li>
-<li>Dropdown Menü</li>
-<li>Checkbox (Toggle)</li>
-<li>Buttons</li>
-<li>Output</li>
-<li>constraints/connection</li>
-<li>...?</li>
-</ul>
-</li>
-<li>Der Nutzer soll die Möglichkeit haben die Position des Interface alternativ einzustellen.</li>
-</ul>
-
 </main>
 <footer>
   <script src="./js/hmi.html.js"></script>

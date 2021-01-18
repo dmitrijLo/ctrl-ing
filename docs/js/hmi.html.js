@@ -1,3 +1,5 @@
+var p;
+
 class ObserverList {
     constructor(){
         this.observerList = [];
@@ -26,8 +28,8 @@ class Subject {
         const observerCount = this.observers.count();
         for (let i=0; i < observerCount; i++) {
             const observer = this.observers.get(i);
-            if(observer.observedValue === key){
-                observer.update( context );
+            for (let observedValue of observer.observedValues) {
+                if(observedValue === key){ observer.update( { value:context, key:key } ); }
             }
         } 
     }
@@ -50,7 +52,7 @@ class CanvasHandler {
     set handle(obj) { this._handle.x = obj.x;
                       this._handle.y = obj.y }
     get newPosition() { return {p1: Math.floor((this.handle.x/this.resolution.x)*10)/10, p2: Math.floor((this.handle.y/this.resolution.y)*10)/10}; }
-                
+      
     circlePointCollision(x,y, circle) {
         const dx = circle.x - x,
               dy = circle.y - y,
@@ -74,7 +76,6 @@ class CanvasHandler {
             e.target.addEventListener("mousemove", this.onMouseMoveBinding);
             e.target.addEventListener("mouseup", this.onMouseUpBinding);
             this.dragHandle = hand;
-            console.log('HIT!')
         }
      }
 
@@ -84,14 +85,12 @@ class CanvasHandler {
                             y: this.handle.y - (e.movementY || e.mozMovementY || e.webkitMovementY || 0) };
         }
         this.strokeHandle();
-        console.log('dragggggggigng')
     }
     
     onMouseUp(e) {
         e.target.removeEventListener("mousemove", this.onMouseMoveBinding);
         e.target.removeEventListener("mouseup", this.onMouseUpBinding);
         this.isDragging = false;
-        console.log('stop that drag')
     }
 
     strokeHandle() {
@@ -123,7 +122,7 @@ class HMIElement {
 
     createDisplay(){
         const display = document.createElement('input'),
-              attributes = [ { el: display, name: ['type','class','id','value'], val: ['number','hmi-display',this.id,this.options.default || false ] } ];
+              attributes = [ { el: display, name: ['type','class','id','value'], val: ['number','hmi-display',this.id, this.options.default || false ] } ];
         this.setAttributes(attributes);
         //display.value = value;
         return display;
@@ -135,14 +134,28 @@ class HMIElement {
         return wrapper;
     }
 
-    createLabel(className = 'hmi-label', text = this.label) {
+    createLabel() {
         const label = document.createElement('div');
-        label.setAttribute('class', className);
-        label.innerHTML = text;
+        label.setAttribute('class', 'hmi-label');
+        label.innerHTML = this.label;
         return label;
     }
 
-    appendCanvas(){
+    appendButton(){
+        const button = document.createElement('button'),
+              wrapper = this.createWrapper(),
+              attributes = [ {el: button, name: ['class','id','type'], val: ['hmi-button',this.id,'button'] } ];
+        button.innerHTML = this.label;
+        this.setAttributes(attributes);
+        wrapper.appendChild(button);
+        this.element.appendChild(wrapper);
+    }
+
+    appendOutput(){
+
+    }
+
+    appendCanvas(p1,p2){
         function convertRemToPixels(rem) {
             return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
         }
@@ -156,7 +169,9 @@ class HMIElement {
               defaultStyle = {canvas: 'width:0;height:0', element:'height:1.25rem', visible: false},
               attributes = [ { el: canvas, name: ['id','style','width','height'], val: [this.id,defaultStyle.canvas,`${convertRemToPixels(12)}px`,`${convertRemToPixels(10)}px` ] },
                              { el: this.element, name: ['class','style'], val: ['hmi-canvasHandle',defaultStyle.element] },
-                             { el: symbol, name: ['class'], val: ['hmi-symbol'] } ];
+                             { el: symbol, name: ['class'], val: ['hmi-symbol'] },
+                             { el: displayP1, name: ['value'], val: [p1] },
+                             { el: displayP2, name: ['value'], val: [p2] } ];
         this.setAttributes(attributes);
         canvas.getContext('2d').translate(0, canvas.height);
         canvas.getContext('2d').scale(1,-1);
@@ -171,6 +186,22 @@ class HMIElement {
             }
             defaultStyle.visible = !defaultStyle.visible;
         })
+        displayP1.update = function(context) {
+            this.value = context.value;
+        }
+        displayP2.update = function(context) {
+            this.value = context.value;
+        }
+        canvas.update = function(context) {
+            if(context.key === this.observedValues[0]){
+                this.interactor.handle = { x: context.value * this.interactor.resolution.x, y: this.interactor.handle.y };
+                console.log(this.interactor.handle)
+            } else if(context.key === this.observedValues[1]) {
+                this.interactor.handle = { x: this.interactor.handle.x, y: context.value * this.interactor.resolution.y };
+            }
+            this.interactor.strokeHandle();
+        }
+
         this.appendElements(wrapper, displayP1, displayP2, symbol);
         this.appendElements(displayWrapper, label, wrapper);
         this.appendElements(this.element, displayWrapper, canvas);
@@ -180,9 +211,9 @@ class HMIElement {
         const input = this.createDisplay(/* 'number','hmi-input' */),
               wrapper = this.createWrapper(),
               label = this.createLabel(),
-              attributes = [ { el: input, name : ['type','class'], val: ['number','hmi-input'] } ];
-        input.update = function(value) {
-            this.value = value;
+              attributes = [ { el: input, name: ['type','class'], val: ['number','hmi-input'] } ];
+        input.update = function(context) {
+            this.value = context.value;
         }
         this.setAttributes(attributes);
         wrapper.appendChild(input);
@@ -196,11 +227,11 @@ class HMIElement {
               label = this.createLabel(),
               attributes = [ { el: slider, name: ['class','id','type','min','max','step','value'], val: ['hmi-slider',this.id,'range',this.options.min || 0,this.options.max || 100,this.options.step || 1,this.options.default || this.options.value ] },
                              { el: display, name: ['min','max','step'], val: [this.options.min || 0,this.options.max || 100,this.options.step || 1] } ];
-        slider.update = function(value) {
-            this.value = value
+        slider.update = function(context) {
+            this.value = context.value;
         }
-        display.update = function(value) {
-            this.value = value;
+        display.update = function(context) {
+            this.value = context.value;
         }
         this.setAttributes(attributes);
         this.appendElements(wrapper, display, slider);
@@ -226,15 +257,15 @@ class HMIElement {
             dropdown.appendChild(option);
         }
 
-        dropdown.update = function(value) {
+        dropdown.update = function(context) {
             for (let child of this.children){
-                if(value === +child.value){
+                if(context.value === +child.value){
                     child.selected = true;
                 }
             }
         }
-        display.update = function(value) {
-            this.value = value;
+        display.update = function(context) {
+            this.value = context.value;
         }
         this.setAttributes(attributes);
         this.appendElements(wrapper,display,dropdown);
@@ -255,15 +286,15 @@ class HMIElement {
         toggle.default = this.options.default || false;
         toggle.switchTo = this.options.switchTo || true;
         toggle.value = toggle.switchTo;
-        toggle.update = function(value){
-            console.log(value)
-            if(value === this.default){
+        toggle.update = function(context){
+            console.log(context.value)
+            if(context.value === this.default){
                 this.value = this.switchTo;
             } else {
                 this.value = this.default;
             }
-            display.value = value;
-            this.checked = value;
+            display.value = context.value;
+            this.checked = context.value;
         }
         display.update = function(){
             //render()
@@ -297,34 +328,52 @@ class HMI extends HTMLElement {
         super();
         this._root = this.attachShadow({mode: 'open'});
         this._inputs = [];
-        this._targetObj;
-        this._header = '';
+        //this._targetObj;
+        //this._header = '';
     }
 
     get root(){ return this._root; }
-    get targetObj(){ return window[this._targetObj]; }
-    set targetObj(ref) { return this._targetObj = ref; }
-    get header(){ return this._header; }
-    set header(str) { return this._header = str; }
+    get targetObj(){ return window[this.getAttribute('ref')]; }
+    set targetObj(q) { if(q) this.setAttribute('ref', q); }
+    get header(){ return this.getAttribute('header'); }
+    set header(q) { if(q) this.setAttribute('header', q); }
+    get id() { return this.getAttribute('id') || "hmi"; }
+    set id(q) { if(q) this.setAttribute('id', q); }
     get inputs() { return this._inputs; }
     set inputs(input) { return this._inputs.push(input); }
+    get xOffset() { return this.getAttribute('xOffset') || 0; }
+    get yOffset() { return this.getAttribute('yOffset') || 0; }
     get dirty() { return this.getAttribute('dirty'); }
     set dirty(bool) { return this.setAttribute('dirty', bool); }
 
     connectedCallback() {
-        this.targetObj = this.getAttribute('ref');
-        this.header = this.getAttribute('header');
+        if(this.getAttribute('id') == undefined) this.id = this.id;
         this.parseJSON();
         this.init();
         this.offset = this.root.querySelector('.hmi').getBoundingClientRect();
-        
-        
+        //this.addEvent(this.inputs);
+        let handler = {
+            set: function(obj, prop, value, receiver) {
+                // The default behavior to store the value
+                if (obj[prop] != value) {
+                    
+                    return Reflect.set(obj, prop, value, receiver);
+                }else {
+                    console.log(obj[prop], value)
+                    return false;
+                }
+            },   
+            get: function (target, prop, receiver) {
+              if (prop === "message2") {
+                return "world";
+              }
+              return Reflect.get(...arguments);
+            },
+          };
+        p = new Proxy(this.targetObj.nodes[0],handler)
 
-        this.addEvent(this.inputs);
-
-        
-        
     }
+    
     attributeChangedCallback(name, oldValue, newValue) {
         if(this.dirty === "true") {
             console.log('Custom square element attributes changed.');
@@ -337,41 +386,53 @@ class HMI extends HTMLElement {
         const style = document.createElement('style')
         style.textContent = HMI.template(this.setPosition());        
 
-        // creates input elements
+        // create & append HMIelements dependend on userinput
         for (let input of this.inputs){
             const child = new HMIElement(input.options, input.id);
             (input.options.type === 'input') ? child.appendInput() :
             (input.options.type === 'slider') ? child.appendSlider() :
             (input.options.type === 'dropdown') ? child.appendDropdown() :
             (input.options.type === 'toggle') ? child.appendToggle() : 
-            (input.options.type === 'canvas') ? child.appendCanvas() : console.log('wrong type');
+            (input.options.type === 'canvasHandle') ? child.appendCanvas(input.options.default,input.reference.options.default) : 
+            (input.options.type === 'button') ? child.appendButton() : console.log('wrong type');
             gui.querySelector('.hmi-cb').appendChild(child.element);
         }
         this._root.appendChild(gui);
         this._root.appendChild(style);
-
+        console.log(this.inputs)
         // set subjects that will notify their observer
-
         for (let input of this.inputs){
-            const path = input.path || input.p1.path;
-            this.defineSubject(path);
-            if(input.hasOwnProperty('p2')) { this.defineSubject(input.p2.path); }
+            //const path = input.path || input.p1.path;
+            if(input.options.type !== "button") { this.defineSubject(input.path); }
+            if(input.hasOwnProperty('reference')) { this.defineSubject(input.reference.path); }
+            this.addEvent(input);
+            //if(input.hasOwnProperty('p2')) { this.defineSubject(input.p2.path); }
         }
     }
 
-    addEvent(inputs) {
-        const events = ['click', 'change','input'];
-        
-        for (let input of inputs){
-            const targets = this.root.querySelectorAll(`#${input.id}`);
-            let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : undefined;
-            let callback = (event != undefined) ? window[input.func] : undefined;
-            if(callback === undefined) event = 'change';
-             
+    addEvent(input) {
+        const events = ['click', 'change','input'],
+              targets = this.root.querySelectorAll(`#${input.id}`);
+        let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : undefined;
+        let callback = (event != undefined) ? window[input.func] : undefined;
+        if(callback === undefined) event = 'change';
+        if(input.hasOwnProperty('reference')) {
+            this.addObserver(input.path, targets[0]); 
+            this.addObserver(input.reference.path, targets[1]);
+            targets[0].addEventListener(event, () => {
+                this.setValue(input.path, targets[0].value);
+                if(callback != undefined) return callback();
+            });
+            targets[1].addEventListener(event, () => {
+                this.setValue(input.reference.path, targets[1].value);
+                if(callback != undefined) return callback();
+            });
+        }
             for (let target of targets) {
                 if(target.tagName === 'CANVAS'){
-                    console.log(input);
-                    const [p1, p2] = [this.getValue(input.p1.path), this.getValue(input.p2.path)],
+                    console.log('CanvasTarget: ', targets)
+                    const [p1, p2] = [this.getValue(input.path), this.getValue(input.reference.path)],
+                          [prop1, prop2] = [input.path.split('/').pop(), input.reference.path.split('/').pop()],
                           [displayP1, displayP2] = [targets[0],targets[1]],
                           cnv = target,
                           range = input.hasOwnProperty('min') && input.hasOwnProperty('max') ? { min: input.min, max: input.max } : 
@@ -380,32 +441,34 @@ class HMI extends HTMLElement {
                           interactor = new CanvasHandler(cnv, { x:p1, y:p2 }, range),
                           mouseMove = () => {
                             [displayP1.value,displayP2.value] = [interactor.newPosition.p1, interactor.newPosition.p2];
-                            this.setValue(input.p1.path,interactor.newPosition.p1);
-                            this.setValue(input.p2.path,interactor.newPosition.p2);
+                            this.setValue(input.path,interactor.newPosition.p1);
+                            this.setValue(input.reference.path,interactor.newPosition.p2);
                             if(callback != undefined) return callback();
                           },
                           mouseUp = () => {
                             cnv.removeEventListener("mousemove", mouseMove);
                             cnv.removeEventListener("mouseup", mouseUp);
                           };
-
+                    cnv.interactor = interactor;
                     [displayP1.value,displayP2.value] = [interactor.newPosition.p1, interactor.newPosition.p2];
                     interactor.strokeHandle();
+                    this.addObserver(input.path, cnv);
+                    this.addObserver(input.reference.path, cnv);
                     cnv.addEventListener("mousedown", (e) => {
                         interactor.onMouseDown(e);
                         cnv.addEventListener("mousemove", mouseMove);
                         cnv.addEventListener("mouseup", mouseUp);
                     })
                         
-                }else if(input.hasOwnProperty('path')) {
-                    this.addObserver(input.path, target);
+                } else if(!input.hasOwnProperty('reference')) {
+                    this.addObserver(input.path, target); 
                     target.addEventListener(event, () => {
                         this.setValue(input.path, target.value);
                         if(callback != undefined) return callback();
                     });
                 }
             }
-        }
+        
     }
 
     createGui() {
@@ -426,7 +489,7 @@ class HMI extends HTMLElement {
     }
 
     setPosition() {
-        const hmi = document.getElementById('hmi'); // <-- todo
+        const hmi = document.getElementById(this.id);
         let hmiTop = hmi.getBoundingClientRect().top;
         const offset = window.pageYOffset;
         let previousElementTop;
@@ -439,10 +502,10 @@ class HMI extends HTMLElement {
             }
             getPreviousElementPosition(previousElement);
         })(hmi);
-
+        console.log(offset, )
         previousElementTop += offset;
         hmiTop += offset;
-        return previousElementTop - hmiTop;
+        return {x: +this.xOffset, y: (previousElementTop - hmiTop + +this.yOffset)};
     }
 
     /* getTargetObj(path){
@@ -451,60 +514,57 @@ class HMI extends HTMLElement {
     } */
 
     getValue(path) {
-        const paths = path.split('/');
-        const last = paths.pop();
-        return paths.reduce((ref, prop) => ref[prop], this.targetObj)[last];
+        if(path !== undefined) {
+            const paths = path.split('/'),
+                  last = paths.pop();
+            return paths.reduce((ref, prop) => ref[prop], this.targetObj)[last];
+        }
     }
 
     setValue(path, newValue) {
-        const paths = path.split('/');
-        const last = paths.pop();
-        if(newValue !== true && newValue !== false) { newValue = +newValue; }
-        paths.reduce((ref, prop) => ref[prop], this.targetObj)[last] = newValue;
+        if(path !== undefined) {
+            const paths = path.split('/'),
+                  last = paths.pop();
+            if(newValue !== true && newValue !== false) { newValue = +newValue; }
+            paths.reduce((ref, prop) => ref[prop], this.targetObj)[last] = newValue;
+        }
     }
 
     getID(path) {
-        const keys = path.split('/');
-        return keys.join('-');
+        if(path !== undefined){
+            const keys = path.split('/');
+            return keys.join('-');
+        }
     }
 
     addObserver(path, observer){
-        const props = path.split('/'),
-              prop = props.pop(),
-              targetObj = props.reduce((ref, prop) => ref[prop], this.targetObj);
-        Object.defineProperty(observer,'observedValue',{ value: prop });
-        targetObj.addObserver(observer);
-        /* for (let observer of observers){
-            //observer.update = fn;
-            targetObj.addObserver(observer);
-        } */
+        if(path !== undefined) {
+            const props = path.split('/'),
+                  prop = props.pop(),
+                  targetObj = props.reduce((ref, prop) => ref[prop], this.targetObj);
+            !observer.hasOwnProperty('observedValues') ? Object.defineProperty(observer,'observedValues',{ value: [prop] }) : observer.observedValues.push(prop);
+            if(!targetObj.observers.observerList.includes(observer)) { targetObj.addObserver(observer); }
+        }
     }
 
     defineSubject(path){
-        const props = path.split('/'), 
-              prop = props.pop(),
-              newProp = '_' + prop,
-              targetObj = props.reduce((ref, prop) => ref[prop], this.targetObj);   
-        if(!targetObj.hasOwnProperty('observers')){ this.extend(targetObj, new Subject()); }
-        console.log(targetObj)
-        Object.defineProperties(targetObj, {
-            [newProp]: {
-                value: this.getValue(path),
-                writable: true,
-                enumerable: true,
-                configurable: true
-            },
-            [prop]: {
-                get: function() {
-                    return this[newProp];
-                },
-                set: function(value) {
-                    console.log(`${newProp} changed!`);
-                    this[newProp] = value;
-                    this.notify(value, prop);
+        if(path !== undefined) {
+            const props = path.split('/'), 
+                  prop = props.pop(),
+                  newProp = '_' + prop,
+                  targetObj = props.reduce((ref, prop) => ref[prop], this.targetObj);   
+            if(!targetObj.hasOwnProperty('observers')){ this.extend(targetObj, new Subject()); }
+            Object.defineProperties(targetObj, {
+                [newProp]: { value: this.getValue(path), writable: true, enumerable: true, configurable: true },
+                [prop]: {
+                    get: function() { return this[newProp]; },
+                    set: function(value) {
+                            this[newProp] = value;
+                            this.notify(value, prop);
+                        }
                 }
-            }
-        })
+            })
+        }
     }
 
     // Extend an object with an extension
@@ -519,50 +579,52 @@ class HMI extends HTMLElement {
 
     parseJSON() {
         try {
-            const types = ['input','slider','dropdown','toggle','canvas'];
+            const types = ['input','slider','dropdown','toggle','canvasHandle','button'];
             const innerHTML = JSON.parse(this.innerHTML);
-            let connections = innerHTML.connect;
 
             for (let elem of innerHTML.add) {
-                if(connections != undefined) {
-                    let skip = false;
-                    for (let connection of connections){
-                        if(connection.p1 === elem.id || connection.p2 === elem.id) skip = !skip;
-                        if(connection.p1 === elem.id) {
-                            delete connection.p1;
-                            Object.defineProperty(connection, 'p1',{ value: elem, writable:true, enumerable:true, configurable:true });
-                            Object.defineProperty(connection, 'canvas',{ value: (connection.hasOwnProperty('label')) ? { label: connection.label }: {}, writable:true, enumerable:true, configurable:true });
-                            delete connection.label;
-                        }else if(connection.p2 === elem.id){
-                            delete connection.p2;
-                            Object.defineProperty(connection, 'p2',{ value: elem, writable:true, enumerable:true, configurable:true });
+                const type = Object.keys(elem).find(key => types.includes(key));
+                if(elem.hasOwnProperty('paths')){
+                    for (let path of elem.paths){
+                        const newObject = Object.assign( { path: path }, elem),
+                              props = [...newObject.paths[0].split('/'),...newObject.paths[1].split('/')],
+                              id = props.reduce((acc,next) => {
+                                  if(acc.split('-').includes(next)) {return acc; }
+                                  if(props.lastIndexOf(next) === props.length - 1) { return acc + next; }
+                                return acc + next + '-';
+                              }, "");
+                        if(!newObject.hasOwnProperty('id')) newObject.id = id;
+                        delete newObject.paths;
+                        innerHTML.add.push(newObject);
+                    }
+                    continue;
+                }
+                //if(elem.hasOwnProperty('path')){
+                    const props = (elem.hasOwnProperty('path')) ? elem.path.split('/') : undefined,
+                          prop = (props != undefined) ? props.pop() : undefined,
+                          event = (elem.hasOwnProperty('on')) ? Reflect.ownKeys(elem.on).shift() : undefined;
+                    Object.defineProperty(elem, 'options',{ value: { type:type, label:prop }, writable:true, enumerable:true, configurable:true });
+                    Object.defineProperty(elem, 'event',{ value: event, writable:true, enumerable:true, configurable:true });
+                    Object.defineProperty(elem, 'func',{ value: elem.on[event], writable:true, enumerable:true, configurable:true });
+                    // check if there are additional options (eg. min,max,step,label, etc.)
+                    if(Object.entries(elem[type]) != 0) Object.assign(elem.options,elem[type]);
+                    // check if there is a custom id
+                    if(!elem.hasOwnProperty('id') && elem.hasOwnProperty('path')) elem.id = this.getID(elem.path);
+                    // save the default value (value at initiation)
+                    if(elem.hasOwnProperty('path')) elem.options.default = this.getValue(elem.path);
+                    if(type === 'button') elem.id = `${elem.options.label.toLowerCase()}-button`;
+                    delete elem.on;
+                    delete elem[type];
+
+                    let dirty = false;
+                    for (let input of this.inputs){
+                        if(input.id === elem.id){
+                            dirty = true;
+                            input.reference = elem;
                         }
                     }
-
-                    if(elem === innerHTML.add[innerHTML.add.length - 1]) {
-                        for (let connection of connections) innerHTML.add.push(connection);
-                        connections = undefined;
-                    }
-                    if(skip) continue;
-                }
-
-                const type = Object.keys(elem).find(key => types.includes(key));
-                let { param1, param2 } = (elem.hasOwnProperty('path')) ? { param1: elem.path.split('/') } : { param1: elem.p1.path.split('/') , param2: elem.p2.path.split('/') } ;
-                (param2 != undefined) ? [param1, param2] = [ param1[param1.length - 1] , param2[param2.length - 1] ] : param1 = param1[param1.length - 1];
-                
-                Object.defineProperty(elem, 'options',{ value: { type:type, label:param1 }, writable:true, enumerable:true, configurable:true });
-                if(Object.entries(elem[type]) != 0) Object.assign(elem.options,elem[type]);
-                if(!elem.hasOwnProperty('id') && elem.hasOwnProperty('path')) elem.id = this.getID(elem.path);
-                // workaround to create an id for connected points
-                if(!elem.hasOwnProperty('id') && !elem.hasOwnProperty('path')) elem.id = this.getID(`${elem.p1.id}/${elem.p2.id}`);
-                if(elem.hasOwnProperty('path')) elem.options.default = this.getValue(/* this.target,  */elem.path);
-                for (const event in elem.on){
-                    elem.event = event;
-                    elem.func = elem.on[event];
-                }
-                delete elem.on;
-                delete elem[type];
-                this.inputs = elem;
+                    if(!dirty) { this.inputs = elem; }
+                //} 
         };
             return true; 
         }
@@ -589,7 +651,8 @@ class HMI extends HTMLElement {
                 font-family: inherit;
                 font-size: 0.75em;
                 position: relative;
-                top: ${position}px;
+                top: ${position.y}px;
+                right: ${position.x}px;
                 float: right;
                 background-color: var(--hmi-base-background-color);
                 box-sizing: border-box;
@@ -637,6 +700,31 @@ class HMI extends HTMLElement {
                 transition: inherit;
             }
 
+            .hmi-button {
+                background: #3839ab linear-gradient(hsla(0, 0, 100%, .2), transparent);
+                background-color: #C8D6C7;
+                border: 1px solid rgba(0, 0, 0, .5);
+                border-radius: 3px;
+                /* box-shadow: 0 .2em .4em rgba(0, 0, 0, .5);  */
+                color: black;
+                /* text-shadow: 0 -.05em .05em rgba(0, 0, 0, .5); */
+                width: 100%;
+                margin-left: 0.25em;
+                transition: all 0.25s ease;
+            }
+
+            .hmi-button:hover:active {
+                //letter-spacing: 2px;
+                letter-spacing: 2px ;
+                background-color: #C8D6C7;
+                /* box-shadow: 0 .2em .4em rgba(0, 0, 0, 0);  */
+            }
+
+            .hmi-button:hover {
+                background-color: #98ab97;
+                /* box-shadow: 0 .2em .4em rgba(0, 0, 0, 0);  */
+            }
+
             .hmi-folder {
                 max-width: 12.5rem;
             }
@@ -681,7 +769,7 @@ class HMI extends HTMLElement {
                 width: 40%;
             }
 
-            .hmi-display, .hmi-label, .hmi-symbol, .hmi-input {
+            .hmi-display, .hmi-label, .hmi-symbol, .hmi-input, .hmi-button {
                 height: 1.25rem;
             }
 
@@ -913,3 +1001,12 @@ class HMI extends HTMLElement {
 }
 
 customElements.define('hm-i', HMI);
+
+
+/* function displayTime() {
+    let date = new Date();
+    let time = date.toLocaleTimeString();
+    document.getElementById('demo').textContent = time;
+ }
+ 
+ const createClock = setInterval(displayTime, 1000); */
