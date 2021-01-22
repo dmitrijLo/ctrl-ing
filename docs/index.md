@@ -113,28 +113,30 @@ Aus den eben genannten Gründen beschäftigt sich diese Studienarbeit beschäfti
     }
     render()
 
-
+/* { "canvasHandle": { "label":"Punkt C" }, "paths":["nodes/2/x","nodes/2/y"],"on":{ "input":"render" } }, */
 </script>
 
-<hm-i ref="model" header="Steuerung eines Dreiecks">
+<ctrl-ing ref="model" header="Steuerung eines Dreiecks">
 {
     "add": [
         { "id":"A0x","dropdown":{"label":"A0.x","min":-10,"mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
         { "id":"A0y","slider":{"min":50,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
         { "toggle":{ "label":"B0.x", "switchTo": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
-        { "canvasHandle": { "label":"Punkt C" }, "paths":["nodes/2/x","nodes/2/y"],"on":{ "input":"render" } },
         { "button": { "label":"Start" }, "on":{ "click":"start" } }
+    ],
+    "output": [
+        { "show": [ { "path": "nodes/0/x", "label":"velocity", "unit":"m/s" } ] }
     ]
 }
-</hm-i>
+</ctrl-ing>
 
 Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:
 
 <br><br><br><br>
 
 ```JSON
-<hm-i ref="model" header="Steuerung eines Dreiecks" id="hmi">
+<ctrl-ing ref="model" header="Steuerung eines Dreiecks" id="ctrling">
 {
     "add":[
         { "input":{ "label":"A0.x" },"path":"nodes/0/x","on":{ "input":"render" } },
@@ -145,7 +147,7 @@ Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks ge
         { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } }
     ]
 }
-</hm-i>
+</ctrl-ing>
 ```
 
 ## Cumstom Elements
