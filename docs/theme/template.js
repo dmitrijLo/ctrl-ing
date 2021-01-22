@@ -27,7 +27,7 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 ${data.content}
 </main>
 <footer>
-  <script src="./js/hmi.html.js"></script>
+  <script src="./js/ctrling.js"></script>
   <script src="./js/g2.html.js"></script>
   <span class="left">&copy; Dmitrij</span>
   <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
