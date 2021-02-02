@@ -1,90 +1,90 @@
-var p;
-
 class ObserverList {
-    constructor(){
+    constructor() {
         this.observerList = [];
     }
     add(obj) { return this.observerList.push(obj); }
     count() { return this.observerList.length; }
-    get(index) { if( index > -1 && index < this.observerList.length ) return this.observerList[ index ]; }   
+    get(index) { if (index > -1 && index < this.observerList.length) return this.observerList[index]; }
     indexOf(obj, startIndex) {
         let i = startIndex;
-        while( i < this.observerList.length ){
-          if( this.observerList[i] === obj ){ return i; }
-          i++;
+        while (i < this.observerList.length) {
+            if (this.observerList[i] === obj) { return i; }
+            i++;
         }
         return -1;
-      } 
-      removeAt(index){ this.observerList.splice( index, 1 ); }
+    }
+    removeAt(index) { this.observerList.splice(index, 1); }
 }
 
 class SuperRef {
-    constructor(path, targetObj){
+    constructor(path, targetObj) {
         this.path = path;
         this.props = path.split('/');
         this.lastProp = this.props.pop();
-        this.handler = new Proxy(this.props.reduce((ref, prop) => ref[prop], targetObj),{})
+        this.handler = new Proxy(this.props.reduce((ref, prop) => ref[prop], targetObj), {})
         this.value = this.handler[this.lastProp];
         this.observers = [];
     }
     addObserver(observer) { this.observers.push(observer); }
     //removeObserver(observer) { this.observers.removeAt(this.observers.indexOf(observer, 0)); }
     notifyObservers(/* context, key */) {
-            for (let observer of this.observers){
-                observer.update(this);
-            }
+        for (let observer of this.observers) {
+            observer.update(this);
+        }
         /* const observerCount = this.observers.count();
         for (let i=0; i < observerCount; i++) {
             const observer = this.observers.get(i);
             for (let observedValue of observer.observedValues) {
                 if(observedValue === key){ observer.update( { value:context, key:key } ); }
             }
-        }*/ 
+        }*/
     }
-    updateState(value){
-        if (value !== this.value) {
+    updateState(value) {
+        if (value !== this.value) {
             this.value = value;
-            this.handler[this.lastProp] = this.value;
+            this.handler[this.lastProp] = this.value;
             this.notifyObservers();
-        }else {
+        } else {
             console.log('nothing changed');
         }
     }
 }
 
 class CanvasHandler {
-    constructor(canvas, handle, range){
-        const resolution = ((range.min && range.max) || range.max != undefined) ? { x: 1/(range.max/canvas.width), y: 1/(range.max/canvas.height) } : 
-                            { x: 1/((handle.x+canvas.width)/canvas.width), y: 1/((handle.y + canvas.height)/canvas.height) } ;
-        this._handle = {x: handle.x * resolution.x, y: handle.y * resolution.y, r: 10};
+    constructor(canvas, handle, range) {
+        const resolution = ((range.min && range.max) || range.max != undefined) ? { x: 1 / (range.max / canvas.width), y: 1 / (range.max / canvas.height) } :
+            { x: 1 / ((handle.x + canvas.width) / canvas.width), y: 1 / ((handle.y + canvas.height) / canvas.height) };
+        this._handle = { x: handle.x * resolution.x, y: handle.y * resolution.y, r: 10 };
         this.isDragging = false;
         this.dragHandle;
         this.canvas = canvas;
         this._resolution = resolution;
     }
 
-    get offset() { return {top: this.canvas.getBoundingClientRect().top,left: this.canvas.getBoundingClientRect().left}; }
+    get offset() { return { top: this.canvas.getBoundingClientRect().top, left: this.canvas.getBoundingClientRect().left }; }
     get resolution() { return this._resolution; }
     get handle() { return this._handle; }
-    set handle(obj) { this._handle.x = obj.x;
-                      this._handle.y = obj.y }
-    get newPosition() { return {p1: Math.floor((this.handle.x/this.resolution.x)*10)/10, p2: Math.floor((this.handle.y/this.resolution.y)*10)/10}; }
-      
-    circlePointCollision(x,y, circle) {
+    set handle(obj) {
+        this._handle.x = obj.x;
+        this._handle.y = obj.y
+    }
+    get newPosition() { return { p1: Math.floor((this.handle.x / this.resolution.x) * 10) / 10, p2: Math.floor((this.handle.y / this.resolution.y) * 10) / 10 }; }
+
+    circlePointCollision(x, y, circle) {
         const dx = circle.x - x,
-              dy = circle.y - y,
-              distance = Math.sqrt(dx*dx + dy*dy);
+            dy = circle.y - y,
+            distance = Math.sqrt(dx * dx + dy * dy);
         return distance < circle.r;
     }
 
     onMouseDown(e) {
-        console.log('Höhe: ',this.canvas.height);
-        console.log('Breite: ',this.canvas.width);
+        console.log('Höhe: ', this.canvas.height);
+        console.log('Breite: ', this.canvas.width);
         const x = e.clientX - Math.floor(this.offset.left),
-              y = this.canvas.height - (e.clientY - Math.floor(this.offset.top));
+            y = this.canvas.height - (e.clientY - Math.floor(this.offset.top));
         let hand = this.handle;
 
-        if(this.circlePointCollision(x, y, hand)) {
+        if (this.circlePointCollision(x, y, hand)) {
             this.handle = { x: x, y: y };
             this.strokeHandle();
             this.isDragging = true;
@@ -94,16 +94,18 @@ class CanvasHandler {
             e.target.addEventListener("mouseup", this.onMouseUpBinding);
             this.dragHandle = hand;
         }
-     }
+    }
 
     onMouseMove(e) {
-        if(this.isDragging && this.dragHandle === this.handle) {
-            this.handle = { x: this.handle.x + (e.movementX || e.mozMovementX || e.webkitMovementX || 0), 
-                            y: this.handle.y - (e.movementY || e.mozMovementY || e.webkitMovementY || 0) };
+        if (this.isDragging && this.dragHandle === this.handle) {
+            this.handle = {
+                x: this.handle.x + (e.movementX || e.mozMovementX || e.webkitMovementX || 0),
+                y: this.handle.y - (e.movementY || e.mozMovementY || e.webkitMovementY || 0)
+            };
         }
         this.strokeHandle();
     }
-    
+
     onMouseUp(e) {
         e.target.removeEventListener("mousemove", this.onMouseMoveBinding);
         e.target.removeEventListener("mouseup", this.onMouseUpBinding);
@@ -112,34 +114,38 @@ class CanvasHandler {
 
     strokeHandle() {
         const ctx = this.canvas.getContext('2d');
-            ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
-            ctx.beginPath();
-            ctx.moveTo(0,0);
-            ctx.lineTo( this.handle.x, this.handle.y );
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(this.handle.x,this.handle.y,this.handle.r/2,0,(Math.PI/180)*360,false);
-            ctx.fill();
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(this.handle.x, this.handle.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(this.handle.x, this.handle.y, this.handle.r / 2, 0, (Math.PI / 180) * 360, false);
+        ctx.fill();
     }
 }
 
 class CI_Element {
-    constructor(options,id) {
+    constructor(options, id) {
         this.options = {};
         this.label = options.label;
         this.id = id;
-        Object.assign(this.options,options);
-        this._element = document.createElement('div');
-        this._element.setAttribute('class', 'ci-element');  
+        this._children = [];
+        Object.assign(this.options, options);
+        this._self = document.createElement('div');
+        this._self.setAttribute('class', 'ci-element');
+
         delete this.options.label;
         delete this.options.type;
     }
 
-    get element(){ return this._element; }
+    get self() { return this._self; }
+    get children() { return this._children; }
+    set children(child) { this._children.push(...child); }
 
-    createDisplay(){
+    createDisplay() {
         const display = document.createElement('input'),
-              attributes = [ { el: display, name: ['type','class','id','value'], val: ['number','ci-display',this.id, this.options.default || false ] } ];
+            attributes = [{ el: display, name: ['type', 'class', 'id', 'value'], val: ['number', 'ci-display', this.id, this.options.defaultValue || false] }];
         this.setAttributes(attributes);
         //display.value = value;
         return display;
@@ -162,73 +168,48 @@ class CI_Element {
         return label;
     }
 
-    appendButton(){
-        const button = document.createElement('button'),
-              //wrapper = this.createWrapper(),
-              attributes = [ {el: button, name: ['class','id','type'], val: ['ci-button',this.id,'button'] } ];
-        button.innerHTML = this.label;
-        this.setAttributes(attributes);
-        //wrapper.appendChild(button);
-        this.element.appendChild(button);
-    }
-
-    appendOutput(){
-        const content = this.createLabel(),
-            label = this.createLabel(),
-            unit = this.createLabel(),
-            attributes = [ { el: content, name: ['class'], val: ['ci-output'] },
-                           { el: label, name: ['class'], val: ['ci-output-label'] },
-                           { el: unit, name: ['class'], val: ['ci-unit'] } ];
-            unit.innerHTML = this.options.unit;
-        this.element.update = function(context) {
-            content.innerHTML = context.value;
-        }
-        this.setAttributes(attributes);
-        this.appendElements(this.element,label,content,unit);
-    }
-
-    appendCanvas(p1,p2){
+    appendCanvas(p1, p2) {
         function convertRemToPixels(rem) {
             return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
         }
         const displayP1 = this.createDisplay(),
-              displayP2 = this.createDisplay(),
-              label = this.createLabel(),
-              displayWrapper = this.createWrapper('ci-element'),
-              wrapper = this.createWrapper(),
-              symbol = document.createElement('div'),
-              canvas = document.createElement('canvas'),
-              defaultStyle = {canvas: 'width:0;height:0', element:'height:1.25rem', visible: false},
-              attributes = [ { el: canvas, name: ['id','style','width','height'], val: [this.id,defaultStyle.canvas,`${convertRemToPixels(12)}px`,`${convertRemToPixels(10)}px` ] },
-                             { el: this.element, name: ['class','style'], val: ['ci-canvasHandle',defaultStyle.element] },
-                             { el: symbol, name: ['class'], val: ['ci-symbol'] },
-                             { el: displayP1, name: ['value'], val: [p1] },
-                             { el: displayP2, name: ['value'], val: [p2] } ];
+            displayP2 = this.createDisplay(),
+            label = this.createLabel(),
+            displayWrapper = this.createWrapper('ci-element'),
+            wrapper = this.createWrapper(),
+            symbol = document.createElement('div'),
+            canvas = document.createElement('canvas'),
+            defaultStyle = { canvas: 'width:0;height:0', element: 'height:1.25rem', visible: false },
+            attributes = [{ el: canvas, name: ['id', 'style', 'width', 'height'], val: [this.id, defaultStyle.canvas, `${convertRemToPixels(12)}px`, `${convertRemToPixels(10)}px`] },
+            { el: this.element, name: ['class', 'style'], val: ['ci-canvasHandle', defaultStyle.element] },
+            { el: symbol, name: ['class'], val: ['ci-symbol'] },
+            { el: displayP1, name: ['value'], val: [p1] },
+            { el: displayP2, name: ['value'], val: [p2] }];
         this.setAttributes(attributes);
         canvas.getContext('2d').translate(0, canvas.height);
-        canvas.getContext('2d').scale(1,-1);
+        canvas.getContext('2d').scale(1, -1);
         symbol.innerHTML = "&#9660;";
         symbol.addEventListener('click', () => {
-            if(!defaultStyle.visible) {
-                canvas.setAttribute('style','width: auto;height: auto;border:1px solid black;');
-                this.element.setAttribute('style','height:auto')
+            if (!defaultStyle.visible) {
+                canvas.setAttribute('style', 'width: auto;height: auto;border:1px solid black;');
+                this.element.setAttribute('style', 'height:auto')
             } else {
                 canvas.setAttribute('style', defaultStyle.canvas);
                 this.element.setAttribute('style', defaultStyle.element);
             }
             defaultStyle.visible = !defaultStyle.visible;
         })
-        displayP1.update = function(context) {
+        displayP1.update = function (context) {
             this.value = context.value;
         }
-        displayP2.update = function(context) {
+        displayP2.update = function (context) {
             this.value = context.value;
         }
-        canvas.update = function(context) {
-            if(context.key === this.observedValues[0]){
+        canvas.update = function (context) {
+            if (context.key === this.observedValues[0]) {
                 this.interactor.handle = { x: context.value * this.interactor.resolution.x, y: this.interactor.handle.y };
                 console.log(this.interactor.handle)
-            } else if(context.key === this.observedValues[1]) {
+            } else if (context.key === this.observedValues[1]) {
                 this.interactor.handle = { x: this.interactor.handle.x, y: context.value * this.interactor.resolution.y };
             }
             this.interactor.strokeHandle();
@@ -239,88 +220,107 @@ class CI_Element {
         this.appendElements(this.element, displayWrapper, canvas);
     }
 
-    appendInput(){
-        const input = this.createDisplay(/* 'number','ci-input' */),
-              //wrapper = this.createWrapper(),
-              label = this.createLabel(),
-              attributes = [ { el: input, name: ['type','class'], val: ['number','ci-input'] } ];
-        input.update = function(context) {
+    appendElements(reciever, ...elements) {
+        for (let element of elements) {
+            reciever.appendChild(element);
+        }
+    }
+
+    setAttributes(attributes) {
+        for (let attribute of attributes) {
+            for (let i = 0; i < attribute.name.length; i++) {
+                attribute.el.setAttribute(attribute.name[i], attribute.val[i]);
+            }
+        }
+    }
+}
+
+class CI_Button extends CI_Element {
+    constructor(options, id) {
+        super(options, id);
+        const button = document.createElement('button'),
+            attributes = [{ el: button, name: ['class', 'id', 'type'], val: ['ci-button', this.id, 'button'] }];
+        button.innerHTML = this.label;
+        button.update = function () { };
+        this.setAttributes(attributes);
+        this.self.appendChild(button);
+        this.children = [button];
+    }
+}
+
+class CI_ColorPicker extends CI_Element {
+    constructor(options, id) {
+        super(options, id);
+        const input = this.createDisplay(),
+            display = this.createDisplay(),
+            label = this.createLabel(),
+            attributes = [{ el: input, name: ['type', 'class', 'value'], val: ['text', 'ci-color-input', this.options.color] },
+            { el: display, name: ['type', 'class', 'style', 'value', 'readonly'], val: ['', 'ci-color-display', `background-color:${this.options.color}`, "", true] }];
+        input.update = function (context) {
+            this.value = context.value;
+        }
+        display.update = function (context) {
+            this.setAttribute('style', `background-color:${context.value}`);
+        }
+
+        this.setAttributes(attributes);
+        this.appendElements(this.self, label, display, input);
+        this.children = [display, input];
+    }
+}
+
+class CI_StandardInput extends CI_Element {
+    constructor(options, id) {
+        super(options, id);
+        const input = this.createDisplay(),
+            label = this.createLabel(),
+            attributes = [{ el: input, name: ['type', 'class'], val: ['number', 'ci-input'] }];
+        input.update = function (context) {
             this.value = context.value;
         }
         this.setAttributes(attributes);
-        //wrapper.appendChild(input);
-        this.appendElements(this.element, label, input);
+        this.appendElements(this.self, label, input);
+        this.children = [input];
     }
+}
 
-    appendSlider(){
+class CI_Slider extends CI_Element {
+    constructor(options, id) {
+        super(options, id);
         const slider = document.createElement('input'),
-              display = this.createDisplay(),
-              //wrapper = this.createWrapper(),
-              label = this.createLabel(),
-              attributes = [ { el: slider, name: ['class','id','type','min','max','step','value'], val: ['ci-slider',this.id,'range',this.options.min || 0,this.options.max || 100,this.options.step || 1,this.options.default || this.options.value ] },
-                             { el: display, name: ['min','max','step'], val: [this.options.min || 0,this.options.max || 100,this.options.step || 1] } ];
-        slider.update = function(context) {
+            display = this.createDisplay(),
+            label = this.createLabel(),
+            attributes = [{ el: slider, name: ['class', 'id', 'type', 'min', 'max', 'step', 'value'], val: ['ci-slider', this.id, 'range', this.options.min || 0, this.options.max || 100, this.options.step || 1, this.options.defaultValue || this.options.value] },
+            { el: display, name: ['min', 'max', 'step'], val: [this.options.min || 0, this.options.max || 100, this.options.step || 1] }];
+        slider.update = function (context) {
             this.value = context.value;
         }
-        display.update = function(context) {
-            this.value = context.value;
-        }
-        this.setAttributes(attributes);
-        //this.appendElements(wrapper, display, slider);
-        this.appendElements(this.element, label, display, slider);
-    }
-
-    appendDropdown(){
-        const dropdown = document.createElement('select'),
-              display = this.createDisplay(),
-              //wrapper = this.createWrapper(),
-              label = this.createLabel(),
-              attributes = [ { el: dropdown, name: ['class','id'], val: ['ci-dropdown',this.id] },
-                             { el: display, name: ['type'], val: [""] } ],
-              items = Reflect.ownKeys(this.options);
-        for (let item of items){
-            const option = document.createElement('option');
-            if(item === 'default') {
-                option.selected = true;
-                display.value = this.options[item];
-            }
-            option.innerHTML = item;
-            option.value = this.options[item];
-            dropdown.appendChild(option);
-        }
-
-        dropdown.update = function(context) {
-            for (let child of this.children){
-                if(context.value === +child.value){
-                    child.selected = true;
-                }
-            }
-        }
-        display.update = function(context) {
+        display.update = function (context) {
             this.value = context.value;
         }
         this.setAttributes(attributes);
-        //this.appendElements(wrapper,display,dropdown);
-        //this.appendElements(this.element,label,wrapper);
-        this.appendElements(this.element,label,display,dropdown);
+        this.appendElements(this.self, label, display, slider);
+        this.children = [display, slider];
     }
+}
 
-    appendToggle(){
+class CI_Toggle extends CI_Element {
+    constructor(options, id) {
+        super(options, id);
         const display = this.createDisplay(),
-              //wrapper = this.createWrapper(),
-              label = this.createLabel(),
-              slider = document.createElement('span'),
-              input = document.createElement('input'),
-              toggle = document.createElement('div'),
-              attributes = [ { el: slider, name: ['class'], val: ["toggle-slider"] },
-                             { el: input, name: ['type'], val: ['checkbox'] },
-                             { el: display, name: ['type'], val: [''] },
-                             { el: toggle, name: ['class', 'id'], val: ['ci-toggle', this.id] } ];
-        toggle.default = this.options.default || false;
+            label = this.createLabel(),
+            slider = document.createElement('span'),
+            input = document.createElement('input'),
+            toggle = document.createElement('div'),
+            attributes = [{ el: slider, name: ['class'], val: ["toggle-slider"] },
+            { el: input, name: ['type'], val: ['checkbox'] },
+            { el: display, name: ['type', 'readonly'], val: ['', true] },
+            { el: toggle, name: ['class', 'id'], val: ['ci-toggle', this.id] }];
+        toggle.default = this.options.defaultValue || false;
         toggle.switchTo = this.options.switchTo || true;
         toggle.value = toggle.switchTo;
-        toggle.update = function(context){
-            if(context.value === this.default){
+        toggle.update = function (context) {
+            if (context.value === this.default) {
                 this.value = this.switchTo;
             } else {
                 this.value = this.default;
@@ -328,37 +328,84 @@ class CI_Element {
             display.value = context.value;
             this.checked = context.value;
         }
-        display.update = function(){
+        display.update = function () {
             //render()
         }
         this.setAttributes(attributes);
-        this.appendElements(toggle,input,slider);
-        //this.appendElements(wrapper,display,toggle);
-        this.appendElements(this.element,label,display,toggle);
+        this.appendElements(toggle, input, slider);
+        this.appendElements(this.self, label, display, toggle);
+        this.children = [display, toggle];
     }
+}
 
-    appendElements(reciever, ...elements) {
-        for (let element of elements){
-            reciever.appendChild(element);
-        } 
-    }
+class CI_Dropdown extends CI_Element {
+    constructor(options, id) {
+        super(options, id);
+        const dropdown = document.createElement('select'),
+            wrapper = this.createWrapper('ci-dropdown-wrapper'),
+            display = this.createDisplay(),
+            label = this.createLabel(),
+            attributes = [{ el: dropdown, name: ['class', 'id'], val: ['ci-dropdown', this.id] },
+            { el: display, name: ['type', 'readonly'], val: ["", true] }],
+            items = Reflect.ownKeys(this.options);
+        for (let item of items) {
+            if (item === 'default') { continue; }
+            const option = document.createElement('option');
+            option.innerHTML = item;
+            option.value = this.options[item];
+            if (item === 'defaultValue') {
+                option.selected = true;
+                option.innerHTML = this.options['default'] || 'default';
+                display.value = this.options[item];
+            }
+            dropdown.appendChild(option);
+        }
 
-    setAttributes(attributes) {
-        for (let attribute of attributes){
-            for (let i = 0; i < attribute.name.length ;i++) {
-                attribute.el.setAttribute(attribute.name[i], attribute.val[i]);
+        dropdown.update = function (context) {
+            for (let child of this.children) {
+                if (context.value === +child.value) {
+                    child.selected = true;
+                }
             }
         }
+        display.update = function (context) {
+            this.value = context.value;
+        }
+        this.setAttributes(attributes);
+        this.appendElements(wrapper, dropdown);
+        this.appendElements(this.self, label, display, wrapper);
+        this.children = [display, dropdown];
+    }
+}
+
+class CI_Output extends CI_Element {
+    constructor(options, id) {
+        super(options, id);
+        const content = this.createLabel(),
+            label = this.createLabel(),
+            unit = this.createLabel(),
+            attributes = [{ el: content, name: ['class'], val: ['ci-output'] },
+            { el: label, name: ['class'], val: ['ci-output-label'] },
+            { el: unit, name: ['class'], val: ['ci-unit'] }];
+        unit.innerHTML = this.options.unit;
+        content.innerHTML = "";
+        this.self.update = function (context) {
+            content.innerHTML = context.value;
+        }
+        console.log(this.options)
+        this.setAttributes(attributes);
+        this.appendElements(this.self, label, content, unit);
+        this.children = [content];
     }
 }
 
 class CI extends HTMLElement {
     static get observedAttributes() {
         return ['dirty'];
-      }
+    }
     constructor() {
         super();
-        this._root = this.attachShadow({mode: 'open'});
+        this._root = this.attachShadow({ mode: 'open' });
         this._inputs = [];
         this._outputs = [];
         this._objectives = [];
@@ -366,13 +413,13 @@ class CI extends HTMLElement {
         //this._header = '';
     }
 
-    get root(){ return this._root; }
-    get targetObj(){ return window[this.getAttribute('ref')]; }
-    set targetObj(q) { if(q) this.setAttribute('ref', q); }
-    get header(){ return this.getAttribute('header'); }
-    set header(q) { if(q) this.setAttribute('header', q); }
+    get root() { return this._root; }
+    get targetObj() { return window[this.getAttribute('ref')]; }
+    set targetObj(q) { if (q) this.setAttribute('ref', q); }
+    get header() { return this.getAttribute('header'); }
+    set header(q) { if (q) this.setAttribute('header', q); }
     get id() { return this.getAttribute('id') || "ci"; }
-    set id(q) { if(q) this.setAttribute('id', q); }
+    set id(q) { if (q) this.setAttribute('id', q); }
     get inputs() { return this._inputs; }
     set inputs(o) { return this._inputs.push(o); }
     get outputs() { return this._outputs; }
@@ -385,153 +432,67 @@ class CI extends HTMLElement {
     set dirty(bool) { return this.setAttribute('dirty', bool); }
 
     connectedCallback() {
-        if(this.getAttribute('id') == undefined) this.id = this.id;
+        if (this.getAttribute('id') == undefined) this.id = this.id;
         this.parseJSON();
         this.init();
         this.offset = this.root.querySelector('.ci').getBoundingClientRect();
-        //this.addEvent(this.inputs);
-        let handler = {
-            set: function(obj, prop, value, receiver) {
-                // The default behavior to store the value
-                if (obj[prop] != value) {
-                    
-                    return Reflect.set(obj, prop, value, receiver);
-                }else {
-                    console.log(obj[prop], value)
-                    return false;
-                }
-            },   
-            get: function (target, prop, receiver) {
-              if (prop === "message2") {
-                return "world";
-              }
-              return Reflect.get(...arguments);
-            },
-          };
-
     }
-    
+
     attributeChangedCallback(name, oldValue, newValue) {
-        if(this.dirty === "true") {
+        if (this.dirty === "true") {
             console.log('Custom square element attributes changed.');
             this.dirty = false;
         }
-      }
+    }
 
     init() {
-        const gui = this.createGui();
-        const style = document.createElement('style')
-        style.textContent = CI.template(this.setPosition());        
+        const gui = this.createGui(),
+            style = document.createElement('style'),
+            events = ['click', 'change', 'input'];
+        style.textContent = CI.template(this.setPosition());
 
         // create & append CI_Elements dependend on userinput
-        for (let input of this.inputs){
-            const child = new CI_Element(input.options, input.id);
-            (input.options.type === 'input') ? child.appendInput() :
-            (input.options.type === 'slider') ? child.appendSlider() :
-            (input.options.type === 'dropdown') ? child.appendDropdown() :
-            (input.options.type === 'toggle') ? child.appendToggle() : 
-            (input.options.type === 'canvasHandle') ? child.appendCanvas(input.options.default,input.reference.options.default) : 
-            (input.options.type === 'button') ? child.appendButton() : console.log('wrong type');
-            gui.querySelector('.ci-cb').appendChild(child.element);
+        for (let input of this.inputs) {
+            const options = input.options, id = input.id,
+                element = (input.options.type === 'input') ? new CI_StandardInput(options, id) :
+                    (input.options.type === 'slider') ? new CI_Slider(options, id) :
+                        (input.options.type === 'dropdown') ? new CI_Dropdown(options, id) :
+                            (input.options.type === 'toggle') ? new CI_Toggle(options, id) :
+                                //(input.options.type === 'canvasHandle') ? element.appendCanvas(input.options.defaultValue,input.reference.options.defaultValue) : 
+                                (input.options.type === 'button') ? new CI_Button(input.options, input.id) :
+                                    (input.options.type === 'color') ? new CI_ColorPicker(input.options, input.id) : console.log('wrong type');
+            // set subjects that will notify their observer
+            const objective = (input.path !== undefined) ? new SuperRef(input.path, this.targetObj) : new SuperRef('value', element);
+            this.objectives = objective;
+            let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : 'change';
+            let callback = (event != undefined) ? window[input.func] : undefined;
+
+            for (let observer of element.children) {
+                observer.addEventListener(event, () => {
+                    const value = (typeof observer.value === 'boolean' || 'string') ? observer.value : +observer.value;
+                    objective.updateState(value);
+                    if (callback != undefined) return callback();
+                });
+                objective.addObserver(observer);
+            }
+            gui.querySelector('.ci-cb').appendChild(element.self);
         }
         this._root.appendChild(gui);
         this._root.appendChild(style);
-        // set subjects that will notify their observer
-        for (let input of this.inputs){
-            if(input.options.type !== "button") {
-                const events = ['click', 'change','input'],
-                      objective = new SuperRef(input.path, this.targetObj),
-                      observers = this.root.querySelectorAll(`#${input.id}`);
-                let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : undefined;
-                let callback = (event != undefined) ? window[input.func] : undefined;
 
-                this.objectives = objective;
-                for (let observer of observers) {
-                    observer.addEventListener(event, () => {
-                        const value = (typeof observer.value === 'boolean') ? observer.value : +observer.value;
-                        objective.updateState(value);
-                        if(callback != undefined) return callback();
-                    });
-                    objective.addObserver(observer); 
-                }
-            }
-            if(input.hasOwnProperty('reference')) { this.defineSubject(input.reference.path); }
-        }
-        for (let output of this.outputs){
-            for (let o of output){
-                const element = new CI_Element({label:o.label,unit:o.unit}, 'id' );
-                element.appendOutput();
-                gui.appendChild(element.element);
-                for(let objective of this.objectives) {
-                    if(o.path === objective.path){
-                        objective.addObserver(element.element);
+        for (let output of this.outputs) {
+            for (let o of output) {
+                const element = new CI_Output({ label: o.label, unit: o.unit }, 'id');
+                gui.appendChild(element.self);
+                for (let objective of this.objectives) {
+                    if (o.path === objective.path) {
+                        objective.addObserver(element.self);
                     }
                 }
             }
-            
+
         }
     }
-
-    /* addEvent(input) {
-        const events = ['click', 'change','input'],
-              targets = this.root.querySelectorAll(`#${input.id}`);
-        let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : undefined;
-        let callback = (event != undefined) ? window[input.func] : undefined;
-        if(callback === undefined) event = 'change';
-        if(input.hasOwnProperty('reference')) {
-            this.addObserver(input.path, targets[0]); 
-            this.addObserver(input.reference.path, targets[1]);
-            targets[0].addEventListener(event, () => {
-                this.setValue(input.path, targets[0].value);
-                if(callback != undefined) return callback();
-            });
-            targets[1].addEventListener(event, () => {
-                this.setValue(input.reference.path, targets[1].value);
-                if(callback != undefined) return callback();
-            });
-        }
-            for (let target of targets) {
-                if(target.tagName === 'CANVAS'){
-                    console.log('CanvasTarget: ', targets)
-                    const [p1, p2] = [this.getValue(input.path), this.getValue(input.reference.path)],
-                          [prop1, prop2] = [input.path.split('/').pop(), input.reference.path.split('/').pop()],
-                          [displayP1, displayP2] = [targets[0],targets[1]],
-                          cnv = target,
-                          range = input.hasOwnProperty('min') && input.hasOwnProperty('max') ? { min: input.min, max: input.max } : 
-                                  input.hasOwnProperty('min') ? { min: input.min, max: undefined } : 
-                                  input.hasOwnProperty('max') ? { min: undefined, max: input.max } : { min: undefined, max: undefined },
-                          interactor = new CanvasHandler(cnv, { x:p1, y:p2 }, range),
-                          mouseMove = () => {
-                            [displayP1.value,displayP2.value] = [interactor.newPosition.p1, interactor.newPosition.p2];
-                            this.setValue(input.path,interactor.newPosition.p1);
-                            this.setValue(input.reference.path,interactor.newPosition.p2);
-                            if(callback != undefined) return callback();
-                          },
-                          mouseUp = () => {
-                            cnv.removeEventListener("mousemove", mouseMove);
-                            cnv.removeEventListener("mouseup", mouseUp);
-                          };
-                    cnv.interactor = interactor;
-                    [displayP1.value,displayP2.value] = [interactor.newPosition.p1, interactor.newPosition.p2];
-                    interactor.strokeHandle();
-                    this.addObserver(input.path, cnv);
-                    this.addObserver(input.reference.path, cnv);
-                    cnv.addEventListener("mousedown", (e) => {
-                        interactor.onMouseDown(e);
-                        cnv.addEventListener("mousemove", mouseMove);
-                        cnv.addEventListener("mouseup", mouseUp);
-                    })
-                        
-                } else if(!input.hasOwnProperty('reference')) {
-                    this.addObserver(input.path, target); 
-                    target.addEventListener(event, () => {
-                        this.setValue(input.path, target.value);
-                        if(callback != undefined) return callback();
-                    });
-                }
-            }
-        
-    } */
 
     createGui() {
         const gui = document.createElement('div');
@@ -543,15 +504,10 @@ class CI extends HTMLElement {
         header.setAttribute('class', 'ci-header');
         const contenBox = document.createElement('div');
         contenBox.setAttribute('class', 'ci-cb');
-        
+
         gui.appendChild(folder);
         folder.appendChild(header);
         folder.appendChild(contenBox);
-
-        /* gui.addEventListener('change', () => {
-            console.log(gui.children);
-            console.log('something changed')
-        }) */
         return gui;
     }
 
@@ -561,96 +517,51 @@ class CI extends HTMLElement {
         const offset = window.pageYOffset;
         let previousElementTop;
 
-        (function getPreviousElementPosition(elem){
+        (function getPreviousElementPosition(elem) {
             const previousElement = elem.previousElementSibling;
 
-            if(!(previousElement.getBoundingClientRect().height === 0)){
+            if (!(previousElement.getBoundingClientRect().height === 0)) {
                 return previousElementTop = previousElement.getBoundingClientRect().top;
             }
             getPreviousElementPosition(previousElement);
         })(ci);
         previousElementTop += offset;
         ciTop += offset;
-        return {x: +this.xOffset, y: (previousElementTop - ciTop + +this.yOffset)};
+        return { x: +this.xOffset, y: (previousElementTop - ciTop + +this.yOffset) };
     }
 
-    /* getTargetObj(path){
-        const props = path.split('/'); 
-        return props.reduce((ref, prop) => ref[prop], this.targetObj);
-    } */
-
-    getValue(path) {
-        if(path !== undefined) {
+    getValue(path) {
+        if (path !== undefined) {
             const paths = path.split('/'),
-                  last = paths.pop();
+                last = paths.pop();
             return paths.reduce((ref, prop) => ref[prop], this.targetObj)[last];
         }
     }
 
     setValue(path, newValue) {
-        if(path !== undefined) {
+        if (path !== undefined) {
             const paths = path.split('/'),
-                  last = paths.pop();
-            if(newValue !== true && newValue !== false) { newValue = +newValue; }
+                last = paths.pop();
+            if (newValue !== true && newValue !== false) { newValue = +newValue; }
             paths.reduce((ref, prop) => ref[prop], this.targetObj)[last] = newValue;
         }
     }
 
     getID(path) {
-        if(path !== undefined){
+        if (path !== undefined) {
             const keys = path.split('/');
             return keys.join('-');
         }
     }
 
-    /* addObserver(path, observer){
-        if(path !== undefined) {
-            const props = path.split('/'),
-                  prop = props.pop(),
-                  targetObj = props.reduce((ref, prop) => ref[prop], this.targetObj);
-            !observer.hasOwnProperty('observedValues') ? Object.defineProperty(observer,'observedValues',{ value: [prop] }) : observer.observedValues.push(prop);
-            if(!targetObj.observers.observerList.includes(observer)) { targetObj.addObserver(observer); }
-        }
-    } */
-
-    /* defineSubject(path){
-        if(path !== undefined) {
-            const props = path.split('/'), 
-                  prop = props.pop(),
-                  newProp = '_' + prop,
-                  targetObj = props.reduce((ref, prop) => ref[prop], this.targetObj);   
-            if(!targetObj.hasOwnProperty('observers')){ this.extend(targetObj, new Subject()); }
-            Object.defineProperties(targetObj, {
-                [newProp]: { value: this.getValue(path), writable: true, enumerable: true, configurable: true },
-                [prop]: {
-                    get: function() { return this[newProp]; },
-                    set: function(value) {
-                            this[newProp] = value;
-                            this.notify(value, prop);
-                        }
-                }
-            })
-        }
-    } */
-
-    /* // Extend an object with an extension
-    extend(obj, extension){
-        const keys = [...Reflect.ownKeys(extension), ...Reflect.ownKeys(Object.getPrototypeOf(extension))];
-        for (let key of keys ){
-            if(key !== 'constructor') {
-                obj[key] = extension[key];
-            }
-        }
-    } */
-
     parseJSON() {
         try {
-            const types = ['input','slider','dropdown','toggle','canvasHandle','button'];
+            const types = ['input', 'slider', 'dropdown', 'toggle', 'canvasHandle', 'button', 'color'];
             const innerHTML = JSON.parse(this.innerHTML);
 
             for (let elem of innerHTML.add) {
                 const type = Object.keys(elem).find(key => types.includes(key));
-                if(elem.hasOwnProperty('paths')){
+                /* if(elem.hasOwnProperty('paths')){
                     for (let path of elem.paths){
                         const newObject = Object.assign( { path: path }, elem),
                               props = [...newObject.paths[0].split('/'),...newObject.paths[1].split('/')],
@@ -664,48 +575,54 @@ class CI extends HTMLElement {
                         innerHTML.add.push(newObject);
                     }
                     continue;
-                }
+                } */
                 //if(elem.hasOwnProperty('path')){
-                    const props = (elem.hasOwnProperty('path')) ? elem.path.split('/') : undefined,
-                          prop = (props != undefined) ? props.pop() : undefined,
-                          event = (elem.hasOwnProperty('on')) ? Reflect.ownKeys(elem.on).shift() : undefined;
-                    Object.defineProperty(elem, 'options',{ value: { type:type, label:prop }, writable:true, enumerable:true, configurable:true });
-                    Object.defineProperty(elem, 'event',{ value: event, writable:true, enumerable:true, configurable:true });
-                    Object.defineProperty(elem, 'func',{ value: elem.on[event], writable:true, enumerable:true, configurable:true });
-                    // check if there are additional options (eg. min,max,step,label, etc.)
-                    if(Object.entries(elem[type]) != 0) Object.assign(elem.options,elem[type]);
-                    // check if there is a custom id
-                    if(!elem.hasOwnProperty('id') && elem.hasOwnProperty('path')) elem.id = this.getID(elem.path);
-                    // save the default value (value at initiation)
-                    if(elem.hasOwnProperty('path')) elem.options.default = this.getValue(elem.path);
-                    if(type === 'button') elem.id = `${elem.options.label.toLowerCase()}-button`;
-                    delete elem.on;
-                    delete elem[type];
+                const props = (elem.hasOwnProperty('path')) ? elem.path.split('/') : elem.path = undefined/* undefined */,
+                    prop = (props !== undefined) ? props.pop() : undefined,
+                    defaultValue = (props !== undefined) ? this.getValue(elem.path) : undefined,
+                    event = (elem.hasOwnProperty('on')) ? Reflect.ownKeys(elem.on).shift() : elem.on = undefined;
+                console.log('elem: ', elem, props)
+                Object.defineProperty(elem, 'options', { value: { type: type, label: prop || type, defaultValue: defaultValue }, writable: true, enumerable: true, configurable: true });
+                if (elem.on !== undefined) {
+                    Object.defineProperty(elem, 'event', { value: event, writable: true, enumerable: true, configurable: true });
+                    Object.defineProperty(elem, 'func', { value: elem.on[event], writable: true, enumerable: true, configurable: true });
+                }
+                // check if there are additional options (eg. min,max,step,label, etc.)
+                if (Object.entries(elem[type]) != 0) Object.assign(elem.options, elem[type]);
+                // check if there is a custom id
+                if (!elem.hasOwnProperty('id') && elem.hasOwnProperty('path')) elem.id = this.getID(elem.path);
+                // save the default value (value at initiation)
+                //if(elem.hasOwnProperty('path')) elem.options.default = this.getValue(elem.path);
+                if (type === 'button') elem.id = `${elem.options.label.toLowerCase()}-button`;
+                if (type === 'color') elem.id = `${elem.options.label.toLowerCase()}-color`;
+                delete elem.on;
+                delete elem[type];
+                this.inputs = elem;
 
-                    let dirty = false;
-                    for (let input of this.inputs){
-                        if(input.id === elem.id){
-                            dirty = true;
-                            input.reference = elem;
-                        }
+                /* let dirty = false;
+                for (let input of this.inputs){
+                    if(input.id === elem.id){
+                        dirty = true;
+                        input.reference = elem;
                     }
-                    if(!dirty) { this.inputs = elem; }
+                }
+                if(!dirty) {  } */
                 //} 
-        };
+            };
 
-        for (let elem of innerHTML.output ) {
-            this.outputs = elem.show;
+            for (let elem of innerHTML.output) {
+                this.outputs = elem.show;
+            }
+            console.log(this.outputs)
+            return true;
         }
-        console.log(this.outputs)
-            return true; 
-        }
-        catch(e) { console.log(e)/* this._root.innerHTML = e.message; */ }
-        return false; 
+        catch (e) { console.log(e)/* this._root.innerHTML = e.message; */ }
+        return false;
     }
 
     static template(position) {
-        document.documentElement.style.setProperty('--ci-base-background-color','#fffff8');
-        document.documentElement.style.setProperty('--ci-base-shadow-color','#10162f');
+        document.documentElement.style.setProperty('--ci-base-background-color', '#fffff8');
+        document.documentElement.style.setProperty('--ci-base-shadow-color', '#10162f');
 
         return `
             /* .ci:hover {
@@ -717,6 +634,7 @@ class CI extends HTMLElement {
 
             *, ::after, ::before {
                 box-sizing: inherit;
+                margin:0;
             }
 
             .ci {
@@ -827,17 +745,22 @@ class CI extends HTMLElement {
                 grid-column: 1;
                 margin: 0 .25em;
             }
-
             .ci-display {
                 grid-column: 2 / 4;
                 margin-right: .25em;
             }
-
-            .ci-dropdown,.ci-slider {
+            .ci-color-display {
+                grid-column: 2 / 3;
+                margin-right: .25em;
+            }
+            .ci-dropdown-wrapper,.ci-slider {
                 grid-column: 4 / 6;
             }
             .ci-input {
                 grid-column: 2 / 6;
+            }
+            .ci-color-input {
+                grid-column: 3 / 6;
             }
             .ci-output-label {
                 grid-column: 1 / 3;
@@ -860,11 +783,12 @@ class CI extends HTMLElement {
                 margin: 0 0.25em;
             }
 
-            .ci-display, .ci-label, .ci-symbol, .ci-input, .ci-button {
+            .ci-label, .ci-symbol, .ci-button {
                 height: 1.25rem;
             }
 
-            .ci-input, .ci-display {
+            .ci-input, .ci-display, .ci-color-input, .ci-color-display {
+                height: 1.25rem;
                 padding: 0.25em 0;
                 background-color: #C8D6C7;
                 text-align: center;
@@ -890,6 +814,30 @@ class CI extends HTMLElement {
             input[type="number"] {
                 -moz-appearance: textfield;
             }
+
+        /* begin dropdown styling */
+            .ci-dropdown {
+                -webkit-appearance: none;
+                appearance: none;
+                width:100%;
+                height: 1.25rem;
+                margin:auto;
+                background-color: #C8D6C7;
+                border: 1px solid #C8D6C7;
+                border-radius: 3px;
+            }
+            .ci-dropdown-wrapper {
+                position: relative;
+            }
+            .ci-dropdown-wrapper::after {
+                content: "▾";
+                font-weight:bold;
+                font-size: 1.25rem;
+                top: -3.5px;
+                right: 5px;
+                position: absolute;
+            }
+        /* end dropdown styling */
 
         /* begin toggle styling */
             .ci-toggle {
@@ -940,11 +888,6 @@ class CI extends HTMLElement {
                 /* green */
             }
         
-        /* .ci-toggle input:focus + .toggle-slider {
-            background-color: pink;
-            box-shadow: 0 0 1px #5a9900;
-        } */
-        
             .ci-toggle input:checked + .toggle-slider:before {
                 -webkit-transform: translateX(1.4em);
                 /* Android 4 */
@@ -965,5 +908,5 @@ customElements.define('ctrl-ing', CI);
     let time = date.toLocaleTimeString();
     document.getElementById('demo').textContent = time;
  }
- 
+
  const createClock = setInterval(displayTime, 1000); */

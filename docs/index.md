@@ -41,7 +41,7 @@ HTML bietet von sich aus eine Vielzahl an Elementen, welche in Verbindung mit Ja
 * Auswahllisten
 * u.v.m
 
-recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiven und vor allem monotonen Code, der stetig mit der Anzahl an Eingabemöglichkeiten wächst. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen $a$, $b$, $c$ und $d$ jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels $\varphi$ der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes. (Code ist auch nicht wiederverwendbar...vlt. noch einfügen...)
+recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiver und vor allem monotoner Codezeilen, die stetig mit der Anzahl an Eingabemöglichkeiten wachsen. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen $a$, $b$, $c$ und $d$ jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels $\varphi$ der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes. (Code ist auch nicht wiederverwendbar...vlt. noch einfügen...)
 
 ... es darf nicht unerwähnt bleiben, dass bereits einige sogenannter GUI-Bibliotheken existieren. Zwei sehr gute Lösung sind zum einen dat.GUI und zum andren Tweakpane, die im Grunde sehr ähnlich funktionieren. Nach Erstellung einer Instanz der jeweiligen JavaScript-Bibliothek stehen dem Benutzer zahlreiche Funktionen zur Verfügungen, die mit wenigen Zeilen Code ein graphisches Interface implementieren. Verknüpft mit einer beliebigen Variable lässt sich diese manipulieren. Dies soll an einem einfachen Beispiel unter dem Einsatz von `tweakpane.js` demonstriert werden. 
 
@@ -119,11 +119,12 @@ Aus den eben genannten Gründen beschäftigt sich diese Studienarbeit beschäfti
 <ctrl-ing ref="model" header="Steuerung eines Dreiecks">
 {
     "add": [
-        { "id":"A0x","dropdown":{"label":"A0.x","min":-10,"mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
+        { "id":"A0x","dropdown":{"label":"A0.x","default":"min","mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
         { "id":"A0y","slider":{"min":50,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
         { "toggle":{ "label":"B0.x", "switchTo": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
         { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
-        { "button": { "label":"Start" }, "on":{ "click":"start" } }
+        { "button": { "label":"Start" }, "on":{ "click":"start" } },
+        { "color": { "label": "Fill", "color":"#DE3163" } }
     ],
     "output": [
         { "show": [ { "path": "nodes/0/x", "label":"velocity", "unit":"m/s" } ] }
