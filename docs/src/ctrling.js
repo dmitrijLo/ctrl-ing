@@ -1,21 +1,3 @@
-class ObserverList {
-    constructor() {
-        this.observerList = [];
-    }
-    add(obj) { return this.observerList.push(obj); }
-    count() { return this.observerList.length; }
-    get(index) { if (index > -1 && index < this.observerList.length) return this.observerList[index]; }
-    indexOf(obj, startIndex) {
-        let i = startIndex;
-        while (i < this.observerList.length) {
-            if (this.observerList[i] === obj) { return i; }
-            i++;
-        }
-        return -1;
-    }
-    removeAt(index) { this.observerList.splice(index, 1); }
-}
-
 class SuperRef {
     constructor(path, targetObj) {
         this.path = path;
@@ -125,7 +107,7 @@ class CanvasHandler {
     }
 }
 
-class CI_Element {
+class CtrlElement {
     constructor(options, id) {
         this.options = {};
         this.label = options.label;
@@ -133,7 +115,7 @@ class CI_Element {
         this._children = [];
         Object.assign(this.options, options);
         this._self = document.createElement('div');
-        this._self.setAttribute('class', 'ci-element');
+        this._self.setAttribute('class', 'ctrl-element');
 
         delete this.options.label;
         delete this.options.type;
@@ -145,13 +127,13 @@ class CI_Element {
 
     createDisplay() {
         const display = document.createElement('input'),
-            attributes = [{ el: display, name: ['type', 'class', 'id', 'value'], val: ['number', 'ci-display', this.id, this.options.defaultValue || false] }];
+            attributes = [{ el: display, name: ['type', 'class', 'id', 'value'], val: ['number', 'ctrl-display', this.id, this.options.defaultValue || false] }];
         this.setAttributes(attributes);
         //display.value = value;
         return display;
     }
 
-    createWrapper(className = 'ci-wrapper') {
+    createWrapper(className = 'ctrl-wrapper') {
         const wrapper = document.createElement('div');
         /* const wrapper = document.createElement('fieldset'),
               legend = document.createElement('legend');
@@ -163,7 +145,7 @@ class CI_Element {
 
     createLabel() {
         const label = document.createElement('div');
-        label.setAttribute('class', 'ci-label');
+        label.setAttribute('class', 'ctrl-label');
         label.innerHTML = this.label;
         return label;
     }
@@ -175,14 +157,14 @@ class CI_Element {
         const displayP1 = this.createDisplay(),
             displayP2 = this.createDisplay(),
             label = this.createLabel(),
-            displayWrapper = this.createWrapper('ci-element'),
+            displayWrapper = this.createWrapper('ctrl-element'),
             wrapper = this.createWrapper(),
             symbol = document.createElement('div'),
             canvas = document.createElement('canvas'),
             defaultStyle = { canvas: 'width:0;height:0', element: 'height:1.25rem', visible: false },
             attributes = [{ el: canvas, name: ['id', 'style', 'width', 'height'], val: [this.id, defaultStyle.canvas, `${convertRemToPixels(12)}px`, `${convertRemToPixels(10)}px`] },
-            { el: this.element, name: ['class', 'style'], val: ['ci-canvasHandle', defaultStyle.element] },
-            { el: symbol, name: ['class'], val: ['ci-symbol'] },
+            { el: this.element, name: ['class', 'style'], val: ['ctrl-canvasHandle', defaultStyle.element] },
+            { el: symbol, name: ['class'], val: ['ctrl-symbol'] },
             { el: displayP1, name: ['value'], val: [p1] },
             { el: displayP2, name: ['value'], val: [p2] }];
         this.setAttributes(attributes);
@@ -235,11 +217,11 @@ class CI_Element {
     }
 }
 
-class CI_Button extends CI_Element {
+class CtrlButton extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const button = document.createElement('button'),
-            attributes = [{ el: button, name: ['class', 'id', 'type'], val: ['ci-button', this.id, 'button'] }];
+            attributes = [{ el: button, name: ['class', 'id', 'type'], val: ['ctrl-button', this.id, 'button'] }];
         button.innerHTML = this.label;
         button.update = function () { };
         this.setAttributes(attributes);
@@ -248,14 +230,14 @@ class CI_Button extends CI_Element {
     }
 }
 
-class CI_ColorPicker extends CI_Element {
+class CtrlColorPicker extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const input = this.createDisplay(),
             display = this.createDisplay(),
             label = this.createLabel(),
-            attributes = [{ el: input, name: ['type', 'class', 'value'], val: ['text', 'ci-color-input', this.options.color] },
-            { el: display, name: ['type', 'class', 'style', 'value', 'readonly'], val: ['', 'ci-color-display', `background-color:${this.options.color}`, "", true] }];
+            attributes = [{ el: input, name: ['type', 'class', 'value'], val: ['text', 'ctrl-color-input', this.options.color] },
+            { el: display, name: ['type', 'class', 'style', 'value', 'readonly'], val: ['', 'ctrl-color-display', `background-color:${this.options.color}`, "", true] }];
         input.update = function (context) {
             this.value = context.value;
         }
@@ -269,12 +251,12 @@ class CI_ColorPicker extends CI_Element {
     }
 }
 
-class CI_StandardInput extends CI_Element {
+class CtrlStandardInput extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const input = this.createDisplay(),
             label = this.createLabel(),
-            attributes = [{ el: input, name: ['type', 'class'], val: ['number', 'ci-input'] }];
+            attributes = [{ el: input, name: ['type', 'class','min','max','step'], val: ['number', 'ctrl-input',this.options.min || Infinity, this.options.max || Infinity, this.options.step || 1] }];
         input.update = function (context) {
             this.value = context.value;
         }
@@ -284,14 +266,16 @@ class CI_StandardInput extends CI_Element {
     }
 }
 
-class CI_Slider extends CI_Element {
+class CtrlSlider extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const slider = document.createElement('input'),
             display = this.createDisplay(),
             label = this.createLabel(),
-            attributes = [{ el: slider, name: ['class', 'id', 'type', 'min', 'max', 'step', 'value'], val: ['ci-slider', this.id, 'range', this.options.min || 0, this.options.max || 100, this.options.step || 1, this.options.defaultValue || this.options.value] },
-            { el: display, name: ['min', 'max', 'step'], val: [this.options.min || 0, this.options.max || 100, this.options.step || 1] }];
+            attributes = [
+                { el: slider, name: ['class', 'id', 'type', 'min', 'max', 'step', 'value'], val: ['ctrl-slider', this.id, 'range', this.options.min || 0, this.options.max || 100, this.options.step || 1, this.options.defaultValue || this.options.value] },
+                { el: display, name: ['min', 'max', 'step'], val: [this.options.min || 0, this.options.max || 100, this.options.step || 1] }
+            ];
         slider.update = function (context) {
             this.value = context.value;
         }
@@ -304,7 +288,7 @@ class CI_Slider extends CI_Element {
     }
 }
 
-class CI_Toggle extends CI_Element {
+class CtrlToggle extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const display = this.createDisplay(),
@@ -315,7 +299,7 @@ class CI_Toggle extends CI_Element {
             attributes = [{ el: slider, name: ['class'], val: ["toggle-slider"] },
             { el: input, name: ['type'], val: ['checkbox'] },
             { el: display, name: ['type', 'readonly'], val: ['', true] },
-            { el: toggle, name: ['class', 'id'], val: ['ci-toggle', this.id] }];
+            { el: toggle, name: ['class', 'id'], val: ['ctrl-toggle', this.id] }];
         toggle.default = this.options.defaultValue || false;
         toggle.switchTo = this.options.switchTo || true;
         toggle.value = toggle.switchTo;
@@ -338,14 +322,14 @@ class CI_Toggle extends CI_Element {
     }
 }
 
-class CI_Dropdown extends CI_Element {
+class CtrlDropdown extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const dropdown = document.createElement('select'),
-            wrapper = this.createWrapper('ci-dropdown-wrapper'),
+            wrapper = this.createWrapper('ctrl-dropdown-wrapper'),
             display = this.createDisplay(),
             label = this.createLabel(),
-            attributes = [{ el: dropdown, name: ['class', 'id'], val: ['ci-dropdown', this.id] },
+            attributes = [{ el: dropdown, name: ['class', 'id'], val: ['ctrl-dropdown', this.id] },
             { el: display, name: ['type', 'readonly'], val: ["", true] }],
             items = Reflect.ownKeys(this.options);
         for (let item of items) {
@@ -378,15 +362,15 @@ class CI_Dropdown extends CI_Element {
     }
 }
 
-class CI_Output extends CI_Element {
+class CtrlOutput extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const content = this.createLabel(),
             label = this.createLabel(),
             unit = this.createLabel(),
-            attributes = [{ el: content, name: ['class'], val: ['ci-output'] },
-            { el: label, name: ['class'], val: ['ci-output-label'] },
-            { el: unit, name: ['class'], val: ['ci-unit'] }];
+            attributes = [{ el: content, name: ['class'], val: ['ctrl-output'] },
+            { el: label, name: ['class'], val: ['ctrl-output-label'] },
+            { el: unit, name: ['class'], val: ['ctrl-unit'] }];
         unit.innerHTML = this.options.unit;
         content.innerHTML = "";
         this.self.update = function (context) {
@@ -399,7 +383,7 @@ class CI_Output extends CI_Element {
     }
 }
 
-class CI extends HTMLElement {
+class Ctrl extends HTMLElement {
     static get observedAttributes() {
         return ['dirty'];
     }
@@ -418,7 +402,7 @@ class CI extends HTMLElement {
     set targetObj(q) { if (q) this.setAttribute('ref', q); }
     get header() { return this.getAttribute('header'); }
     set header(q) { if (q) this.setAttribute('header', q); }
-    get id() { return this.getAttribute('id') || "ci"; }
+    get id() { return this.getAttribute('id') || "ctrl"; }
     set id(q) { if (q) this.setAttribute('id', q); }
     get inputs() { return this._inputs; }
     set inputs(o) { return this._inputs.push(o); }
@@ -435,7 +419,7 @@ class CI extends HTMLElement {
         if (this.getAttribute('id') == undefined) this.id = this.id;
         this.parseJSON();
         this.init();
-        this.offset = this.root.querySelector('.ci').getBoundingClientRect();
+        this.offset = this.root.querySelector('.ctrl').getBoundingClientRect();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -449,18 +433,18 @@ class CI extends HTMLElement {
         const gui = this.createGui(),
             style = document.createElement('style'),
             events = ['click', 'change', 'input'];
-        style.textContent = CI.template(this.setPosition());
+        style.textContent = Ctrl.template(this.setPosition());
 
-        // create & append CI_Elements dependend on userinput
+        // create & append CtrlElements dependend on userinput
         for (let input of this.inputs) {
             const options = input.options, id = input.id,
-                element = (input.options.type === 'input') ? new CI_StandardInput(options, id) :
-                    (input.options.type === 'slider') ? new CI_Slider(options, id) :
-                        (input.options.type === 'dropdown') ? new CI_Dropdown(options, id) :
-                            (input.options.type === 'toggle') ? new CI_Toggle(options, id) :
+                element = (input.options.type === 'input') ? new CtrlStandardInput(options, id) :
+                    (input.options.type === 'slider') ? new CtrlSlider(options, id) :
+                        (input.options.type === 'dropdown') ? new CtrlDropdown(options, id) :
+                            (input.options.type === 'toggle') ? new CtrlToggle(options, id) :
                                 //(input.options.type === 'canvasHandle') ? element.appendCanvas(input.options.defaultValue,input.reference.options.defaultValue) : 
-                                (input.options.type === 'button') ? new CI_Button(input.options, input.id) :
-                                    (input.options.type === 'color') ? new CI_ColorPicker(input.options, input.id) : console.log('wrong type');
+                                (input.options.type === 'button') ? new CtrlButton(input.options, input.id) :
+                                    (input.options.type === 'color') ? new CtrlColorPicker(input.options, input.id) : console.log('wrong type');
             // set subjects that will notify their observer
             const objective = (input.path !== undefined) ? new SuperRef(input.path, this.targetObj) : new SuperRef('value', element);
             this.objectives = objective;
@@ -475,14 +459,14 @@ class CI extends HTMLElement {
                 });
                 objective.addObserver(observer);
             }
-            gui.querySelector('.ci-cb').appendChild(element.self);
+            gui.querySelector('.ctrl-cb').appendChild(element.self);
         }
         this._root.appendChild(gui);
         this._root.appendChild(style);
 
         for (let output of this.outputs) {
             for (let o of output) {
-                const element = new CI_Output({ label: o.label, unit: o.unit }, 'id');
+                const element = new CtrlOutput({ label: o.label, unit: o.unit }, 'id');
                 gui.appendChild(element.self);
                 for (let objective of this.objectives) {
                     if (o.path === objective.path) {
@@ -496,14 +480,14 @@ class CI extends HTMLElement {
 
     createGui() {
         const gui = document.createElement('div');
-        gui.setAttribute('class', 'ci');
+        gui.setAttribute('class', 'ctrl');
         const folder = document.createElement('div');
-        folder.setAttribute('class', 'ci-container');
+        folder.setAttribute('class', 'ctrl-container');
         const header = document.createElement('div');
         header.innerHTML = this.header;
-        header.setAttribute('class', 'ci-header');
+        header.setAttribute('class', 'ctrl-header');
         const contenBox = document.createElement('div');
-        contenBox.setAttribute('class', 'ci-cb');
+        contenBox.setAttribute('class', 'ctrl-cb');
 
         gui.appendChild(folder);
         folder.appendChild(header);
@@ -512,8 +496,8 @@ class CI extends HTMLElement {
     }
 
     setPosition() {
-        const ci = document.getElementById(this.id);
-        let ciTop = ci.getBoundingClientRect().top;
+        const ctrl = document.getElementById(this.id);
+        let ctrlTop = ctrl.getBoundingClientRect().top;
         const offset = window.pageYOffset;
         let previousElementTop;
 
@@ -524,10 +508,10 @@ class CI extends HTMLElement {
                 return previousElementTop = previousElement.getBoundingClientRect().top;
             }
             getPreviousElementPosition(previousElement);
-        })(ci);
+        })(ctrl);
         previousElementTop += offset;
-        ciTop += offset;
-        return { x: +this.xOffset, y: (previousElementTop - ciTop + +this.yOffset) };
+        ctrlTop += offset;
+        return { x: +this.xOffset, y: (previousElementTop - ctrlTop + +this.yOffset) };
     }
 
     getValue(path) {
@@ -609,11 +593,12 @@ class CI extends HTMLElement {
                 if(!dirty) {  } */
                 //} 
             };
-
-            for (let elem of innerHTML.output) {
-                this.outputs = elem.show;
+            if(innerHTML.output !== undefined){
+                for (let elem of innerHTML.output) {
+                    this.outputs = elem.show;
+                }
             }
-            console.log(this.outputs)
+
             return true;
         }
         catch (e) { console.log(e)/* this._root.innerHTML = e.message; */ }
@@ -621,11 +606,11 @@ class CI extends HTMLElement {
     }
 
     static template(position) {
-        document.documentElement.style.setProperty('--ci-base-background-color', '#fffff8');
-        document.documentElement.style.setProperty('--ci-base-shadow-color', '#10162f');
+        document.documentElement.style.setProperty('--ctrl-base-background-color', '#fffff8');
+        document.documentElement.style.setProperty('--ctrl-base-shadow-color', '#10162f');
 
         return `
-            /* .ci:hover {
+            /* .ctrl:hover {
                 -webkit-transform: translate(-0.25rem, -0.25rem);
                 -moz-transform: translate(-0.25rem, -0.25rem);
                 -ms-transform: translate(-0.25rem, -0.25rem);
@@ -637,7 +622,7 @@ class CI extends HTMLElement {
                 margin:0;
             }
 
-            .ci {
+            .ctrl {
                 display: block;
                 margin-bottom: 0.5em;
                 color: #1a1a1a;
@@ -647,7 +632,7 @@ class CI extends HTMLElement {
                 top: ${position.y}px;
                 right: ${position.x}px;
                 float: right;
-                background-color: var(--ci-base-background-color);
+                background-color: var(--ctrl-base-background-color);
                 box-sizing: border-box;
                 border: 1px solid black;
                 /*border-radius: 0px 25px 0px 25px;*/
@@ -661,11 +646,11 @@ class CI extends HTMLElement {
                 box-sizing: inherit;
             }
 
-            .ci::before {
+            .ctrl::before {
                 z-index: -1;
             }
 
-            .ci::after,.ci::before {
+            .ctrl::after,.ctrl::before {
                 content: '';
                 position: absolute;
                 background-color: inherit;
@@ -679,21 +664,21 @@ class CI extends HTMLElement {
                 height: calc(100% + 2px);
             }
 
-            .ci:hover::after {
+            .ctrl:hover::after {
                 -webkit-transform: translate(0.5rem,0.5rem);
                 -moz-transform: translate(0.5rem,0.5rem);
                 -ms-transform: translate(0.5rem,0.5rem);
                 transform: translate(0.5rem,0.5rem);
             }
 
-            .ci::after {
+            .ctrl::after {
                 z-index: -2;
-                background-color: var(--ci-base-shadow-color);
+                background-color: var(--ctrl-base-shadow-color);
                 -webkit-transition: inherit;
                 transition: inherit;
             } */
 
-            .ci-button {
+            .ctrl-button {
                 grid-column-start: 2;
                 grid-column-end: span 4;
                 background: #3839ab linear-gradient(hsla(0, 0, 100%, .2), transparent);
@@ -707,87 +692,87 @@ class CI extends HTMLElement {
                 transition: all 0.25s ease;
             }
 
-            .ci-button:hover:active {
+            .ctrl-button:hover:active {
                 //letter-spacing: 2px;
                 letter-spacing: 2px ;
                 background-color: #C8D6C7;
                 /* box-shadow: 0 .2em .4em rgba(0, 0, 0, 0);  */
             }
 
-            .ci-button:hover {
+            .ctrl-button:hover {
                 background-color: #98ab97;
                 /* box-shadow: 0 .2em .4em rgba(0, 0, 0, 0);  */
             }
 
-            .ci-container {
+            .ctrl-container {
                 max-width: 12.5rem;
             }
 
-            .ci-header {
+            .ctrl-header {
                 color: #E2DDDB;
                 background-color: #58595B;
                 padding-left: 0.25em;
             }
 
-            .ci-cb {
+            .ctrl-cb {
                 border-top: 1px solid black;
                 padding-top: 0.5em;
                 /* word-wrap: anywhere; */
             }
 
-            .ci-element {
+            .ctrl-element {
                 display: grid;
                 grid-template-columns: repeat(5, 20%);
                 padding-bottom: 0.25rem;
                 padding-right: 0.25em;
             }
-            .ci-label {
+            .ctrl-label {
                 grid-column: 1;
                 margin: 0 .25em;
             }
-            .ci-display {
+            .ctrl-display {
                 grid-column: 2 / 4;
                 margin-right: .25em;
             }
-            .ci-color-display {
+            .ctrl-color-display {
                 grid-column: 2 / 3;
                 margin-right: .25em;
             }
-            .ci-dropdown-wrapper,.ci-slider {
+            .ctrl-dropdown-wrapper,.ctrl-slider {
                 grid-column: 4 / 6;
             }
-            .ci-input {
+            .ctrl-input {
                 grid-column: 2 / 6;
             }
-            .ci-color-input {
+            .ctrl-color-input {
                 grid-column: 3 / 6;
             }
-            .ci-output-label {
+            .ctrl-output-label {
                 grid-column: 1 / 3;
                 margin: 0 .25em;
             }
-            .ci-output {
+            .ctrl-output {
                 grid-column: 3 / 5;
             }
-            .ci-unit {
+            .ctrl-unit {
                 grid-column: 5;
             }
-            .ci-canvasHandle {
+            .ctrl-canvasHandle {
                 margin-bottom: 0.25em;
             }
 
-            .ci-canvasHandle > canvas {
+            .ctrl-canvasHandle > canvas {
                 width: 100%;
                 height: 7.5rem;
                 cursor: crosshair;
                 margin: 0 0.25em;
             }
 
-            .ci-label, .ci-symbol, .ci-button {
+            .ctrl-label, .ctrl-symbol, .ctrl-button {
                 height: 1.25rem;
             }
 
-            .ci-input, .ci-display, .ci-color-input, .ci-color-display {
+            .ctrl-input, .ctrl-display, .ctrl-color-input, .ctrl-color-display {
                 height: 1.25rem;
                 padding: 0.25em 0;
                 background-color: #C8D6C7;
@@ -796,7 +781,7 @@ class CI extends HTMLElement {
                 border-radius: 3px;
             }
 
-            .ci-symbol {
+            .ctrl-symbol {
                 font-size: 0.75em;
                 width: 100%;
                 background-color: #C8D6C7;
@@ -816,7 +801,7 @@ class CI extends HTMLElement {
             }
 
         /* begin dropdown styling */
-            .ci-dropdown {
+            .ctrl-dropdown {
                 -webkit-appearance: none;
                 appearance: none;
                 width:100%;
@@ -826,10 +811,10 @@ class CI extends HTMLElement {
                 border: 1px solid #C8D6C7;
                 border-radius: 3px;
             }
-            .ci-dropdown-wrapper {
+            .ctrl-dropdown-wrapper {
                 position: relative;
             }
-            .ci-dropdown-wrapper::after {
+            .ctrl-dropdown-wrapper::after {
                 content: "▾";
                 font-weight:bold;
                 font-size: 1.25rem;
@@ -840,14 +825,14 @@ class CI extends HTMLElement {
         /* end dropdown styling */
 
         /* begin toggle styling */
-            .ci-toggle {
+            .ctrl-toggle {
                 width:2.5rem;
                 height:100%;
                 position: relative;
                 left: 1.25rem;
                 display: inline-block;
             }
-            .ci-toggle input {
+            .ctrl-toggle input {
                 width:2.5rem;
                 height:100%;
                 margin: 0 0 0 0;
@@ -861,7 +846,7 @@ class CI extends HTMLElement {
                 cursor:pointer;
                 opacity:0;
             }
-            .ci-toggle .toggle-slider { /* Grundfläche */
+            .ctrl-toggle .toggle-slider { /* Grundfläche */
                 position: absolute;
                 cursor: pointer;
                 top: 0; 
@@ -872,7 +857,7 @@ class CI extends HTMLElement {
                 border-radius: 1em; 
                 transition: all .3s ease-in-out;
             }
-            .ci-toggle  .toggle-slider::before {  /* verschiebbarer Button */
+            .ctrl-toggle  .toggle-slider::before {  /* verschiebbarer Button */
                 position: absolute;
                 content: "";
                 height: 1em;
@@ -883,12 +868,12 @@ class CI extends HTMLElement {
                 border-radius: 50%;
                 transition: all .3s ease-in-out;
             }
-            .ci-toggle input:checked + .toggle-slider {
+            .ctrl-toggle input:checked + .toggle-slider {
                 background-color: #5a9900;
                 /* green */
             }
         
-            .ci-toggle input:checked + .toggle-slider:before {
+            .ctrl-toggle input:checked + .toggle-slider:before {
                 -webkit-transform: translateX(1.4em);
                 /* Android 4 */
                 -ms-transform: translateX(1.4em);
@@ -900,7 +885,7 @@ class CI extends HTMLElement {
     }
 }
 
-customElements.define('ctrl-ing', CI);
+customElements.define('ctrl-ing', Ctrl);
 
 
 /* function displayTime() {
