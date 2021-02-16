@@ -13,21 +13,18 @@ class SuperRef {
         for (let observer of this.observers) {
             observer.update(this);
         }
-        /* const observerCount = this.observers.count();
-        for (let i=0; i < observerCount; i++) {
-            const observer = this.observers.get(i);
-            for (let observedValue of observer.observedValues) {
-                if(observedValue === key){ observer.update( { value:context, key:key } ); }
-            }
-        }*/
     }
     updateState(value) {
         if (value !== this.value) {
             this.value = value;
             this.handler[this.lastProp] = this.value;
             this.notifyObservers();
-        } else {
-            console.log('nothing changed');
+        }
+    }
+    reviewState(){
+        if(this.handler[this.lastProp] !== this.value) {
+            this.value = this.handler[this.lastProp];
+            this.notifyObservers();
         }
     }
 }
@@ -215,6 +212,33 @@ class CtrlElement {
             }
         }
     }
+    static round(val,acc){
+        if(typeof val === 'number') {
+            return Math.round(val * 10 ** acc)/(10 ** acc);
+        }else if(typeof val === 'object'){
+            let str = JSON.stringify(val);
+            let members = str.split(',').map( m => m.split(':'));
+            for (let member in members){
+                for(let value in members[member]){
+                    if(!isNaN(+members[member][value])) {
+                        const roundedValue = CtrlElement.round(+members[member][value],acc);
+                        members[member][value] = roundedValue;
+                    }
+                }
+            }
+            str = members.map(m => m.join(':')).join(',');
+            const props = str.split('').map(s => {
+                const value = (s === '{') ? '{&nbsp;' :
+                              (s === '}') ? '<br>}' :
+                              (s === ':') ? ':&nbsp;' :
+                              (s === '\"') ? '' :
+                              (s === ',') ? ',<br>&nbsp;&nbsp;&nbsp;' : s;
+                return value;
+            });
+            str = "".concat(...props);
+            return `${str}`
+        }
+    }
 }
 
 class CtrlButton extends CtrlElement {
@@ -365,21 +389,25 @@ class CtrlDropdown extends CtrlElement {
 class CtrlOutput extends CtrlElement {
     constructor(options, id) {
         super(options, id);
-        const content = this.createLabel(),
-            label = this.createLabel(),
-            unit = this.createLabel(),
-            attributes = [{ el: content, name: ['class'], val: ['ctrl-output'] },
-            { el: label, name: ['class'], val: ['ctrl-output-label'] },
-            { el: unit, name: ['class'], val: ['ctrl-unit'] }];
-        unit.innerHTML = this.options.unit;
-        content.innerHTML = "";
-        this.self.update = function (context) {
-            content.innerHTML = context.value;
+        const output = document.createElement('table'),
+        tr = document.createElement('tr'),
+        label = document.createElement('td'),
+        data = document.createElement('td'),
+        attributes = [{ el: output, name: ['class'], val: ['ctrl-output'] },
+                      { el: label, name: ['class'], val: ['ctrl-output-label'] },
+                      { el: data, name: ['class'], val: ['ctrl-output-data'] }];
+
+        const accuracy = this.options.accuracy || 0;
+        label.innerHTML = `${this.label} ${this.options.unit ? '[' + this.options.unit + ']' : ''}`;
+        data.innerHTML = CtrlElement.round(this.options.defaultValue, accuracy);
+        data.update = function (context) {
+            data.innerHTML = CtrlElement.round(context.value, accuracy);
         }
-        console.log(this.options)
         this.setAttributes(attributes);
-        this.appendElements(this.self, label, content, unit);
-        this.children = [content];
+        this.appendElements(tr, label, data);
+        this.appendElements(output, tr);
+        this.appendElements(this.self,output);
+        this.children = [data];
     }
 }
 
@@ -400,7 +428,7 @@ class Ctrl extends HTMLElement {
     get root() { return this._root; }
     get targetObj() { return window[this.getAttribute('ref')]; }
     set targetObj(q) { if (q) this.setAttribute('ref', q); }
-    get header() { return this.getAttribute('header'); }
+    get header() { return this.getAttribute('header') || 'ctrl-ing'; }
     set header(q) { if (q) this.setAttribute('header', q); }
     get id() { return this.getAttribute('id') || "ctrl"; }
     set id(q) { if (q) this.setAttribute('id', q); }
@@ -424,7 +452,9 @@ class Ctrl extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (this.dirty === "true") {
-            console.log('Custom square element attributes changed.');
+            for(let objective of this.objectives){
+                objective.reviewState();
+            }
             this.dirty = false;
         }
     }
@@ -437,45 +467,33 @@ class Ctrl extends HTMLElement {
 
         // create & append CtrlElements dependend on userinput
         for (let input of this.inputs) {
-            const options = input.options, id = input.id,
-                element = (input.options.type === 'input') ? new CtrlStandardInput(options, id) :
-                    (input.options.type === 'slider') ? new CtrlSlider(options, id) :
-                        (input.options.type === 'dropdown') ? new CtrlDropdown(options, id) :
+            const options = input.options, id = input.id;
+            const element = (input.options.type === 'input') ? new CtrlStandardInput(options, id) :
+                            (input.options.type === 'slider') ? new CtrlSlider(options, id) :
+                            (input.options.type === 'dropdown') ? new CtrlDropdown(options, id) :
                             (input.options.type === 'toggle') ? new CtrlToggle(options, id) :
-                                //(input.options.type === 'canvasHandle') ? element.appendCanvas(input.options.defaultValue,input.reference.options.defaultValue) : 
-                                (input.options.type === 'button') ? new CtrlButton(input.options, input.id) :
-                                    (input.options.type === 'color') ? new CtrlColorPicker(input.options, input.id) : console.log('wrong type');
+                            (input.options.type === 'button') ? new CtrlButton(options, id) :
+                            (input.options.type === 'color') ? new CtrlColorPicker(options, id) : 
+                            (input.options.type === 'output') ? new CtrlOutput(options, id) : console.log('wrong type');
             // set subjects that will notify their observer
             const objective = (input.path !== undefined) ? new SuperRef(input.path, this.targetObj) : new SuperRef('value', element);
             this.objectives = objective;
             let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : 'change';
-            let callback = (event != undefined) ? window[input.func] : undefined;
+            let callback = (event != undefined) ? this.targetObj[input.func] || window[input.func] : undefined;
 
             for (let observer of element.children) {
+                objective.addObserver(observer);
+                if(input.options.type === 'output') continue;
                 observer.addEventListener(event, () => {
                     const value = (typeof observer.value === 'boolean' || 'string') ? observer.value : +observer.value;
                     objective.updateState(value);
                     if (callback != undefined) return callback();
                 });
-                objective.addObserver(observer);
             }
             gui.querySelector('.ctrl-cb').appendChild(element.self);
         }
         this._root.appendChild(gui);
         this._root.appendChild(style);
-
-        for (let output of this.outputs) {
-            for (let o of output) {
-                const element = new CtrlOutput({ label: o.label, unit: o.unit }, 'id');
-                gui.appendChild(element.self);
-                for (let objective of this.objectives) {
-                    if (o.path === objective.path) {
-                        objective.addObserver(element.self);
-                    }
-                }
-            }
-
-        }
     }
 
     createGui() {
@@ -540,32 +558,15 @@ class Ctrl extends HTMLElement {
 
     parseJSON() {
         try {
-            const types = ['input', 'slider', 'dropdown', 'toggle', 'canvasHandle', 'button', 'color'];
+            const types = ['input', 'slider', 'dropdown', 'toggle', 'canvasHandle', 'button', 'color', 'output'];
             const innerHTML = JSON.parse(this.innerHTML);
 
             for (let elem of innerHTML.add) {
                 const type = Object.keys(elem).find(key => types.includes(key));
-                /* if(elem.hasOwnProperty('paths')){
-                    for (let path of elem.paths){
-                        const newObject = Object.assign( { path: path }, elem),
-                              props = [...newObject.paths[0].split('/'),...newObject.paths[1].split('/')],
-                              id = props.reduce((acc,next) => {
-                                  if(acc.split('-').includes(next)) {return acc; }
-                                  if(props.lastIndexOf(next) === props.length - 1) { return acc + next; }
-                                return acc + next + '-';
-                              }, "");
-                        if(!newObject.hasOwnProperty('id')) newObject.id = id;
-                        delete newObject.paths;
-                        innerHTML.add.push(newObject);
-                    }
-                    continue;
-                } */
-                //if(elem.hasOwnProperty('path')){
-                const props = (elem.hasOwnProperty('path')) ? elem.path.split('/') : elem.path = undefined/* undefined */,
-                    prop = (props !== undefined) ? props.pop() : undefined,
-                    defaultValue = (props !== undefined) ? this.getValue(elem.path) : undefined,
-                    event = (elem.hasOwnProperty('on')) ? Reflect.ownKeys(elem.on).shift() : elem.on = undefined;
-                console.log('elem: ', elem, props)
+                const props = (elem.hasOwnProperty('path')) ? elem.path.split('/') : elem.path = undefined,
+                      prop = (props !== undefined) ? props.pop() : undefined,
+                      defaultValue = (props !== undefined) ? this.getValue(elem.path) : undefined,
+                      event = (elem.hasOwnProperty('on')) ? Reflect.ownKeys(elem.on).shift() : elem.on = undefined;
                 Object.defineProperty(elem, 'options', { value: { type: type, label: prop || type, defaultValue: defaultValue }, writable: true, enumerable: true, configurable: true });
                 if (elem.on !== undefined) {
                     Object.defineProperty(elem, 'event', { value: event, writable: true, enumerable: true, configurable: true });
@@ -583,26 +584,16 @@ class Ctrl extends HTMLElement {
                 delete elem[type];
                 this.inputs = elem;
 
-                /* let dirty = false;
-                for (let input of this.inputs){
-                    if(input.id === elem.id){
-                        dirty = true;
-                        input.reference = elem;
-                    }
-                }
-                if(!dirty) {  } */
-                //} 
             };
-            if(innerHTML.output !== undefined){
-                for (let elem of innerHTML.output) {
-                    this.outputs = elem.show;
-                }
-            }
 
             return true;
         }
         catch (e) { console.log(e)/* this._root.innerHTML = e.message; */ }
         return false;
+    }
+
+    update() {
+        this.dirty = true;
     }
 
     static template(position) {
@@ -705,7 +696,7 @@ class Ctrl extends HTMLElement {
             }
 
             .ctrl-container {
-                max-width: 12.5rem;
+                width: 12.5rem;
             }
 
             .ctrl-header {
@@ -747,16 +738,32 @@ class Ctrl extends HTMLElement {
             .ctrl-color-input {
                 grid-column: 3 / 6;
             }
-            .ctrl-output-label {
-                grid-column: 1 / 3;
-                margin: 0 .25em;
-            }
             .ctrl-output {
-                grid-column: 3 / 5;
+                grid-column: 1 / 6;
+                display: flex;
+                font-size: 0.75rem;
+                word-wrap: anywhere;
+                overflow: scroll;
+                white-space: pre-wrap;
+                /* padding: 0.25em 0; */
+                margin-left: .25em;
+                background-color: #C8D6C7;
+                border: 1px solid rgba(0, 0, 0, .51);
+                border-radius: 3px;
+                max-height: 3rem;
             }
-            .ctrl-unit {
-                grid-column: 5;
-            }
+            .ctrl-output-label {
+                width: 50%;
+                padding-right: 0.5rem;
+                padding-left: 0.25em;
+                border-right: 2px solid rgba(0, 0, 0, .5);
+                vertical-align: top;
+
+            } 
+            .ctrl-output-data{
+                width: 10rem; 
+                padding-left: 0.5rem;
+            } 
             .ctrl-canvasHandle {
                 margin-bottom: 0.25em;
             }

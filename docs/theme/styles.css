@@ -46,6 +46,7 @@
   --bgcol-code: #1f3939;
   --color-shade: #666;
   --color-blockquote-bar: #583733;
+  --sidebar-width: 14rem;
 }
 
 .theme-light {
@@ -93,9 +94,43 @@ body {
   font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
   box-shadow: 0 0 0.5em var(--color-shade);
 }
-@media screen and (min-width: 768px) {
+main > nav {
+  overflow-y: scroll;
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;
+  grid-column: 1;
+  background: var(--bgcol-main);
+  color: var(--color-main);
+  position: sticky;
+  width:10em;
+  top: 0.5em;
+  height: 98vh;
+  margin: 0.5em 0.5em;
+  border-right: 1px solid;
+  align-self: start;
+}
+
+/* Hide scrollbar in Chrome and Safari */
+main > nav::-webkit-scrollbar {
+  width: 0;
+}
+/* Hide scrollbar for Firefox */
+#nav {
+  scrollbar-width: none;
+}
+/* for Chrome and Safari */
+#nav::-webkit-scrollbar {
+  width: 0;
+}
+main > article {
+  /* max-width: 640px; */
+  grid-column: 2;
+  display: block;
+  padding: 1rem;
+}
+@media screen and (min-width: 1024px) {
   body {
-    max-width: 768px;
+    max-width: 1024px;
     margin: 1em auto;
   }
 }
@@ -103,6 +138,7 @@ main, footer {
   padding: 5px 1em;
 }
 main {
+  display: grid;
   color: var(--color-main);
   background-color: var(--bgcol-main);
   word-wrap: break-word;
@@ -288,9 +324,9 @@ pre > code.code-line > div {
   background-color: var(--bgcol-code);
   border-radius: 5px;
   margin: 0 1rem 1rem 1rem;
-  padding: 0.5em;
+  padding: 2em 0 2em 1em;
   white-space: pre-wrap;
-  height: 10rem;
+  max-height: 12.5em;
   overflow: scroll;
 }
 kbd {
@@ -351,7 +387,7 @@ time {
   main > nav {
     display: none;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     break-after: avoid;
     break-inside: avoid;

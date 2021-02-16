@@ -20,15 +20,21 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 </head>
 <body>
 <header>
-  <a href="./index.html" class="left">microJam - Tufte Style</a>
+  <a href="./index.html" class="left">&lt;ctrl-ing&gt;</a>
   <span class="right"><a href="./index.html">About</a> | <a href="https://github.com/dmitrijLo/HMI">Source</a></span>
 </header>
 <main>
-${data.content}
+<nav>
+  <nav-pane base="${data.base}"></nav-pane>
+</nav>
+<article>
+  ${data.content}
+</article>
 </main>
 <footer>
-  <script src="./src/ctrling.js"></script>
-  <script src="./js/g2.html.js"></script>
+  <script src="../src/ctrling.js"></script>
+  ${data.g2 ? `<script src="./js/g2.html.js"></script>` : ''}
+  <script src="${data.base}/js/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>
   <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
   <span class="right"
@@ -40,6 +46,34 @@ ${data.content}
 </body>
 </html>` 
 },
+
+navigation(data) {
+  return `<!doctype html>
+  <html${data.lang ? ` lang="${data.lang}"` : ''}>
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,user-scalable=no">
+  <meta name="description" content="${data.description || (data.title + ' - microjam page')}">
+  ${data.authors ? `<meta name="authoraa" content="${data.authors.join()}">` : ''}
+  ${data.date ? `<meta name="date" content="${new Date(data.date).toString()}">` : ''}
+  ${data.tags ? `<meta name="keywords" content="${data.tags.join()}">` : ''}
+  ${data.navigation || ''}
+  <title>${data.title}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.18.1/styles/tomorrow-night-bright.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.css">
+  <link rel="stylesheet" href="${data.base}/theme/style.css">
+  </head>
+  <body id="nav">
+  <main>
+  <article>
+  ${data.content}
+  </article>
+  </main>
+  </body>
+  </html>` 
+},
+
 // page layout ...
 page(data) {
   return tmpl.base(data);
