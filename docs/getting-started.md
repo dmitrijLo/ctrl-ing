@@ -10,10 +10,10 @@
 Use the convenience of CDN to add `<ctrl-ing>`:
 
 ```HTML
-<script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing/docs/src/ctrling.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing/src/ctrling.min.js"></script>
 ```
 
-Or, <a target="_blank" rel="noopener noreferrer" href='../src/ctrling.js' download>download the latest ctrling.js version</a> and import it to your web page:
+Or, <a target="_blank" rel="noopener noreferrer" href='' download>download the latest ctrling.js version</a> and import it to your web page:
 
 ```HTML
 <script src="./path/to/ctrling.js"></script>
