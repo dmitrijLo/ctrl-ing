@@ -33,8 +33,8 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 </main>
 <footer>
   <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing/src/ctrling.min.js"></script>
-  ${data.g2 ? `<script src="./js/g2.html.js"></script>` : ''}
-  <script src="${data.base}/js/navigation.js"></script>
+  ${data.g2 ? `<script src="${data.base}/bin/g2.html.js"></script>` : ''}
+  <script src="${data.base}/bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>
   <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
   <span class="right"

@@ -16,11 +16,11 @@
 Take control over objects with this minimalistic panel designed as custom HTML element.
 
 </div>
-<script src="../bin/canvasInteractor.js"></script>
-<script src="../bin/g2.core.js"></script>
-<script src="../bin/g2.lib.js"></script>
-<script src="../bin/g2.ext.js"></script>
-<script src="../bin/g2.selector.js"></script>
+<script src="./bin/canvasInteractor.js"></script>
+<script src="./bin/g2.core.js"></script>
+<script src="./bin/g2.lib.js"></script>
+<script src="./bin/g2.ext.js"></script>
+<script src="./bin/g2.selector.js"></script>
 
 <script>
 const ctx = document.getElementById('c').getContext('2d');

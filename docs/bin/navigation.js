@@ -6,10 +6,10 @@ const nav = {
         "path": "getting-started.html"
     },{
         "name": "Attributes",
-        "path": ""
+        "path": "attributes.html"
     },{
-        "name": "Elements",
-        "path": ""
+        "name": "Inputs",
+        "path": "inputs.html"
     },{
         "name": "Studywork",
         "path": "studywork.html"

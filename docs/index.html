@@ -34,11 +34,11 @@
 <h1 id="ctrl-ing"><code>&lt;ctrl-ing&gt;</code></h1>
 <p>Take control over objects with this minimalistic panel designed as custom HTML element.</p>
 </div>
-<script src="../bin/canvasInteractor.js"></script>
-<script src="../bin/g2.core.js"></script>
-<script src="../bin/g2.lib.js"></script>
-<script src="../bin/g2.ext.js"></script>
-<script src="../bin/g2.selector.js"></script>
+<script src="./bin/canvasInteractor.js"></script>
+<script src="./bin/g2.core.js"></script>
+<script src="./bin/g2.lib.js"></script>
+<script src="./bin/g2.ext.js"></script>
+<script src="./bin/g2.selector.js"></script>
 <script>
 const ctx = document.getElementById('c').getContext('2d');
 const interactor = canvasInteractor.create(ctx, {x:200,y:200,cartesian:true});
@@ -69,7 +69,7 @@ interactor.on('tick', (e) => { g.exe(selector).exe(ctx) } )
 <footer>
   <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing/src/ctrling.min.js"></script>
   
-  <script src="./js/navigation.js"></script>
+  <script src="./bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>
   <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
   <span class="right"

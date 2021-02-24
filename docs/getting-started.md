@@ -1,6 +1,6 @@
 ---
 "layout": "page",
-"title": "Getting Started"
+"title": "ctrl-ing"
 ---
 
 # Getting Started
@@ -19,7 +19,7 @@ Or, <a target="_blank" rel="noopener noreferrer" href='' download>download the l
 <script src="./path/to/ctrling.js"></script>
 ```
 
-> Note that since `<ctrl-ing>` is a custom html element which is a relative young web technology, it was found through this work that ctrling.js should be imported after declaration of the object you want to control. This will ensure that `<ctrl-ing>` is displayed properly cross different browser.
+> **Note:** Since `<ctrl-ing>` is a custom html element which is a relative young web technology, it was found through this work that ctrling.js should be imported after declaration of the object you want to control. This will ensure that `<ctrl-ing>` is displayed properly cross different browser.
 
 ## 2. Create an object which you want to control
 

@@ -1,0 +1,89 @@
+<!doctype html>
+<html class="theme-light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,user-scalable=no">
+<meta name="description" content="ctrl-ing">
+
+<meta name="keywords" content="">
+<title>ctrl-ing</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.18.1/styles/vs2015.min.css">
+
+<link rel="stylesheet" href="./theme/styles.css">
+<script src="https://cdn.jsdelivr.net/gh/goessner/g2@v2.5/src/g2.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/goessner/mec2@master/mec2.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tweakpane@1.5.5/dist/tweakpane.min.js"></script>
+</head>
+<body>
+<header>
+  <a href="./index.html" class="left">&lt;ctrl-ing&gt;</a>
+  <span class="right"><a href="./index.html">About</a> | <a href="https://github.com/dmitrijLo/HMI">Source</a></span>
+</header>
+<main>
+<nav>
+  <nav-pane base="."></nav-pane>
+</nav>
+<article>
+  <h1 id="inputs">Inputs</h1>
+<p>Add components by writing into the innerHtml of the <code>ctrl-ing</code>-element. The <code>ctrl-ing</code>-element interprets its innerHTML using the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> format.</p>
+<p>Start with:</p>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;targetObject&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [
+
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<blockquote>
+<p><strong>Note:</strong> <code>&quot;add&quot;</code> defines the array containing all components which are in turn represented as objects.</p>
+</blockquote>
+<h2 id="standard-input">Standard input</h2>
+<script>var targetObject = { x:10 }</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;targetObject&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [
+        { &quot;input&quot;:{ &quot;label&quot;:&quot;velocity&quot;,&quot;min&quot;:10,&quot;max&quot;:100,&quot;step&quot;:0.5 },
+          &quot;path&quot;:&quot;x&quot;,&quot;on&quot;:{&quot;change&quot;:&quot;myFunc&quot;} }
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<ctrl-ing ref="targetObject" xOffset=20 yOffset=-15>
+{
+    "add": [ { "input":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
+}
+</ctrl-ing>
+<h2 id="slider">Slider</h2>
+<script>var targetObject = { x:10 }</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;targetObject&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [
+        { &quot;slider&quot;:{ &quot;label&quot;:&quot;velocity&quot;,&quot;min&quot;:10,&quot;max&quot;:100,&quot;step&quot;:0.5 },
+          &quot;path&quot;:&quot;x&quot;,&quot;on&quot;:{&quot;input&quot;:&quot;myFunc&quot;} }
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<ctrl-ing ref="targetObject" xOffset=20 yOffset=-15>
+{
+    "add": [ { "slider":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
+}
+</ctrl-ing>
+
+</article>
+</main>
+<footer>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing/src/ctrling.min.js"></script>
+  
+  <script src="./bin/navigation.js"></script>
+  <span class="left">&copy; Dmitrij</span>
+  <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
+  <span class="right"
+        title="toggle light/dark theme"
+        onclick="document.documentElement.className = document.documentElement.className === 'theme-dark' ? 'theme-light' : 'theme-dark';">
+    &#9788;
+  </span>
+</footer>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html class="theme-light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,user-scalable=no">
+<meta name="description" content="ctrl-ing">
+
+<meta name="keywords" content="">
+<title>ctrl-ing</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.18.1/styles/vs2015.min.css">
+
+<link rel="stylesheet" href="./theme/styles.css">
+<script src="https://cdn.jsdelivr.net/gh/goessner/g2@v2.5/src/g2.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/goessner/mec2@master/mec2.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tweakpane@1.5.5/dist/tweakpane.min.js"></script>
+</head>
+<body>
+<header>
+  <a href="./index.html" class="left">&lt;ctrl-ing&gt;</a>
+  <span class="right"><a href="./index.html">About</a> | <a href="https://github.com/dmitrijLo/HMI">Source</a></span>
+</header>
+<main>
+<nav>
+  <nav-pane base="."></nav-pane>
+</nav>
+<article>
+  <h1 id="attributes">Attributes</h1>
+<p><code>&lt;ctrl-ing&gt;</code> provides several attributes.</p>
+<h2 id="required">Required</h2>
+<ul>
+<li><code>ref</code>: Reference to the target object.</li>
+</ul>
+<h2 id="optional">Optional</h2>
+<ul>
+<li><code>id</code>: Set a custom id. Omit for default id <code>ctrl</code>.</li>
+<li><code>header</code>: Label the header of the element. Otherwise the header will be set to <code>ctrl-ing</code>.</li>
+<li><code>xOffset</code>: Shift the element a number of <code>px</code> to the left.</li>
+<li><code>yOffset</code>: Shift the element a number of <code>px</code> down.</li>
+</ul>
+<h2 id="minimal-example">Minimal example</h2>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;model&quot;</span> <span class="hljs-attr">header</span>=<span class="hljs-string">&quot;Headline&quot;</span> <span class="hljs-attr">xOffset</span>=<span class="hljs-string">100</span> <span class="hljs-attr">yOffset</span>=<span class="hljs-string">50</span>&gt;</span>
+//...
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+
+</article>
+</main>
+<footer>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing/src/ctrling.min.js"></script>
+  
+  <script src="./bin/navigation.js"></script>
+  <span class="left">&copy; Dmitrij</span>
+  <span class="center">powered by &mu;Jam &amp; <a href="https://code.visualstudio.com/">VSCode</a> &mdash; hosted by <a href="https://github.com/">GitHub</a></span>
+  <span class="right"
+        title="toggle light/dark theme"
+        onclick="document.documentElement.className = document.documentElement.className === 'theme-dark' ? 'theme-light' : 'theme-dark';">
+    &#9788;
+  </span>
+</footer>
+</body>
+</html>
