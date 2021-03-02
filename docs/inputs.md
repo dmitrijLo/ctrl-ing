@@ -21,7 +21,7 @@ Start with:
 
 > **Note:** `"add"` defines the array containing all components which are in turn represented as objects.
 
-## Standard input
+## Input
 
 <script>var targetObject = { x:10 }</script>
 
@@ -62,3 +62,14 @@ Start with:
     "add": [ { "slider":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
 }
 </ctrl-ing>
+
+## Dropdown
+
+## Toggle
+
+## Button
+
+## Output
+
+## Color
+
