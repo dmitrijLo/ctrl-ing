@@ -462,6 +462,8 @@ class Ctrl extends HTMLElement {
         document.documentElement.style.setProperty('--ctrl-base-shadow-color', '#10162f');
 
         return `
+
+
             /* .ctrl:hover {
                 -webkit-transform: translate(-0.25rem, -0.25rem);
                 -moz-transform: translate(-0.25rem, -0.25rem);
@@ -472,14 +474,14 @@ class Ctrl extends HTMLElement {
             *, ::after, ::before {
                 box-sizing: inherit;
                 margin:0;
+                font-size: 12px;
+                font-family: Lucida Grande, Tahoma, Arial;
             }
 
             .ctrl {
                 display: block;
                 margin-bottom: 0.5em;
                 color: #1a1a1a;
-                font-family: inherit;
-                font-size: 0.75em;
                 position: relative;
                 top: ${position.y}px;
                 right: ${position.x}px;
@@ -592,7 +594,7 @@ class Ctrl extends HTMLElement {
                 grid-row: 1;
                 white-space: nowrap;
                 overflow: hidden;
-                margin-bottom: -0.2rem;
+                margin-bottom: -0.1rem;
                 z-index: 1;
 
             }
