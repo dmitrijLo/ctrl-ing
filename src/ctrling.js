@@ -1,3 +1,4 @@
+var a;
 class SuperRef {
     constructor(path, targetObj) {
         this.path = path;
@@ -179,28 +180,32 @@ class CtrlButton extends CtrlElement {
     }
 }
 
-class CtrlColorPicker extends CtrlElement {
+class CtrlColorInput extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const input = this.createDisplay(),
             display = this.createDisplay(),
+            picker = this.createDisplay(),
             label = this.createLabel(),
             attributes = [{ el: input, name: ['type', 'class', 'value'], val: ['text', 'ctrl-color-input', this.options.color] },
-            { el: display, name: ['type', 'class', 'style', 'value', 'readonly'], val: ['', 'ctrl-color-display', `background-color:${this.options.color}`, "", true] }];
+                          { el: picker, name: ['type', 'class', 'style', 'value'], val: ['color', 'ctrl-color-picker', `opacity:0`, `${options.color}`] },
+                          { el: display, name: ['class','style','readonly'], val: ['ctrl-color-display',`background-color:${options.color};`,true] }];
         input.update = function (context) {
             this.value = context.value;
         }
-        display.update = function (context) {
-            this.setAttribute('style', `background-color:${context.value}`);
+        picker.update = function (context) {
+            display.setAttribute('style', `background-color:${context.value}`);
         }
 
         this.setAttributes(attributes);
-        this.appendElements(this.self, label, display, input);
-        this.children = [display, input];
+        this.appendElements(this.self, label, display, picker, input);
+        this.children = [picker, input];
+        //picker.autofocus = true;
+        a = picker;
     }
 }
 
-class CtrlStandardInput extends CtrlElement {
+class CtrlNumberInput extends CtrlElement {
     constructor(options, id) {
         super(options, id);
         const input = this.createDisplay(),
@@ -393,17 +398,17 @@ class Ctrl extends HTMLElement {
         // create & append CtrlElements dependend on userinput
         for (let input of this.inputs) {
             const options = input.options, id = input.id;
-            const element = (input.options.type === 'input') ? new CtrlStandardInput(options, id) :
+            const element = (input.options.type === 'input') ? new CtrlNumberInput(options, id) :
                             (input.options.type === 'slider') ? new CtrlSlider(options, id) :
                             (input.options.type === 'dropdown') ? new CtrlDropdown(options, id) :
                             (input.options.type === 'toggle') ? new CtrlToggle(options, id) :
                             (input.options.type === 'button') ? new CtrlButton(options, id) :
-                            (input.options.type === 'color') ? new CtrlColorPicker(options, id) : 
+                            (input.options.type === 'color') ? new CtrlColorInput(options, id) : 
                             (input.options.type === 'output') ? new CtrlOutput(options, id) : console.log('wrong type');
             // set subjects that will notify their observer
             const objective = (input.path !== undefined) ? new SuperRef(input.path, this.targetObj) : new SuperRef('value', element);
             this.objectives = objective;
-            let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : 'change';
+            let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : 'input';
             let callback = (event != undefined) ? this.targetObj[input.func] || window[input.func] : undefined;
 
             for (let observer of element.children) {
@@ -688,22 +693,17 @@ class Ctrl extends HTMLElement {
             .ctrl-output-data{
                 width: 10rem; 
                 padding-left: 0.5rem;
-            } 
-            .ctrl-canvasHandle {
-                margin-bottom: 0.25em;
-            }
-
-            .ctrl-canvasHandle > canvas {
-                width: 100%;
-                height: 7.5rem;
-                cursor: crosshair;
-                margin: 0 0.25em;
             }
 
             .ctrl-label, .ctrl-symbol, .ctrl-button {
                 height: 1.25rem;
             }
+            .ctrl-color-picker{
+                position:absolute;
+                margin-left: 20%;
+                width: 20%;
 
+            }
             .ctrl-input, .ctrl-display, .ctrl-color-input, .ctrl-color-display {
                 height: 1.25rem;
                 padding: 0.25em 0;
