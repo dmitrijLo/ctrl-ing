@@ -1,4 +1,3 @@
-var a;
 class SuperRef {
     constructor(path, targetObj) {
         this.path = path;
@@ -58,10 +57,6 @@ class CtrlElement {
 
     createWrapper(className = 'ctrl-wrapper') {
         const wrapper = document.createElement('div');
-        /* const wrapper = document.createElement('fieldset'),
-              legend = document.createElement('legend');
-              wrapper.appendChild(legend);
-        legend.innerHTML = this.label; */
         wrapper.setAttribute('class', className);
         return wrapper;
     }
@@ -69,60 +64,8 @@ class CtrlElement {
     createLabel() {
         const label = document.createElement('div');
         label.setAttribute('class', 'ctrl-label');
-        label.innerHTML = this.label;
+        label.textContent = `__ ${this.label} _____________________________`;
         return label;
-    }
-
-    appendCanvas(p1, p2) {
-        function convertRemToPixels(rem) {
-            return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-        }
-        const displayP1 = this.createDisplay(),
-            displayP2 = this.createDisplay(),
-            label = this.createLabel(),
-            displayWrapper = this.createWrapper('ctrl-element'),
-            wrapper = this.createWrapper(),
-            symbol = document.createElement('div'),
-            canvas = document.createElement('canvas'),
-            defaultStyle = { canvas: 'width:0;height:0', element: 'height:1.25rem', visible: false },
-            attributes = [{ el: canvas, name: ['id', 'style', 'width', 'height'], val: [this.id, defaultStyle.canvas, `${convertRemToPixels(12)}px`, `${convertRemToPixels(10)}px`] },
-            { el: this.element, name: ['class', 'style'], val: ['ctrl-canvasHandle', defaultStyle.element] },
-            { el: symbol, name: ['class'], val: ['ctrl-symbol'] },
-            { el: displayP1, name: ['value'], val: [p1] },
-            { el: displayP2, name: ['value'], val: [p2] }];
-        this.setAttributes(attributes);
-        canvas.getContext('2d').translate(0, canvas.height);
-        canvas.getContext('2d').scale(1, -1);
-        symbol.innerHTML = "&#9660;";
-        symbol.addEventListener('click', () => {
-            if (!defaultStyle.visible) {
-                canvas.setAttribute('style', 'width: auto;height: auto;border:1px solid black;');
-                this.element.setAttribute('style', 'height:auto')
-            } else {
-                canvas.setAttribute('style', defaultStyle.canvas);
-                this.element.setAttribute('style', defaultStyle.element);
-            }
-            defaultStyle.visible = !defaultStyle.visible;
-        })
-        displayP1.update = function (context) {
-            this.value = context.value;
-        }
-        displayP2.update = function (context) {
-            this.value = context.value;
-        }
-        canvas.update = function (context) {
-            if (context.key === this.observedValues[0]) {
-                this.interactor.handle = { x: context.value * this.interactor.resolution.x, y: this.interactor.handle.y };
-                console.log(this.interactor.handle)
-            } else if (context.key === this.observedValues[1]) {
-                this.interactor.handle = { x: this.interactor.handle.x, y: context.value * this.interactor.resolution.y };
-            }
-            this.interactor.strokeHandle();
-        }
-
-        this.appendElements(wrapper, displayP1, displayP2, symbol);
-        this.appendElements(displayWrapper, label, wrapper);
-        this.appendElements(this.element, displayWrapper, canvas);
     }
 
     appendElements(reciever, ...elements) {
@@ -183,13 +126,10 @@ class CtrlButton extends CtrlElement {
 class CtrlColorInput extends CtrlElement {
     constructor(options, id) {
         super(options, id);
-        const input = this.createDisplay(),
-            display = this.createDisplay(),
-            picker = this.createDisplay(),
-            label = this.createLabel(),
-            attributes = [{ el: input, name: ['type', 'class', 'value'], val: ['text', 'ctrl-color-input', this.options.color] },
-                          { el: picker, name: ['type', 'class', 'style', 'value'], val: ['color', 'ctrl-color-picker', `opacity:0`, `${options.color}`] },
-                          { el: display, name: ['class','style','readonly'], val: ['ctrl-color-display',`background-color:${options.color};`,true] }];
+        const wrapper = this.createWrapper(), input = this.createDisplay(), display = this.createDisplay(), picker = this.createDisplay(), label = this.createLabel(),
+              attributes = [{ el: input, name: ['type', 'class', 'value'], val: ['text', 'ctrl-color-input', this.options.color] },
+                            { el: picker, name: ['type', 'class', 'style', 'value'], val: ['color', 'ctrl-color-picker', `opacity:0`, `${options.color}`] },
+                            { el: display, name: ['class','style','readonly'], val: ['ctrl-color-display',`background-color:${options.color};`,true] }];
         input.update = function (context) {
             this.value = context.value;
         }
@@ -198,24 +138,23 @@ class CtrlColorInput extends CtrlElement {
         }
 
         this.setAttributes(attributes);
-        this.appendElements(this.self, label, display, picker, input);
+        this.appendElements(wrapper,display,picker,input)
+        this.appendElements(this.self,label,wrapper);
         this.children = [picker, input];
-        //picker.autofocus = true;
-        a = picker;
     }
 }
 
 class CtrlNumberInput extends CtrlElement {
     constructor(options, id) {
         super(options, id);
-        const input = this.createDisplay(),
-            label = this.createLabel(),
-            attributes = [{ el: input, name: ['type', 'class','min','max','step'], val: ['number', 'ctrl-input',this.options.min || Infinity, this.options.max || Infinity, this.options.step || 1] }];
+        const wrapper = this.createWrapper(), input = this.createDisplay(), label = this.createLabel(),
+              attributes = [{ el: input, name: ['type', 'class','min','max','step'], val: ['number', 'ctrl-input',this.options.min || Infinity, this.options.max || Infinity, this.options.step || 1] }];
         input.update = function (context) {
             this.value = context.value;
         }
         this.setAttributes(attributes);
-        this.appendElements(this.self, label, input);
+        this.appendElements(wrapper, input);
+        this.appendElements(this.self, label, wrapper);
         this.children = [input];
     }
 }
@@ -223,13 +162,9 @@ class CtrlNumberInput extends CtrlElement {
 class CtrlSlider extends CtrlElement {
     constructor(options, id) {
         super(options, id);
-        const slider = document.createElement('input'),
-            display = this.createDisplay(),
-            label = this.createLabel(),
-            attributes = [
-                { el: slider, name: ['class', 'id', 'type', 'min', 'max', 'step', 'value'], val: ['ctrl-slider', this.id, 'range', this.options.min || 0, this.options.max || 100, this.options.step || 1, this.options.defaultValue || this.options.value] },
-                { el: display, name: ['min', 'max', 'step'], val: [this.options.min || 0, this.options.max || 100, this.options.step || 1] }
-            ];
+        const wrapper = this.createWrapper(), slider = document.createElement('input'), display = this.createDisplay(), label = this.createLabel(),
+              attributes = [{ el: slider, name: ['class', 'id', 'type', 'min', 'max', 'step', 'value'], val: ['ctrl-slider', this.id, 'range', this.options.min || 0, this.options.max || 100, this.options.step || 1, this.options.defaultValue || this.options.value] },
+                            { el: display, name: ['min', 'max', 'step'], val: [this.options.min || 0, this.options.max || 100, this.options.step || 1] }];
         slider.update = function (context) {
             this.value = context.value;
         }
@@ -237,7 +172,8 @@ class CtrlSlider extends CtrlElement {
             this.value = context.value;
         }
         this.setAttributes(attributes);
-        this.appendElements(this.self, label, display, slider);
+        this.appendElements(wrapper, display, slider);
+        this.appendElements(this.self, label, wrapper);
         this.children = [display, slider];
     }
 }
@@ -245,15 +181,11 @@ class CtrlSlider extends CtrlElement {
 class CtrlToggle extends CtrlElement {
     constructor(options, id) {
         super(options, id);
-        const display = this.createDisplay(),
-            label = this.createLabel(),
-            slider = document.createElement('span'),
-            input = document.createElement('input'),
-            toggle = document.createElement('div'),
-            attributes = [{ el: slider, name: ['class'], val: ["toggle-slider"] },
-            { el: input, name: ['type'], val: ['checkbox'] },
-            { el: display, name: ['type', 'readonly'], val: ['', true] },
-            { el: toggle, name: ['class', 'id'], val: ['ctrl-toggle', this.id] }];
+        const wrapper = this.createWrapper(), display = this.createDisplay(), label = this.createLabel(), slider = document.createElement('span'), input = document.createElement('input'), toggle = document.createElement('div'),
+              attributes = [{ el: slider, name: ['class'], val: ["toggle-slider"] },
+                            { el: input, name: ['type'], val: ['checkbox'] },
+                            { el: display, name: ['type', 'readonly'], val: ['', true] },
+                            { el: toggle, name: ['class', 'id'], val: ['ctrl-toggle', this.id] }];
         toggle.default = this.options.defaultValue || false;
         toggle.switchTo = this.options.switchTo || true;
         toggle.value = toggle.switchTo;
@@ -271,7 +203,8 @@ class CtrlToggle extends CtrlElement {
         }
         this.setAttributes(attributes);
         this.appendElements(toggle, input, slider);
-        this.appendElements(this.self, label, display, toggle);
+        this.appendElements(wrapper,display,toggle);
+        this.appendElements(this.self, label, wrapper);
         this.children = [display, toggle];
     }
 }
@@ -279,13 +212,10 @@ class CtrlToggle extends CtrlElement {
 class CtrlDropdown extends CtrlElement {
     constructor(options, id) {
         super(options, id);
-        const dropdown = document.createElement('select'),
-            wrapper = this.createWrapper('ctrl-dropdown-wrapper'),
-            display = this.createDisplay(),
-            label = this.createLabel(),
-            attributes = [{ el: dropdown, name: ['class', 'id'], val: ['ctrl-dropdown', this.id] },
-            { el: display, name: ['type', 'readonly'], val: ["", true] }],
-            items = Reflect.ownKeys(this.options);
+        const wrapper = this.createWrapper(), dropdown = document.createElement('select'), menuWrapper = this.createWrapper('ctrl-dropdown-wrapper'), display = this.createDisplay(), label = this.createLabel(),
+              attributes = [{ el: dropdown, name: ['class', 'id'], val: ['ctrl-dropdown', this.id] },
+                            { el: display, name: ['type', 'readonly'], val: ["", true] }],
+              items = Reflect.ownKeys(this.options);
         for (let item of items) {
             if (item === 'default') { continue; }
             const option = document.createElement('option');
@@ -310,8 +240,9 @@ class CtrlDropdown extends CtrlElement {
             this.value = context.value;
         }
         this.setAttributes(attributes);
-        this.appendElements(wrapper, dropdown);
-        this.appendElements(this.self, label, display, wrapper);
+        this.appendElements(menuWrapper, dropdown);
+        this.appendElements(wrapper,display,menuWrapper)
+        this.appendElements(this.self, label, wrapper);
         this.children = [display, dropdown];
     }
 }
@@ -600,8 +531,7 @@ class Ctrl extends HTMLElement {
             } */
 
             .ctrl-button {
-                grid-column-start: 2;
-                grid-column-end: span 4;
+                grid-column: 1 / 6;
                 background: #3839ab linear-gradient(hsla(0, 0, 100%, .2), transparent);
                 background-color: #C8D6C7;
                 border: 1px solid rgba(0, 0, 0, .5);
@@ -640,43 +570,58 @@ class Ctrl extends HTMLElement {
                 padding-top: 0.5em;
                 /* word-wrap: anywhere; */
             }
+            .ctrl-wrapper{
+                display: grid;
+                grid-column: 1/6;
+                grid-row: 2;
+                grid-template-columns: repeat(5, 20%);
+                border: 1px solid black;
+                border-radius: 0 0 3px 3px;
+                border-top: none;
+            }
 
             .ctrl-element {
                 display: grid;
                 grid-template-columns: repeat(5, 20%);
-                padding-bottom: 0.25rem;
-                padding-right: 0.25em;
+                grid-template-rows: repeat(2,max-content);
+                margin: 0 0.25rem;
+                margin-bottom: 0.25rem;
             }
             .ctrl-label {
-                grid-column: 1;
-                margin: 0 .25em;
+                grid-column: 1/6;
+                grid-row: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                margin-bottom: -0.2rem;
+                z-index: 1;
+
             }
             .ctrl-display {
-                grid-column: 2 / 4;
-                margin-right: .25em;
+                grid-column: 1 / 3;
+                margin-right: 0.25rem;
             }
             .ctrl-color-display {
-                grid-column: 2 / 3;
-                margin-right: .25em;
+                grid-column: 1 / 3;
+                margin-right: 0.25rem;
             }
             .ctrl-dropdown-wrapper,.ctrl-slider {
-                grid-column: 4 / 6;
+                grid-column: 3 / 6;
             }
             .ctrl-input {
-                grid-column: 2 / 6;
+                grid-column: 1 / 6;
             }
             .ctrl-color-input {
                 grid-column: 3 / 6;
             }
             .ctrl-output {
                 grid-column: 1 / 6;
+                grid-row: 1 / 2;
                 display: flex;
                 font-size: 0.75rem;
                 word-wrap: anywhere;
                 overflow: scroll;
+                scrollbar-width: none;
                 white-space: pre-wrap;
-                /* padding: 0.25em 0; */
-                margin-left: .25em;
                 background-color: #C8D6C7;
                 border: 1px solid rgba(0, 0, 0, .51);
                 border-radius: 3px;
@@ -694,23 +639,21 @@ class Ctrl extends HTMLElement {
                 width: 10rem; 
                 padding-left: 0.5rem;
             }
-
-            .ctrl-label, .ctrl-symbol, .ctrl-button {
+            .ctrl-symbol, .ctrl-button {
                 height: 1.25rem;
             }
             .ctrl-color-picker{
-                position:absolute;
-                margin-left: 20%;
-                width: 20%;
-
+                position: absolute;
+                left:0;
+                width: 40%;
             }
             .ctrl-input, .ctrl-display, .ctrl-color-input, .ctrl-color-display {
                 height: 1.25rem;
                 padding: 0.25em 0;
                 background-color: #C8D6C7;
                 text-align: center;
-                border: 1px solid #C8D6C7;
-                border-radius: 3px;
+                border: 0px;
+                border-radius: 0 0 2px 2px;
             }
 
             .ctrl-symbol {
@@ -758,33 +701,23 @@ class Ctrl extends HTMLElement {
 
         /* begin toggle styling */
             .ctrl-toggle {
-                width:2.5rem;
-                height:100%;
-                position: relative;
-                left: 1.25rem;
-                display: inline-block;
+                grid-column: 3/6;
             }
             .ctrl-toggle input {
-                width:2.5rem;
-                height:100%;
-                margin: 0 0 0 0;
-                padding:0 0;
                 position:absolute;
-                top:0;
-                right: 0;
-                bottom:0;
-                left: 0;
+                width:2.5rem;
+                height:1.25rem;
+                margin-left: 20%;
                 z-index:2;
                 cursor:pointer;
                 opacity:0;
             }
             .ctrl-toggle .toggle-slider { /* Grundfläche */
                 position: absolute;
-                cursor: pointer;
-                top: 0; 
-                left: 0;
-                width: 2.5rem;
+                width: 20%;
                 height: 1.25rem;
+                margin-left: 20%;
+                cursor: pointer;
                 background-color: #c32e04; 
                 border-radius: 1em; 
                 transition: all .3s ease-in-out;
@@ -792,8 +725,8 @@ class Ctrl extends HTMLElement {
             .ctrl-toggle  .toggle-slider::before {  /* verschiebbarer Button */
                 position: absolute;
                 content: "";
-                height: 1em;
-                width: 1em;
+                height: 1rem;
+                width: 1rem;
                 left: .2em;
                 top: .2em;
                 background-color: white;
@@ -806,11 +739,11 @@ class Ctrl extends HTMLElement {
             }
         
             .ctrl-toggle input:checked + .toggle-slider:before {
-                -webkit-transform: translateX(1.4em);
+                -webkit-transform: translateX(1.25rem);
                 /* Android 4 */
-                -ms-transform: translateX(1.4em);
+                -ms-transform: translateX(1.25rem);
                 /* IE9 */
-                transform: translateX(1.4em);
+                transform: translateX(1.25rem);
             }
             /* end toggle styling */
       `;
