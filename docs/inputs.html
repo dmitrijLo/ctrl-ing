@@ -38,6 +38,35 @@
 <blockquote>
 <p><strong>Note:</strong> <code>&quot;add&quot;</code> defines the array containing all components which are in turn represented as objects.</p>
 </blockquote>
+<p>Until now the component object accepts the following properties:</p>
+<ul>
+<li><code>type</code> or name of component: <code>input</code>, <code>slider</code>, <code>dropdown</code>, <code>toggle</code>, <code>button</code>, <code>output</code>, <code>color</code></li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> Value of type is an object that accepts some optional settings. For now left it empty (<code>{}</code>), possible settings will be explained in the examples.</p>
+</blockquote>
+<ul>
+<li><code>path</code> accepts a string which represents the way to the targeted value</li>
+</ul>
+<blockquote>
+<p><strong>e.g.:</strong> Let the targeted object be</p>
+<pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">var</span> model = {
+  <span class="hljs-attr">nodes</span>: [ 
+      { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-attr">x</span>:<span class="hljs-number">100</span>, <span class="hljs-attr">y</span>:<span class="hljs-number">50</span> },
+      { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;B&#x27;</span>, <span class="hljs-attr">x</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">y</span>:<span class="hljs-number">100</span> },
+      { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;C&#x27;</span>, <span class="hljs-attr">x</span>:<span class="hljs-number">75</span>, <span class="hljs-attr">y</span>:<span class="hljs-number">75</span> }
+  ]
+}
+</div></code></pre>
+<p>then the path to the y-value of node C is <code>&quot;nodes/2/y&quot;</code>. Don't forget since <code>nodes</code> is an array its index begins at <code>0</code>.</p>
+</blockquote>
+<ul>
+<li><code>on</code> takes an object whose property match an event and the value match a function that will be executed.</li>
+</ul>
+<blockquote>
+<p><strong>e.g.:</strong> <code>&quot;on&quot;: { &quot;click&quot;: &quot;myFunction&quot; }</code><br>
+<strong>Note:</strong> Until now the events <code>click</code>, <code>input</code> and <code>change</code> are implemented. If there is no function to execute <code>on</code> can be ommited.</p>
+</blockquote>
 <h2 id="input">Input</h2>
 <script>var targetObject = { x:10 }</script>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;targetObject&quot;</span>&gt;</span>
@@ -79,7 +108,7 @@
 </article>
 </main>
 <footer>
-  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@1.0.0/src/ctrling.min.js"></script>
   
   <script src="./bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>

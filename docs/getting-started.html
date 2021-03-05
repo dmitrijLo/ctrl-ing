@@ -27,34 +27,34 @@
   <h1 id="getting-started">Getting Started</h1>
 <h2 id="1-add-ctrlingjs-to-a-project">1. Add ctrling.js to a project</h2>
 <p>Use the convenience of CDN to add <code>&lt;ctrl-ing&gt;</code>:</p>
-<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing/src/ctrling.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@1.0.0/src/ctrling.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </div></code></pre>
-<p>Or, <a target="_blank" rel="noopener noreferrer" href='' download>download the latest ctrling.js version</a> and import it to your web page:</p>
+<p>Or, <a target="_blank" rel="noopener noreferrer" href='https://github.com/dmitrijLo/ctrl-ing/releases' download>download the latest ctrling.js version</a> and import it to your web page:</p>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;./path/to/ctrling.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </div></code></pre>
 <blockquote>
 <p><strong>Note:</strong> Since <code>&lt;ctrl-ing&gt;</code> is a custom html element which is a relative young web technology, it was found through this work that ctrling.js should be imported after declaration of the object you want to control. This will ensure that <code>&lt;ctrl-ing&gt;</code> is displayed properly cross different browser.</p>
 </blockquote>
-<h2 id="2-create-an-object-which-you-want-to-control">2. Create an object which you want to control</h2>
+<h2 id="2-create-an-object-which-needs-to-be-controlled">2. Create an object which needs to be controlled</h2>
 <p>The declaration of an object is up to you. However, there is just one limitation. It must be available in the <code>window</code>- or rather the <code>globalThis</code>-object. With this in mind use the <code>var</code>-keyword or the <code>globalThis</code>.</p>
 <h2 id="3-create-a-controller">3. Create a controller</h2>
 <p>Use the <code>&lt;ctrl-ing&gt;</code>-tag directly on your HTML page.</p>
-<script>var myObject = { speed:10 }</script>
+<script>var myObject = { frequency: 60 }</script>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;myObject&quot;</span>&gt;</span>
 {
-    &quot;add&quot;: [ { &quot;input&quot;:{},&quot;path&quot;:&quot;speed&quot; } ]
+    &quot;add&quot;: [ { &quot;input&quot;:{},&quot;path&quot;:&quot;frequency&quot; } ]
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
 <ctrl-ing ref="myObject" xOffset=50 yOffset=5>
 {
-    "add": [ { "input":{},"path":"speed" } ]
+    "add": [ { "input":{},"path":"frequency" } ]
 }
 </ctrl-ing>
 </article>
 </main>
 <footer>
-  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@1.0.0/src/ctrling.min.js"></script>
   
   <script src="./bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>

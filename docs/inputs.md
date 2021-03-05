@@ -21,6 +21,26 @@ Start with:
 
 > **Note:** `"add"` defines the array containing all components which are in turn represented as objects.
 
+Until now the component object accepts the following properties:
+
+* `type` or name of component: `input`, `slider`, `dropdown`, `toggle`, `button`, `output`, `color`
+> **Note:** Value of type is an object that accepts some optional settings. For now left it empty (`{}`), possible settings will be explained in the examples.
+* `path` accepts a string which represents the way to the targeted value
+> **e.g.:** Let the targeted object be
+> ```JavaScript
+> var model = {
+>   nodes: [ 
+>       { id: 'A', x:100, y:50 },
+>       { id: 'B', x:0, y:100 },
+>       { id: 'C', x:75, y:75 }
+>   ]
+> }
+> ```
+> then the path to the y-value of node C is `"nodes/2/y"`. Don't forget since `nodes` is an array its index begins at `0`.
+* `on` takes an object whose property match an event and the value match a function that will be executed.
+> **e.g.:** `"on": { "click": "myFunction" }`<br>
+> **Note:** Until now the events `click`, `input` and `change` are implemented. If there is no function to execute `on` can be ommited.
+
 ## Input
 
 <script>var targetObject = { x:10 }</script>
