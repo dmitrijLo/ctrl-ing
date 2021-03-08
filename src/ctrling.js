@@ -1,84 +1,139 @@
-class SuperRef {
-    constructor(path, targetObj) {
-        this.path = path;
-        this.props = path.split('/');
-        this.lastProp = this.props.pop();
-        this.handler = new Proxy(this.props.reduce((ref, prop) => ref[prop], targetObj), {})
-        this.value = this.handler[this.lastProp];
-        this.observers = [];
-    }
-    addObserver(observer) { this.observers.push(observer); }
-    //removeObserver(observer) { this.observers.removeAt(this.observers.indexOf(observer, 0)); }
-    notifyObservers(/* context, key */) {
-        for (let observer of this.observers) {
-            observer.update(this);
+/* const CtrlElement = {
+    create() {
+        const self = Object.create(this.prototype);
+        self.constructor.apply(self,arguments);
+        return self; 
+    },
+    prototype: {
+        constructor(input, target) {
+            this.options = {};
+            this.label = input.options.label;
+            this.id = input.id;
+            Object.assign(this.options, input.options);
+            delete this.options.label;
+            delete this.options.type;
+            
+            this._children = [];
+            this._self = document.createElement('div');
+            this._self.setAttribute('class', 'ctrl-element');
+        },
+        get self() { return this._self; },
+        get children() { return this._children; },
+        set children(child) { this._children.push(...child); },
+        createDisplay() {
+            const display = document.createElement('input'),
+                attributes = [{ el: display, name: ['type', 'class', 'id', 'value'], val: ['number', 'ctrl-display', this.id, this.options.defaultValue || false] }];
+            this.setAttributes(attributes);
+            //display.value = value;
+            return display;
+        },
+        createWrapper(className = 'ctrl-wrapper') {
+            const wrapper = document.createElement('div');
+            wrapper.setAttribute('class', className);
+            return wrapper;
+        },
+        createLabel() {
+            const label = document.createElement('div');
+            label.setAttribute('class', 'ctrl-label');
+            label.textContent = `__ ${this.label} _____________________________`;
+            return label;
+        },
+        appendElements(reciever, ...elements) {
+            for (let element of elements) {
+                reciever.appendChild(element);
+            }
+        },
+        setAttributes(attributes) {
+            for (let attribute of attributes) {
+                for (let i = 0; i < attribute.name.length; i++) {
+                    attribute.el.setAttribute(attribute.name[i], attribute.val[i]);
+                }
+            }
         }
     }
-    updateState(value) {
-        if (value !== this.value) {
-            this.value = value;
-            this.handler[this.lastProp] = this.value;
-            this.notifyObservers();
-        }
-    }
-    reviewState(){
-        if(this.handler[this.lastProp] !== this.value) {
-            this.value = this.handler[this.lastProp];
-            this.notifyObservers();
-        }
-    }
-}
+} */
 
 class CtrlElement {
-    constructor(options, id) {
+    constructor(input, target) {
         this.options = {};
-        this.label = options.label;
-        this.id = id;
-        this._children = [];
-        Object.assign(this.options, options);
-        this._self = document.createElement('div');
-        this._self.setAttribute('class', 'ctrl-element');
-
+        this.label = input.options.label;
+        this.id = input.id;
+        Object.assign(this.options, input.options);
         delete this.options.label;
         delete this.options.type;
+        if(input.path){
+            this.path = input.path;
+            this.props = this.path.split('/') || undefined;
+            this.lastProp = this.props.pop(); 
+        } else {
+            this.props = [];
+            this.lastProp = 'value';
+            target = this;
+        }
+        this.targetAccess = new Proxy(this.props.reduce((ref, prop) => ref[prop], target), {});
+        this.state = this.targetAccess[this.lastProp];
+        this._children = [];
+        this._self = document.createElement('div');
+        this._self.setAttribute('class', 'ctrl-element');
+        console.log(this)
     }
-
     get self() { return this._self; }
     get children() { return this._children; }
     set children(child) { this._children.push(...child); }
-
     createDisplay() {
         const display = document.createElement('input'),
             attributes = [{ el: display, name: ['type', 'class', 'id', 'value'], val: ['number', 'ctrl-display', this.id, this.options.defaultValue || false] }];
         this.setAttributes(attributes);
-        //display.value = value;
         return display;
     }
-
     createWrapper(className = 'ctrl-wrapper') {
         const wrapper = document.createElement('div');
         wrapper.setAttribute('class', className);
         return wrapper;
     }
-
     createLabel() {
         const label = document.createElement('div');
         label.setAttribute('class', 'ctrl-label');
         label.textContent = `__ ${this.label} _____________________________`;
         return label;
     }
-
     appendElements(reciever, ...elements) {
         for (let element of elements) {
             reciever.appendChild(element);
         }
     }
-
     setAttributes(attributes) {
         for (let attribute of attributes) {
             for (let i = 0; i < attribute.name.length; i++) {
                 attribute.el.setAttribute(attribute.name[i], attribute.val[i]);
             }
+        }
+    }
+    addListener(evt,fn){
+        for (let child of this.children){
+            child.addEventListener(evt, () => {
+                const value = (typeof child.value === 'boolean' || 'string') ? child.value : +child.value;
+                this.updateState(value);
+                if (fn !== undefined) return fn();
+            });
+        }
+    }
+    notify(/* context, key */) {
+        for (let child of this.children) {
+            child.update(this);
+        }
+    }
+    updateState(value) {
+        if (value !== this.state) {
+            this.state = value;
+            this.targetAccess[this.lastProp] = this.state;
+            this.notify();
+        }
+    }
+    reviewState(){
+        if(this.targetAccess[this.lastProp] !== this.state) {
+            this.state = this.targetAccess[this.lastProp];
+            this.notify();
         }
     }
     static round(val,acc){
@@ -111,8 +166,8 @@ class CtrlElement {
 }
 
 class CtrlButton extends CtrlElement {
-    constructor(options, id) {
-        super(options, id);
+    constructor(input, target) {
+        super(input, target);
         const button = document.createElement('button'),
             attributes = [{ el: button, name: ['class', 'id', 'type'], val: ['ctrl-button', this.id, 'button'] }];
         button.innerHTML = this.label;
@@ -124,52 +179,52 @@ class CtrlButton extends CtrlElement {
 }
 
 class CtrlColorInput extends CtrlElement {
-    constructor(options, id) {
-        super(options, id);
-        const wrapper = this.createWrapper(), input = this.createDisplay(), display = this.createDisplay(), picker = this.createDisplay(), label = this.createLabel(),
-              attributes = [{ el: input, name: ['type', 'class', 'value'], val: ['text', 'ctrl-color-input', this.options.color] },
-                            { el: picker, name: ['type', 'class', 'style', 'value'], val: ['color', 'ctrl-color-picker', `opacity:0`, `${options.color}`] },
-                            { el: display, name: ['class','style','readonly'], val: ['ctrl-color-display',`background-color:${options.color};`,true] }];
-        input.update = function (context) {
-            this.value = context.value;
+    constructor(input, target) {
+        super(input, target);
+        const wrapper = this.createWrapper(), textInput = this.createDisplay(), display = this.createDisplay(), picker = this.createDisplay(), label = this.createLabel(),
+              attributes = [{ el: textInput, name: ['type', 'class', 'value'], val: ['text', 'ctrl-color-input', this.options.color] },
+                            { el: picker, name: ['type', 'class', 'style', 'value'], val: ['color', 'ctrl-color-picker', `opacity:0`, `${this.options.color}`] },
+                            { el: display, name: ['class','style','readonly'], val: ['ctrl-color-display',`background-color:${this.options.color};`,true] }];
+        textInput.update = function (context) {
+            this.value = context.state;
         }
         picker.update = function (context) {
-            display.setAttribute('style', `background-color:${context.value}`);
+            display.setAttribute('style', `background-color:${context.state}`);
         }
 
         this.setAttributes(attributes);
-        this.appendElements(wrapper,display,picker,input)
+        this.appendElements(wrapper,display,picker,textInput)
         this.appendElements(this.self,label,wrapper);
-        this.children = [picker, input];
+        this.children = [picker, textInput];
     }
 }
 
 class CtrlNumberInput extends CtrlElement {
-    constructor(options, id) {
-        super(options, id);
-        const wrapper = this.createWrapper(), input = this.createDisplay(), label = this.createLabel(),
-              attributes = [{ el: input, name: ['type', 'class','min','max','step'], val: ['number', 'ctrl-input',this.options.min || Infinity, this.options.max || Infinity, this.options.step || 1] }];
-        input.update = function (context) {
-            this.value = context.value;
+    constructor(input, target) {
+        super(input, target);
+        const wrapper = this.createWrapper(), numInput = this.createDisplay(), label = this.createLabel(),
+              attributes = [{ el: numInput, name: ['type', 'class','min','max','step'], val: ['number', 'ctrl-input',this.options.min || Infinity, this.options.max || Infinity, this.options.step || 1] }];
+        numInput.update = function (context) {
+            this.value = context.state;
         }
         this.setAttributes(attributes);
-        this.appendElements(wrapper, input);
+        this.appendElements(wrapper, numInput);
         this.appendElements(this.self, label, wrapper);
-        this.children = [input];
+        this.children = [numInput];
     }
 }
 
 class CtrlSlider extends CtrlElement {
-    constructor(options, id) {
-        super(options, id);
+    constructor(input, target) {
+        super(input, target);
         const wrapper = this.createWrapper(), slider = document.createElement('input'), display = this.createDisplay(), label = this.createLabel(),
               attributes = [{ el: slider, name: ['class', 'id', 'type', 'min', 'max', 'step', 'value'], val: ['ctrl-slider', this.id, 'range', this.options.min || 0, this.options.max || 100, this.options.step || 1, this.options.defaultValue || this.options.value] },
                             { el: display, name: ['min', 'max', 'step'], val: [this.options.min || 0, this.options.max || 100, this.options.step || 1] }];
         slider.update = function (context) {
-            this.value = context.value;
+            this.value = context.state;
         }
         display.update = function (context) {
-            this.value = context.value;
+            this.value = context.state;
         }
         this.setAttributes(attributes);
         this.appendElements(wrapper, display, slider);
@@ -179,30 +234,30 @@ class CtrlSlider extends CtrlElement {
 }
 
 class CtrlToggle extends CtrlElement {
-    constructor(options, id) {
-        super(options, id);
-        const wrapper = this.createWrapper(), display = this.createDisplay(), label = this.createLabel(), slider = document.createElement('span'), input = document.createElement('input'), toggle = document.createElement('div'),
+    constructor(input, target) {
+        super(input, target);
+        const wrapper = this.createWrapper(), display = this.createDisplay(), label = this.createLabel(), slider = document.createElement('span'), checkbox = document.createElement('input'), toggle = document.createElement('div'),
               attributes = [{ el: slider, name: ['class'], val: ["toggle-slider"] },
-                            { el: input, name: ['type'], val: ['checkbox'] },
+                            { el: checkbox, name: ['type'], val: ['checkbox'] },
                             { el: display, name: ['type', 'readonly'], val: ['', true] },
                             { el: toggle, name: ['class', 'id'], val: ['ctrl-toggle', this.id] }];
         toggle.default = this.options.defaultValue || false;
         toggle.switchTo = this.options.switchTo || true;
         toggle.value = toggle.switchTo;
         toggle.update = function (context) {
-            if (context.value === this.default) {
+            if (context.state === this.default) {
                 this.value = this.switchTo;
             } else {
                 this.value = this.default;
             }
-            display.value = context.value;
-            this.checked = context.value;
+            display.value = context.state;
+            this.checked = context.state;
         }
         display.update = function () {
             //render()
         }
         this.setAttributes(attributes);
-        this.appendElements(toggle, input, slider);
+        this.appendElements(toggle, checkbox, slider);
         this.appendElements(wrapper,display,toggle);
         this.appendElements(this.self, label, wrapper);
         this.children = [display, toggle];
@@ -210,8 +265,8 @@ class CtrlToggle extends CtrlElement {
 }
 
 class CtrlDropdown extends CtrlElement {
-    constructor(options, id) {
-        super(options, id);
+    constructor(input, target) {
+        super(input, target);
         const wrapper = this.createWrapper(), dropdown = document.createElement('select'), menuWrapper = this.createWrapper('ctrl-dropdown-wrapper'), display = this.createDisplay(), label = this.createLabel(),
               attributes = [{ el: dropdown, name: ['class', 'id'], val: ['ctrl-dropdown', this.id] },
                             { el: display, name: ['type', 'readonly'], val: ["", true] }],
@@ -219,11 +274,11 @@ class CtrlDropdown extends CtrlElement {
         for (let item of items) {
             if (item === 'default') { continue; }
             const option = document.createElement('option');
-            option.innerHTML = item;
+            option.textContent = item;
             option.value = this.options[item];
             if (item === 'defaultValue') {
                 option.selected = true;
-                option.innerHTML = this.options['default'] || 'default';
+                option.textContent = this.options['default'] || 'default';
                 display.value = this.options[item];
             }
             dropdown.appendChild(option);
@@ -231,13 +286,13 @@ class CtrlDropdown extends CtrlElement {
 
         dropdown.update = function (context) {
             for (let child of this.children) {
-                if (context.value === +child.value) {
+                if (context.state === +child.value) {
                     child.selected = true;
                 }
             }
         }
         display.update = function (context) {
-            this.value = context.value;
+            this.value = context.state;
         }
         this.setAttributes(attributes);
         this.appendElements(menuWrapper, dropdown);
@@ -248,21 +303,17 @@ class CtrlDropdown extends CtrlElement {
 }
 
 class CtrlOutput extends CtrlElement {
-    constructor(options, id) {
-        super(options, id);
-        const output = document.createElement('table'),
-        tr = document.createElement('tr'),
-        label = document.createElement('td'),
-        data = document.createElement('td'),
+    constructor(input, target) {
+        super(input, target);
+        const output = document.createElement('table'), tr = document.createElement('tr'), label = document.createElement('td'), data = document.createElement('td'),
         attributes = [{ el: output, name: ['class'], val: ['ctrl-output'] },
                       { el: label, name: ['class'], val: ['ctrl-output-label'] },
                       { el: data, name: ['class'], val: ['ctrl-output-data'] }];
-
         const accuracy = this.options.accuracy || 0;
-        label.innerHTML = `${this.label} ${this.options.unit ? '[' + this.options.unit + ']' : ''}`;
+        label.textContent = `${this.label} ${this.options.unit ? '[' + this.options.unit + ']' : ''}`;
         data.innerHTML = CtrlElement.round(this.options.defaultValue, accuracy);
         data.update = function (context) {
-            data.innerHTML = CtrlElement.round(context.value, accuracy);
+            data.innerHTML = CtrlElement.round(context.state, accuracy);
         }
         this.setAttributes(attributes);
         this.appendElements(tr, label, data);
@@ -282,8 +333,7 @@ class Ctrl extends HTMLElement {
         this._inputs = [];
         this._outputs = [];
         this._objectives = [];
-        //this._targetObj;
-        //this._header = '';
+        this._elements = [];
     }
 
     get root() { return this._root; }
@@ -297,8 +347,8 @@ class Ctrl extends HTMLElement {
     set inputs(o) { return this._inputs.push(o); }
     get outputs() { return this._outputs; }
     set outputs(o) { return this._outputs.push(o); }
-    get objectives() { return this._objectives; }
-    set objectives(o) { return this._objectives.push(o); }
+    get elements() { return this._elements; }
+    set elements(o) { return this._elements.push(o); }
     get xOffset() { return this.getAttribute('xOffset') || 0; }
     get yOffset() { return this.getAttribute('yOffset') || 0; }
     get dirty() { return this.getAttribute('dirty'); }
@@ -313,44 +363,29 @@ class Ctrl extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (this.dirty === "true") {
-            for(let objective of this.objectives){
-                objective.reviewState();
+            for(let element of this.elements){
+                element.reviewState();
             }
             this.dirty = false;
         }
     }
 
     init() {
-        const gui = this.createGui(),
-            style = document.createElement('style'),
-            events = ['click', 'change', 'input'];
+        const gui = this.createGui(), style = document.createElement('style'), events = ['click', 'change', 'input'];
         style.textContent = Ctrl.template(this.setPosition());
-
         // create & append CtrlElements dependend on userinput
         for (let input of this.inputs) {
-            const options = input.options, id = input.id;
-            const element = (input.options.type === 'input') ? new CtrlNumberInput(options, id) :
-                            (input.options.type === 'slider') ? new CtrlSlider(options, id) :
-                            (input.options.type === 'dropdown') ? new CtrlDropdown(options, id) :
-                            (input.options.type === 'toggle') ? new CtrlToggle(options, id) :
-                            (input.options.type === 'button') ? new CtrlButton(options, id) :
-                            (input.options.type === 'color') ? new CtrlColorInput(options, id) : 
-                            (input.options.type === 'output') ? new CtrlOutput(options, id) : console.log('wrong type');
-            // set subjects that will notify their observer
-            const objective = (input.path !== undefined) ? new SuperRef(input.path, this.targetObj) : new SuperRef('value', element);
-            this.objectives = objective;
+            const element = (input.options.type === 'input') ? new CtrlNumberInput(input, this.targetObj) :
+                            (input.options.type === 'slider') ? new CtrlSlider(input, this.targetObj) :
+                            (input.options.type === 'dropdown') ? new CtrlDropdown(input, this.targetObj) :
+                            (input.options.type === 'toggle') ? new CtrlToggle(input, this.targetObj) :
+                            (input.options.type === 'button') ? new CtrlButton(input, this.targetObj) :
+                            (input.options.type === 'color') ? new CtrlColorInput(input, this.targetObj) : 
+                            (input.options.type === 'output') ? new CtrlOutput(input, this.targetObj) : console.log('wrong type');
+            this.elements = element;
             let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : 'input';
             let callback = (event != undefined) ? this.targetObj[input.func] || window[input.func] : undefined;
-
-            for (let observer of element.children) {
-                objective.addObserver(observer);
-                if(input.options.type === 'output') continue;
-                observer.addEventListener(event, () => {
-                    const value = (typeof observer.value === 'boolean' || 'string') ? observer.value : +observer.value;
-                    objective.updateState(value);
-                    if (callback != undefined) return callback();
-                });
-            }
+            element.addListener(event, callback);
             gui.querySelector('.ctrl-cb').appendChild(element.self);
         }
         this._root.appendChild(gui);
