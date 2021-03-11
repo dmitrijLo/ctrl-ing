@@ -68,8 +68,8 @@
 <strong>Note:</strong> Until now the events <code>click</code>, <code>input</code> and <code>change</code> are implemented. If there is no function to execute <code>on</code> can be ommited.</p>
 </blockquote>
 <h2 id="input">Input</h2>
-<script>var targetObject = { x:10 }</script>
-<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;targetObject&quot;</span>&gt;</span>
+<script>var inputExample = { x:10 }</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;inputExample&quot;</span>&gt;</span>
 {
     &quot;add&quot;: [
         { &quot;input&quot;:{ &quot;label&quot;:&quot;velocity&quot;,&quot;min&quot;:10,&quot;max&quot;:100,&quot;step&quot;:0.5 },
@@ -78,14 +78,14 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="targetObject" xOffset=20 yOffset=-15>
+<ctrl-ing ref="inputExample" xOffset=20 yOffset=-15>
 {
     "add": [ { "input":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
 }
 </ctrl-ing>
 <h2 id="slider">Slider</h2>
-<script>var targetObject = { x:10 }</script>
-<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;targetObject&quot;</span>&gt;</span>
+<script>var rangeExample = { x:10 }</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;rangeExample&quot;</span>&gt;</span>
 {
     &quot;add&quot;: [
         { &quot;slider&quot;:{ &quot;label&quot;:&quot;velocity&quot;,&quot;min&quot;:10,&quot;max&quot;:100,&quot;step&quot;:0.5 },
@@ -94,17 +94,91 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="targetObject" xOffset=20 yOffset=-15>
+<ctrl-ing ref="rangeExample" xOffset=20 yOffset=-15>
 {
     "add": [ { "slider":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
 }
 </ctrl-ing>
 <h2 id="dropdown">Dropdown</h2>
+<script>var dropdownExample = { geometry: 'triangle' }</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;dropdownExample&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [
+        { &quot;dropdown&quot;:{ &quot;label&quot;:&quot;Geometry Area&quot;, &quot;default&quot;:&quot;triangle&quot;, &quot;circle&quot;:&quot;circle&quot;, &quot;rectangle&quot;:&quot;rectangle&quot;,&quot;pentagon&quot;:&quot;pentagon&quot; }, &quot;path&quot;:&quot;geometry&quot; }
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<ctrl-ing ref="dropdownExample" xOffset=20 yOffset=-15>
+{
+    "add": [
+        { "dropdown":{ "label":"Geometry Selection", "default":"triangle", "circle":"circle", "rectangle":"rectangle","pentagon":"pentagon" }, "path":"geometry"}
+    ]
+}
+</ctrl-ing>
 <h2 id="toggle">Toggle</h2>
+<script>var toggleExample = { runAnimation: false }</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;toggleExample&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ 
+        { &quot;toggle&quot;:{ &quot;label&quot;:&quot;Animation&quot; }, &quot;path&quot;:&quot;runAnimation&quot; } 
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<ctrl-ing ref="toggleExample" xOffset=20 yOffset=-15>
+{
+    "add": [ { "toggle":{ "label":"Run Animation" }, "path":"runAnimation" } ]
+}
+</ctrl-ing>
 <h2 id="button">Button</h2>
+<script>var buttonExample = {}</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;buttonExample&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ 
+        { &quot;button&quot;:{ &quot;label&quot;:&quot;Add mass&quot; }, &quot;on&quot;:{ &quot;click&quot;:&quot;addMass&quot; } } 
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<ctrl-ing ref="buttonExample" xOffset=20 yOffset=-15>
+{
+    "add": [ { "button":{ "label":"Add mass" }, "on":{ "click":"addMass" } } ]
+}
+</ctrl-ing>
 <h2 id="output">Output</h2>
+<script>var outputExample =  {momentOfInertia: 1000.123456789 }</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;outputExample&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ 
+        { &quot;output&quot;: { &quot;label&quot;:&quot;Moment of Inertia&quot;,
+          &quot;unit&quot;:&quot;kg m^2&quot;, &quot;accuracy&quot;:2 }, &quot;path&quot;: &quot;momentOfInertia&quot; }
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<ctrl-ing ref="outputExample" xOffset=20 yOffset=-15>
+{
+    "add": [{ "output": { "label":"Moment of Inertia","unit":"kg m^2", "accuracy":2 }, "path": "momentOfInertia" }]
+}
+</ctrl-ing>
 <h2 id="color">Color</h2>
-
+<script>var colorExample =  { color: '#DE3163' }</script>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;colorExample&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ 
+        { &quot;color&quot;: { &quot;label&quot;: &quot;Fill&quot;, &quot;color&quot;:&quot;#DE3163&quot; }, &quot;path&quot;: &quot;color&quot; }
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<ctrl-ing ref="colorExample" xOffset=20 yOffset=-15>
+{
+    "add": [ 
+        { "color": { "label": "Fill", "color":"#DE3163" }, "path": "color" }
+    ]
+}
+</ctrl-ing>
 </article>
 </main>
 <footer>

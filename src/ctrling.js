@@ -75,7 +75,6 @@ class CtrlElement {
         this._children = [];
         this._self = document.createElement('div');
         this._self.setAttribute('class', 'ctrl-element');
-        console.log(this)
     }
     get self() { return this._self; }
     get children() { return this._children; }
