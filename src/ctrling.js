@@ -338,20 +338,23 @@ class Ctrl extends HTMLElement {
     get root() { return this._root; }
     get targetObj() { return window[this.getAttribute('ref')]; }
     set targetObj(q) { if (q) this.setAttribute('ref', q); }
-    get header() { return this.getAttribute('header') || 'ctrl-ing'; }
-    set header(q) { if (q) this.setAttribute('header', q); }
-    get id() { return this.getAttribute('id') || "ctrl"; }
-    set id(q) { if (q) this.setAttribute('id', q); }
     get inputs() { return this._inputs; }
     set inputs(o) { return this._inputs.push(o); }
     get outputs() { return this._outputs; }
     set outputs(o) { return this._outputs.push(o); }
     get elements() { return this._elements; }
     set elements(o) { return this._elements.push(o); }
-    get xOffset() { return this.getAttribute('xOffset') || 0; }
-    get yOffset() { return this.getAttribute('yOffset') || 0; }
     get dirty() { return this.getAttribute('dirty'); }
     set dirty(bool) { return this.setAttribute('dirty', bool); }
+
+    //optional attributes
+    get header() { return this.getAttribute('header') || 'ctrl-ing'; }
+    set header(q) { if (q) this.setAttribute('header', q); }
+    get id() { return this.getAttribute('id') || "ctrl"; }
+    set id(q) { if (q) this.setAttribute('id', q); }
+    get xOffset() { return this.getAttribute('xOffset') || 0; }
+    get yOffset() { return this.getAttribute('yOffset') || 0; }
+    get parent() { return this.getAttribute('parent') || undefined; }
 
     connectedCallback() {
         if (this.getAttribute('id') == undefined) this.id = this.id;
@@ -409,22 +412,34 @@ class Ctrl extends HTMLElement {
     }
 
     setPosition() {
-        const ctrl = document.getElementById(this.id);
-        let ctrlTop = ctrl.getBoundingClientRect().top;
-        const offset = window.pageYOffset;
-        let previousElementTop;
-
-        (function getPreviousElementPosition(elem) {
-            const previousElement = elem.previousElementSibling;
-
-            if (!(previousElement.getBoundingClientRect().height === 0)) {
-                return previousElementTop = previousElement.getBoundingClientRect().top;
+        const ctrl = this.root.host;
+        const parent = (this.parent) ? document.getElementById(this.parent) : undefined;
+        let top = +this.yOffset, right = +this.xOffset;
+        if(parent !== undefined) top += parent.getBoundingClientRect().top - ctrl.getBoundingClientRect().top;
+        else {
+            const parent = ctrl.parentElement;
+            const nodes = parent.childElementCount;
+            if(nodes === 1) top += (parent.getBoundingClientRect().width !== 0) ? parent.getBoundingClientRect().top - ctrl.getBoundingClientRect().top : 0;
+            else{
+                for (let i = nodes - 1; i >= 0; i--){
+                    const child = parent.children[i];
+                    if(child !== ctrl) continue;
+                    else {
+                        let previous = child.previousElementSibling;
+                        for(let j = 0; j != i; j++) {
+                            const width = previous.getBoundingClientRect().width;
+                            if(width !== 0){
+                                console.log(previous);
+                                top += previous.getBoundingClientRect().top - ctrl.getBoundingClientRect().top;
+                                break;
+                            } else previous = previous.previousElementSibling;   
+                        }
+                    }
+                break;
+                }
             }
-            getPreviousElementPosition(previousElement);
-        })(ctrl);
-        previousElementTop += offset;
-        ctrlTop += offset;
-        return { x: +this.xOffset, y: (previousElementTop - ctrlTop + +this.yOffset) };
+        }
+        return {x: right, y: top}
     }
 
     getValue(path) {

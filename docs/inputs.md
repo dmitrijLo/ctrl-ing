@@ -3,6 +3,8 @@
 "title": "ctrl-ing"
 ---
 
+<script src="./bin/canvasInteractor.js"></script>
+
 # Inputs
 
 Add components by writing into the innerHtml of the `ctrl-ing`-element. The `ctrl-ing`-element interprets its innerHTML using the [JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON) format.
@@ -168,8 +170,6 @@ Until now the component object accepts the following properties:
 
 ## Color
 
-<script>var colorExample =  { color: '#DE3163' }</script>
-
 ```HTML
 <ctrl-ing ref="colorExample">
 {
@@ -180,7 +180,27 @@ Until now the component object accepts the following properties:
 </ctrl-ing>
 ```
 
-<ctrl-ing ref="colorExample" xOffset=20 yOffset=-15>
+<canvas id="colorDemo" width="150" height="100" style="border:1px solid black;"></canvas>
+
+<script>
+    var colorExample =  { color: '#DE3163' };
+    const ctx = document.getElementById('colorDemo').getContext('2d');
+    const interactor = canvasInteractor.create(ctx,{x:75,y:50,cartesian:true});
+    const points = [];
+    const ply = g2().ply({pts:points,ls:colorExample.color,lw:3});
+    const g = g2().clr().view(interactor.view).grid().use({grp:ply});
+    let i = 0;
+    let forward = true;
+    interactor.on('tick', (e) => {
+        i+=0.5;
+        forward ? points.push({x: Math.cos(Math.PI * i / 60 ) * 40, y: Math.sin(Math.PI * i / 20) * 40}) : points.shift();
+        if(points.length === 240 || points.length === 0) { forward = !forward; };
+        ply.del().ply({pts:points,ls:colorExample.color,lw:3});
+        g.exe(ctx);
+        }).startTimer();
+</script>
+
+<ctrl-ing ref="colorExample">
 {
     "add": [ 
         { "color": { "label": "Fill", "color":"#DE3163" }, "path": "color" }

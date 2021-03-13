@@ -24,7 +24,8 @@
   <nav-pane base="."></nav-pane>
 </nav>
 <article>
-  <h1 id="inputs">Inputs</h1>
+  <script src="./bin/canvasInteractor.js"></script>
+<h1 id="inputs">Inputs</h1>
 <p>Add components by writing into the innerHtml of the <code>ctrl-ing</code>-element. The <code>ctrl-ing</code>-element interprets its innerHTML using the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> format.</p>
 <p>Start with:</p>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;targetObject&quot;</span>&gt;</span>
@@ -163,7 +164,6 @@
 }
 </ctrl-ing>
 <h2 id="color">Color</h2>
-<script>var colorExample =  { color: '#DE3163' }</script>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;colorExample&quot;</span>&gt;</span>
 {
     &quot;add&quot;: [ 
@@ -172,7 +172,25 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="colorExample" xOffset=20 yOffset=-15>
+<p><canvas id="colorDemo" width="150" height="100" style="border:1px solid black;"></canvas></p>
+<script>
+    var colorExample =  { color: '#DE3163' };
+    const ctx = document.getElementById('colorDemo').getContext('2d');
+    const interactor = canvasInteractor.create(ctx,{x:75,y:50,cartesian:true});
+    const points = [];
+    const ply = g2().ply({pts:points,ls:colorExample.color,lw:3});
+    const g = g2().clr().view(interactor.view).grid().use({grp:ply});
+    let i = 0;
+    let forward = true;
+    interactor.on('tick', (e) => {
+        i+=0.5;
+        forward ? points.push({x: Math.cos(Math.PI * i / 60 ) * 40, y: Math.sin(Math.PI * i / 20) * 40}) : points.shift();
+        if(points.length === 240 || points.length === 0) { forward = !forward; };
+        ply.del().ply({pts:points,ls:colorExample.color,lw:3});
+        g.exe(ctx);
+        }).startTimer();
+</script>
+<ctrl-ing ref="colorExample">
 {
     "add": [ 
         { "color": { "label": "Fill", "color":"#DE3163" }, "path": "color" }
@@ -182,7 +200,7 @@
 </article>
 </main>
 <footer>
-  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@1.0.0/src/ctrling.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@1/src/ctrling.min.js"></script>
   
   <script src="./bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>
