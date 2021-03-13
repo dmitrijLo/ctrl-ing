@@ -58,7 +58,7 @@ Until now the component object accepts the following properties:
 </ctrl-ing>
 ```
 
-<ctrl-ing ref="inputExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="inputExample">
 {
     "add": [ { "input":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
 }
@@ -79,7 +79,7 @@ Until now the component object accepts the following properties:
 </ctrl-ing>
 ```
 
-<ctrl-ing ref="rangeExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="rangeExample">
 {
     "add": [ { "slider":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
 }
@@ -99,7 +99,7 @@ Until now the component object accepts the following properties:
 </ctrl-ing>
 ```
 
-<ctrl-ing ref="dropdownExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="dropdownExample">
 {
     "add": [
         { "dropdown":{ "label":"Geometry Selection", "default":"triangle", "circle":"circle", "rectangle":"rectangle","pentagon":"pentagon" }, "path":"geometry"}
@@ -121,7 +121,7 @@ Until now the component object accepts the following properties:
 </ctrl-ing>
 ```
 
-<ctrl-ing ref="toggleExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="toggleExample">
 {
     "add": [ { "toggle":{ "label":"Run Animation" }, "path":"runAnimation" } ]
 }
@@ -141,7 +141,7 @@ Until now the component object accepts the following properties:
 </ctrl-ing>
 ```
 
-<ctrl-ing ref="buttonExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="buttonExample">
 {
     "add": [ { "button":{ "label":"Add mass" }, "on":{ "click":"addMass" } } ]
 }
@@ -162,7 +162,7 @@ Until now the component object accepts the following properties:
 </ctrl-ing>
 ```
 
-<ctrl-ing ref="outputExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="outputExample">
 {
     "add": [{ "output": { "label":"Moment of Inertia","unit":"kg m^2", "accuracy":2 }, "path": "momentOfInertia" }]
 }

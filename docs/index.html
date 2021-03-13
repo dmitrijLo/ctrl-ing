@@ -24,16 +24,16 @@
   <nav-pane base="."></nav-pane>
 </nav>
 <article>
-  <p><canvas id="c" width="750" height="401" style="position:relative;left:0rem;border:1px solid black;"></canvas>
-<ctrl-ing ref="model" xOffset=50>
-{
-&quot;add&quot;:[ {&quot;input&quot;:{}},{&quot;dropdown&quot;:{}},{&quot;toggle&quot;:{}},{&quot;slider&quot;:{}},{&quot;color&quot;:{}},{&quot;output&quot;:{}},{&quot;button&quot;:{}} ]
-}
-</ctrl-ing></p>
+  <p><canvas id="c" width="750" height="401" style="left:0rem;border:1px solid black;"></canvas></p>
 <div style="position:relative;width:20rem;top:-29rem;left:1rem">
 <h1 id="ctrl-ing"><code>&lt;ctrl-ing&gt;</code></h1>
 <p>Take control over objects with this minimalistic panel designed as custom HTML element.</p>
 </div>
+<ctrl-ing ref="model" xOffset=50>
+{
+    "add":[ {"input":{}},{"dropdown":{}},{"toggle":{}},{"slider":{}},{"color":{}},{"output":{}},{"button":{}} ]
+}
+</ctrl-ing>
 <script src="./bin/canvasInteractor.js"></script>
 <script src="./bin/g2.core.js"></script>
 <script src="./bin/g2.lib.js"></script>
@@ -67,7 +67,7 @@ interactor.on('tick', (e) => { g.exe(selector).exe(ctx) } )
 </article>
 </main>
 <footer>
-  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@1/src/ctrling.min.js"></script>
+  <script src="../src/ctrling.js"></script>
   
   <script src="./bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>

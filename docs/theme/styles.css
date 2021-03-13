@@ -319,11 +319,12 @@ figcaption {
 /* code sections */
 pre > code > code > div,
 pre > code.code-line > div {
+  width: 100%;
   font-size: 0.75rem;
   color: var(--color-code);
   background-color: var(--bgcol-code);
   border-radius: 5px;
-  margin: 0 1rem 1rem 1rem;
+  /* margin: 0 1rem 1rem 1rem; */
   padding: 2em 0 2em 1em;
   white-space: pre-wrap;
   max-height: 12.5em;

@@ -429,7 +429,6 @@ class Ctrl extends HTMLElement {
                         for(let j = 0; j != i; j++) {
                             const width = previous.getBoundingClientRect().width;
                             if(width !== 0){
-                                console.log(previous);
                                 top += previous.getBoundingClientRect().top - ctrl.getBoundingClientRect().top;
                                 break;
                             } else previous = previous.previousElementSibling;   

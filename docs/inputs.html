@@ -79,7 +79,7 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="inputExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="inputExample">
 {
     "add": [ { "input":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
 }
@@ -95,7 +95,7 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="rangeExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="rangeExample">
 {
     "add": [ { "slider":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
 }
@@ -110,7 +110,7 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="dropdownExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="dropdownExample">
 {
     "add": [
         { "dropdown":{ "label":"Geometry Selection", "default":"triangle", "circle":"circle", "rectangle":"rectangle","pentagon":"pentagon" }, "path":"geometry"}
@@ -127,7 +127,7 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="toggleExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="toggleExample">
 {
     "add": [ { "toggle":{ "label":"Run Animation" }, "path":"runAnimation" } ]
 }
@@ -142,7 +142,7 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="buttonExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="buttonExample">
 {
     "add": [ { "button":{ "label":"Add mass" }, "on":{ "click":"addMass" } } ]
 }
@@ -158,7 +158,7 @@
 }
 <span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
 </div></code></pre>
-<ctrl-ing ref="outputExample" xOffset=20 yOffset=-15>
+<ctrl-ing ref="outputExample">
 {
     "add": [{ "output": { "label":"Moment of Inertia","unit":"kg m^2", "accuracy":2 }, "path": "momentOfInertia" }]
 }
@@ -200,7 +200,7 @@
 </article>
 </main>
 <footer>
-  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@1/src/ctrling.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script>
   
   <script src="./bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>

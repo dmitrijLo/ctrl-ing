@@ -3,12 +3,7 @@
 "title": "ctrl-ing"
 ---
 
-<canvas id="c" width="750" height="401" style="position:relative;left:0rem;border:1px solid black;"></canvas>
-<ctrl-ing ref="model" xOffset=50>
-{
-    "add":[ {"input":{}},{"dropdown":{}},{"toggle":{}},{"slider":{}},{"color":{}},{"output":{}},{"button":{}} ]
-}
-</ctrl-ing>
+<canvas id="c" width="750" height="401" style="left:0rem;border:1px solid black;"></canvas>
 <div style="position:relative;width:20rem;top:-29rem;left:1rem">
 
 # `<ctrl-ing>`
@@ -16,6 +11,12 @@
 Take control over objects with this minimalistic panel designed as custom HTML element.
 
 </div>
+<ctrl-ing ref="model" xOffset=50>
+{
+    "add":[ {"input":{}},{"dropdown":{}},{"toggle":{}},{"slider":{}},{"color":{}},{"output":{}},{"button":{}} ]
+}
+</ctrl-ing>
+
 <script src="./bin/canvasInteractor.js"></script>
 <script src="./bin/g2.core.js"></script>
 <script src="./bin/g2.lib.js"></script>
