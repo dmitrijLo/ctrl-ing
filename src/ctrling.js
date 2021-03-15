@@ -108,12 +108,14 @@ class CtrlElement {
             }
         }
     }
-    addListener(evt,fn){
+    addListener(evt,fn,target){
         for (let child of this.children){
             child.addEventListener(evt, () => {
                 const value = (typeof child.value === 'boolean' || 'string') ? child.value : +child.value;
+                const boundFn = fn.bind(target);
                 this.updateState(value);
-                if (fn !== undefined) return fn();
+                
+                if (fn !== undefined) return boundFn();
             });
         }
     }
@@ -387,7 +389,7 @@ class Ctrl extends HTMLElement {
             this.elements = element;
             let event = (input.hasOwnProperty('event')) ? Object.values(input).find(key => events.includes(key)) : 'input';
             let callback = (event != undefined) ? this.targetObj[input.func] || window[input.func] : undefined;
-            element.addListener(event, callback);
+            element.addListener(event, callback, this.targetObj);
             gui.querySelector('.ctrl-cb').appendChild(element.self);
         }
         this._root.appendChild(gui);
