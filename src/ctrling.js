@@ -112,10 +112,8 @@ class CtrlElement {
         for (let child of this.children){
             child.addEventListener(evt, () => {
                 const value = (typeof child.value === 'boolean' || 'string') ? child.value : +child.value;
-                const boundFn = fn.bind(target);
                 this.updateState(value);
-                
-                if (fn !== undefined) return boundFn();
+                if (fn !== undefined) return fn.bind(target)();
             });
         }
     }
