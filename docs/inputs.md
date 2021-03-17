@@ -43,12 +43,10 @@ Until now the component object accepts the following properties:
 > **e.g.:** `"on": { "click": "myFunction" }`<br>
 > **Note:** Until now the events `click`, `input` and `change` are implemented. If there is no function to execute `on` can be ommited.
 
-## Input
-
-<script>var inputExample = { x:10 }</script>
+## Number <span id="number">
 
 ```HTML
-<ctrl-ing ref="inputExample">
+<ctrl-ing ref="numberExample">
 {
     "add": [
         { "input":{ "label":"velocity","min":10,"max":100,"step":0.5 },
@@ -58,13 +56,24 @@ Until now the component object accepts the following properties:
 </ctrl-ing>
 ```
 
-<ctrl-ing ref="inputExample">
+<canvas id="numberDemo" width="750" height="100" style="border:1px solid black;"></canvas>
+
+<script>
+    var circle =  {x:0,y:0,r:60,fs:'lightgreen'};
+    const ctxNumEx = document.getElementById('numberDemo').getContext('2d');
+    const interactor = canvasInteractor.create(ctxNumEx,{x:175,y:50,cartesian:true});
+    const cir = g2().clr().view(interactor.view).grid().cir(circle);
+    interactor.on('tick', (e) => { cir.exe(ctxNumEx); })
+              .startTimer();
+</script>
+
+<ctrl-ing ref="circle">
 {
-    "add": [ { "input":{"label":"velocity","min":10,"max":100,"step":0.5},"path":"x" } ]
+    "add": [ { "input":{"label":"Radius","min":10,"max":100,"step":0.5},"path":"r" } ]
 }
 </ctrl-ing>
 
-## Slider
+## Slider <span id="slider">
 
 <script>var rangeExample = { x:10 }</script>
 
@@ -85,7 +94,7 @@ Until now the component object accepts the following properties:
 }
 </ctrl-ing>
 
-## Dropdown
+## Dropdown <span id="dropdown">
 
 <script>var dropdownExample = { geometry: 'triangle' }</script>
 
@@ -107,7 +116,7 @@ Until now the component object accepts the following properties:
 }
 </ctrl-ing>
 
-## Toggle
+## Toggle <span id="toggle">
 
 <script>var toggleExample = { runAnimation: false }</script>
 
@@ -127,7 +136,7 @@ Until now the component object accepts the following properties:
 }
 </ctrl-ing>
 
-## Button
+## Button <span id="button">
 
 <script>var buttonExample = {}</script>
 
@@ -147,7 +156,7 @@ Until now the component object accepts the following properties:
 }
 </ctrl-ing>
 
-## Output
+## Output <span id="output">
 
 <script>var outputExample =  {momentOfInertia: 1000.123456789 }</script>
 
@@ -168,42 +177,39 @@ Until now the component object accepts the following properties:
 }
 </ctrl-ing>
 
-## Color
+## Color <span id="color">
 
 ```HTML
-<ctrl-ing ref="colorExample">
+<ctrl-ing ref="points">
 {
     "add": [ 
-        { "color": { "label": "Fill", "color":"#DE3163" }, "path": "color" }
+        { "color": { "label": "Color of linestroke", "color":"#DE3163" }, "path": "ls" }
     ]
 }
 </ctrl-ing>
 ```
 
-<canvas id="colorDemo" width="150" height="100" style="border:1px solid black;"></canvas>
+<canvas id="colorDemo" width="750" height="100" style="border:1px solid black;"></canvas>
 
 <script>
-    var colorExample =  { color: '#DE3163' };
-    const ctx = document.getElementById('colorDemo').getContext('2d');
-    const interactor = canvasInteractor.create(ctx,{x:75,y:50,cartesian:true});
-    const points = [];
-    const ply = g2().ply({pts:points,ls:colorExample.color,lw:3});
-    const g = g2().clr().view(interactor.view).grid().use({grp:ply});
+    const ctxColor = document.getElementById('colorDemo').getContext('2d');
+    var points = {pts:[{x:200,y:0}],ls:'#DE3163',lw:3};
+    //const ply = g2().ply({pts:points,ls:colorExample.color,lw:3});
+    const ply = g2().del().clr().view(interactor.view).grid().ply(points);
     let i = 0;
     let forward = true;
     interactor.on('tick', (e) => {
         i+=0.5;
-        forward ? points.push({x: Math.cos(Math.PI * i / 60 ) * 40, y: Math.sin(Math.PI * i / 20) * 40}) : points.shift();
-        if(points.length === 240 || points.length === 0) { forward = !forward; };
-        ply.del().ply({pts:points,ls:colorExample.color,lw:3});
-        g.exe(ctx);
+        forward ? points.pts.push({x: Math.cos(Math.PI * i / 60 ) * 200, y: Math.sin(Math.PI * i / 20) * 40}) : points.pts.shift();
+        if(points.pts.length === 240 || points.pts.length === 0) { forward = !forward; };
+        ply.exe(ctxColor);
         }).startTimer();
 </script>
 
-<ctrl-ing ref="colorExample">
+<ctrl-ing ref="points">
 {
     "add": [ 
-        { "color": { "label": "Fill", "color":"#DE3163" }, "path": "color" }
+        { "color": { "label": "Color of linestroke", "color":"#DE3163" }, "path": "ls" }
     ]
 }
 </ctrl-ing>

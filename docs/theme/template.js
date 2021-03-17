@@ -25,7 +25,7 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 </header>
 <main>
 <nav>
-  <nav-pane base="${data.base}"></nav-pane>
+  <nav-pane base="${data.base}" detail=false></nav-pane>
 </nav>
 <article>
   ${data.content}

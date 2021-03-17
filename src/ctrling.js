@@ -594,7 +594,7 @@ class Ctrl extends HTMLElement {
             }
 
             .ctrl-button:hover:active {
-                //letter-spacing: 2px;
+                /* letter-spacing: 2px; */
                 letter-spacing: 2px ;
                 background-color: #C8D6C7;
                 /* box-shadow: 0 .2em .4em rgba(0, 0, 0, 0);  */

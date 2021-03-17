@@ -9,7 +9,16 @@ const nav = {
         "path": "attributes.html"
     },{
         "name": "Inputs",
-        "path": "inputs.html"
+        "path": "inputs.html",
+        "entries": [
+            { "name": "Number","path": "#number"},
+            { "name": "Slider","path": "#slider" },
+            { "name": "Dropdown", "path": "#dropdown" },
+            { "name": "Toggle","path": "#toggle" },
+            { "name": "Button","path": "#button" },
+            { "name": "Output","path": "#output" },
+            { "name": "Color","path": "#color" }
+        ]
     },{
         "name": "Studywork",
         "path": "studywork.html"
@@ -30,6 +39,8 @@ class NavigationPane extends HTMLElement {
     set img(q) { if (q) this.setAttribute('img', q) }
     get start() { return this.getAttribute('start') || 1 }
     set start(q) { if (q) this.setAttribute('start', q) }
+    get detail() { return this.getAttribute('detail') || false }
+    set detail(q) { if (q) this.setAttribute('detail', q) }
 
     constructor() {
         super();
@@ -57,13 +68,13 @@ class NavigationPane extends HTMLElement {
     template({ entries }) {
         const addEntries = (entries, path) => {
             return `${entries.map((c, idx) => {
-                const concatPath = path + "/" + c.path;
-
-                if (c.entries) {
+                const concatPath = (c.path[0] !== '#') ? path + "/" + c.path : path + c.path;
+                
+                if (c.entries && this.detail == 'true') {
                     const summaryStyle = "cursor: pointer";
                     const olStyle = "padding-inline-start: 25px";
                     const open = this.open == idx ? "open" : "";
-
+                    console.log(this.detail === 'false')
                     return `<li><details
                         ${open}
                         onclick="window.sessionStorage.setItem('navPaneOpen', ${idx})">
@@ -72,17 +83,21 @@ class NavigationPane extends HTMLElement {
                         </details></li>`
                 }
                 else {
-                    const [el, href, style] = c.path ?
-                        ["a", `href="${concatPath}"`, "font-color:black;text-decoration:none"] :
-                        ["span", "",
-                            "pointer-events: none; cursor: default; color: lightgray"];
+                    console.log(c.path)
+                    const [el, href, style] = c.path ? c.path[0] === '#' ?
+                        ["a", `href="${concatPath}"`, "color: black !important;text-decoration:none;"] :
+                        ["a", `href="${concatPath}"`, "color: #1f3939 !important;font-weight:bold;font-size:16pt;vertical-align: -1rem;;text-decoration:none;"] :
+                        ["span", "","pointer-events: none; cursor: default; color: lightgray"] ;
 
-                    return `<li><${el} style="${style}" ${href}>${c.name}</${el}></li>`;
+                    return `<li><${el} style="${style}" ${href}>${c.name}</${el}>
+                    ${c.entries ? `<ul style="${entryStyle}">${addEntries(c.entries, concatPath)}</ul>` :''}
+                    </li>`;
                 }
             }).join("")}`
         }
 
         const olStyle = "padding-inline-start: 25px;list-style: none;";
+        const entryStyle = "font-weight: normal;padding-inline-start: 0;list-style: none;";
         const imgStyle = "margin: 0 auto; max-width: 100%;";
 
         return `<a href="${this.base}/index.html">
