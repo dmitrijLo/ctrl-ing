@@ -111,7 +111,8 @@ class CtrlElement {
     addListener(evt,fn,target){
         for (let child of this.children){
             child.addEventListener(evt, () => {
-                const value = (typeof child.value === 'boolean' || 'string') ? child.value : +child.value;
+                const value = (typeof child.value === 'boolean') ? child.value : 
+                              (isNaN(+child.value)) ? child.value : +child.value;
                 this.updateState(value);
                 if (fn !== undefined) return fn.bind(target)();
             });
