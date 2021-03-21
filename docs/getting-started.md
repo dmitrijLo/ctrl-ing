@@ -34,13 +34,13 @@ Use the `<ctrl-ing>`-tag directly on your HTML page.
 ```HTML
 <ctrl-ing ref="myObject">
 {
-    "add": [ { "input":{},"path":"frequency" } ]
+    "add": [ { "number":{},"path":"frequency" } ]
 }
 </ctrl-ing>
 ```
 
 <ctrl-ing ref="myObject" xOffset=50 yOffset=5>
 {
-    "add": [ { "input":{},"path":"frequency" } ]
+    "add": [ { "number":{},"path":"frequency" } ]
 }
 </ctrl-ing>

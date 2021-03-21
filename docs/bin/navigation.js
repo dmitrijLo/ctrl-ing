@@ -6,10 +6,13 @@ const nav = {
         "path": "getting-started.html"
     },{
         "name": "Attributes",
-        "path": "attributes.html"
+        "path": "attributes.html",
+        "entries": [
+            { "name": "Positioning","path": "#positioning" }
+        ]
     },{
-        "name": "Inputs",
-        "path": "inputs.html",
+        "name": "Components",
+        "path": "components.html",
         "entries": [
             { "name": "Number","path": "#number"},
             { "name": "Slider","path": "#slider" },
@@ -74,7 +77,6 @@ class NavigationPane extends HTMLElement {
                     const summaryStyle = "cursor: pointer";
                     const olStyle = "padding-inline-start: 25px";
                     const open = this.open == idx ? "open" : "";
-                    console.log(this.detail === 'false')
                     return `<li><details
                         ${open}
                         onclick="window.sessionStorage.setItem('navPaneOpen', ${idx})">
@@ -83,7 +85,6 @@ class NavigationPane extends HTMLElement {
                         </details></li>`
                 }
                 else {
-                    console.log(c.path)
                     const [el, href, style] = c.path ? c.path[0] === '#' ?
                         ["a", `href="${concatPath}"`, "color: black !important;text-decoration:none;"] :
                         ["a", `href="${concatPath}"`, "color: #1f3939 !important;font-weight:bold;font-size:16pt;vertical-align: -1rem;;text-decoration:none;"] :

@@ -14,14 +14,16 @@ ${data.tags ? `<meta name="keywords" content="${data.tags.join()}">` : ''}
 ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.css">` : ''}
 <link rel="stylesheet" href="./theme/styles.css">
-<script src="https://cdn.jsdelivr.net/gh/goessner/g2@v2.5/src/g2.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/goessner/g2@v3.0/src/g2.core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/goessner/g2@v3.0/src/g2.ext.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/goessner/g2@v3.0/src/g2.mec.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/goessner/mec2@master/mec2.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tweakpane@1.5.5/dist/tweakpane.min.js"></script>
 </head>
 <body>
 <header>
   <a href="./index.html" class="left">&lt;ctrl-ing&gt;</a>
-  <span class="right"><a href="./index.html">About</a> | <a href="https://github.com/dmitrijLo/HMI">Source</a></span>
+  <span class="right"><a href="./index.html">About</a> | <a href="https://github.com/dmitrijLo/ctrl-ing">Source</a></span>
 </header>
 <main>
 <nav>
@@ -32,7 +34,8 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 </article>
 </main>
 <footer>
-  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script> --->
+  <script src="../src/ctrling.js"></script>
   ${data.g2 ? `<script src="${data.base}/bin/g2.html.js"></script>` : ''}
   <script src="${data.base}/bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>

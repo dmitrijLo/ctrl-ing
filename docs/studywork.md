@@ -31,7 +31,7 @@
 
 An der Fachhochschule Dortmund vermittelt das Wahlpflichtmodul Web-Kinematik den Studiereden des Fachbereichs Maschinenbau die fundamentalen Grundlagen moderner Webtechnologien. Dabei werden Problemstellungen der technischen Mechanik mittels HTML, CSS und JavaScript in eine einfache Form einer Webanwendung überführt. Abbildung 1 zeigt beispielhaft das webbasierte Modell eines Viergelenkgetriebes, welches einer typischen Aufgabenstellung entspricht. Ist das Modell einmal überführt, lassen sich zahlreiche Eigenschaften dessen analysieren. So kann beispielweise die Umlauffähigkeit, die zurückgelegte Bahn einzelner Punkte, die Geschwindigkeit oder Beschleunigung z.B des ebenfalls dargestellten Koppelpunktes oder gar die unterschiedlichen Pole der ebenen Bewegung visualisiert werden.
 
-Um das webbasierte Modell hinreichend analysieren zu können bedarf es interaktiver Elemente, die das Steuern und Verstellen des Modells direkt im Webbrowser ermöglichen. Andernfalls ist der häufige Eingriff in den Quelltext erforderlich, was zum einen zu Fehlern führen kann und zum andren beispielsweise während einer Präsentation undenkbar ist.
+Um das webbasierte Modell hinreichend analysieren zu können, bedarf es interaktiver Elemente, die das Steuern und Verstellen des Modells direkt im Webbrowser ermöglichen. Andernfalls ist der häufige Eingriff in den Quelltext erforderlich, was zum einen zu Fehlern führen kann und zum andren beispielsweise während einer Präsentation undenkbar ist.
 
 HTML bietet von sich aus eine Vielzahl an Elementen, welche in Verbindung mit JavaScript die gewünschte Interaktivität gewähren. So lassen sich standardmäßig 
 
@@ -42,138 +42,7 @@ HTML bietet von sich aus eine Vielzahl an Elementen, welche in Verbindung mit Ja
 * Auswahllisten
 * u.v.m
 
-recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiver und vor allem monotoner Codezeilen, die stetig mit der Anzahl an Eingabemöglichkeiten wachsen. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen $a$, $b$, $c$ und $d$ jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels $\varphi$ der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes. (Code ist auch nicht wiederverwendbar...vlt. noch einfügen...)
-
-... es darf nicht unerwähnt bleiben, dass bereits einige sogenannter GUI-Bibliotheken existieren. Zwei sehr gute Lösung sind zum einen dat.GUI und zum andren Tweakpane, die im Grunde sehr ähnlich funktionieren. Nach Erstellung einer Instanz der jeweiligen JavaScript-Bibliothek stehen dem Benutzer zahlreiche Funktionen zur Verfügungen, die mit wenigen Zeilen Code ein graphisches Interface implementieren. Verknüpft mit einer beliebigen Variable lässt sich diese manipulieren. Dies soll an einem einfachen Beispiel unter dem Einsatz von `tweakpane.js` demonstriert werden. 
-
-Angenommen die Eckpunkte eines Dreiecks sollen durch ein Interface verstellbar sein, so kann das Dreieck durch ein Objekt, welches das Array `nodes` mit allen Eckpunkten beinhaltet, repräsentiert sein. Nach Erstellung einer neuen Instanz der Tweakpane-Klasse in der Konstanten `gui`, steht nun beispielsweise die Funktion `addInput()` zur Verfügung, die ein Input-Element erzeugt und das Steuern jener Koordinate ermöglicht. Auf diese Art und Weise lassen sich die einzelnen Koordinaten des Dreiecks, wie in der Auflistung 3 gezeigt, recht einfach mit einem Interface verbinden und ist somit eine saubere Lösung verglichen mit dem Code in Auflistung 1 und 2.
-
-#### Livebeispiel 1:
-
-<aside style="max-width:60%; float:left;">
-<h4>Ausgabe:</h4>
-<span id="output"><span>
-</aside>
-
-<aside>
-<h4>Tweakpane Interface</h4>
-<span id="someContainer"><span>
-</aside>
-
-<script>
-   const triangle = {
-    nodes: [ {x:75,y:50}, {x:150,y:200}, {x:250,y:10} ]
-}
-const gui = new Tweakpane({container: document.getElementById('someContainer')}); 
-gui.addInput(triangle.nodes[0], 'x', {label: 'A0x'});
-gui.addInput(triangle.nodes[0], 'y', {label: 'A0y'});
-gui.addInput(triangle.nodes[1], 'x', {label: 'B0x'});
-gui.addInput(triangle.nodes[1], 'y', {label: 'B0y'});
-gui.addInput(triangle.nodes[2], 'x', {label: 'C0x'});
-gui.addInput(triangle.nodes[2], 'y', {label: 'C0x'});
-document.getElementById('output').innerHTML = `const triangle = { <br>&nbsp;
-    nodes: [ {x: ${triangle.nodes[0].x}, y: ${triangle.nodes[0].y}}, {x: ${triangle.nodes[1].x}, y: ${triangle.nodes[1].y}}, {x: ${triangle.nodes[2].x}, y: ${triangle.nodes[2].y}} ] <br>} `;
-gui.on('change', () => {
-  document.getElementById('output').innerHTML = `const triangle = { <br>&nbsp;
-    nodes: [ {x: ${triangle.nodes[0].x}, y: ${triangle.nodes[0].y}}, {x: ${triangle.nodes[1].x}, y: ${triangle.nodes[1].y}}, {x: ${triangle.nodes[2].x}, y: ${triangle.nodes[2].y}} ] <br>} `;
-});
-</script>
-
-<br><br><br><br><br><br><br><br>
-
-Aus den eben genannten Gründen beschäftigt sich diese Studienarbeit beschäftigt mit dem Entwurf einer minimalistischen JavaScript-Bibliothek, die dem Anwender die Programmierung einer Steuerung weitgehend abnimmt und die geforderte Interaktivität gewährt.
-
-<br><br><br><br>
-
-<canvas id="cv" width="350" height="250"></canvas>
-
-<script>
-    const ctx = document.getElementById("cv").getContext("2d");
-    var model = {
-        "nodes": [
-            { "id": "A0", "x": 75, "y": 50 },
-            { "id": "B0", "x": 150, "y": 200 },
-            { "id": "C0", "x": 250, "y": 10 }
-        ],
-        "constraints": [
-        { "id": "a", "p1": "A0", "p2": "B0" }, 
-        { "id": "b", "p1": "B0", "p2": "C0" }, 
-        { "id": "c", "p1": "C0", "p2": "A0" }
-        ]
-    };
-    mec.model.extend(model);
-    model.init();
-    function render() {
-        const g = g2().del().clr().view({ cartesian: true });
-        model.draw(g);
-        g.exe(ctx);
-    return g;
-    }
-    function start() {
-        console.log('Animation is running!');
-    }
-    render()
-
-/* { "canvasHandle": { "label":"Punkt C" }, "paths":["nodes/2/x","nodes/2/y"],"on":{ "input":"render" } }, */
-</script>
-
-<ctrl-ing ref="model" header="Steuerung eines Dreiecks">
-{
-    "add": [
-        { "id":"A0x","dropdown":{"label":"A0.x","default":"min","mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
-        { "id":"A0y","slider":{"min":50,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
-        { "toggle":{ "label":"B0.x", "switchTo": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
-        { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
-        { "button": { "label":"Start" }, "on":{ "click":"start" } },
-        { "color": { "label": "Fill", "color":"#DE3163" } },
-        { "output": { "label":"velocity", "unit":"m/s" }, "path": "nodes/0/x" }
-    ]
-}
-</ctrl-ing>
-
-Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:
-
-<br><br><br><br>
-
-```JSON
-<ctrl-ing ref="model" header="Steuerung eines Dreiecks" id="ctrling">
-{
-    "add":[
-        { "input":{ "label":"A0.x" },"path":"nodes/0/x","on":{ "input":"render" } },
-        { "input":{ "label":"A0.y" },"path":"nodes/0/y","on":{ "input":"render" } },
-        { "input":{ "label":"B0.x" },"path":"nodes/1/x","on":{ "input":"render" } },
-        { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } },
-        { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } },
-        { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } }
-    ]
-}
-</ctrl-ing>
-```
-
-## Cumstom Elements
-
-* ### Shadow Dom
-
-## Bidirektionales "Eventmanagement"
-
-* ### Observer Design Pattern
-
-## Konkretes Anwendungsbeispiel
-
-## Funktionale Anforderungen
-
-* Das Interface muss die nachfolgenden Elemente beinhalten:
-    * Standard Input
-    * Slider
-    * Dropdown Menü
-    * Checkbox (Toggle)
-    * Buttons
-    * Output
-    * constraints/connection
-    * ...?
-* Der Nutzer soll die Möglichkeit haben die Position des Interface alternativ einzustellen.
-
-## Anhang
+recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiver und vor allem monotoner Codezeilen, die stetig mit der Anzahl an Eingabemöglichkeiten wachsen. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen $a$, $b$, $c$ und $d$ jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels $\varphi$ der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes. Zu allem Übel ist der Code nicht einmal wiederverwendbar.
 
 #### Listing 1: HTML Struktur zur Erzeugung einer Variation an Bedienelementen
 
@@ -265,25 +134,128 @@ releaseK.addEventListener("click", function () { /*...*/ });
 resetButton.addEventListener("click",refreshPage);
 ```
 
+####
+
+Es darf nicht unerwähnt bleiben, dass einige sogenannter GUI-Bibliotheken bereits existieren und für die zuvor beschriebene Problemstellung einen Lösungsansatz bieten. Zwei sehr gute Lösung sind zum einen dat.GUI und zum andren Tweakpane, die im Grunde sehr ähnlich funktionieren. Nach Erstellung einer Instanz der jeweiligen JavaScript-Bibliothek stehen dem Benutzer zahlreiche Funktionen zur Verfügungen, die mit wenigen Zeilen Code ein graphisches Interface implementieren. Verknüpft mit einer beliebigen Variable lässt sich diese manipulieren. Dies soll an einem einfachen Beispiel unter dem Einsatz von `tweakpane.js` demonstriert werden. 
+
+Angenommen die Eckpunkte eines Dreiecks sollen durch ein Interface verstellbar sein, so kann das Dreieck durch ein Objekt, welches das Array `nodes` mit allen Eckpunkten beinhaltet, repräsentiert sein. Nach Erstellung einer neuen Instanz der Tweakpane-Klasse in der Konstanten `gui`, steht nun beispielsweise die Funktion `addInput()` zur Verfügung, die ein Input-Element erzeugt und das Steuern jener Koordinate ermöglicht. Auf diese Art und Weise lassen sich die einzelnen Koordinaten des Dreiecks, wie in der Auflistung 3 gezeigt, recht einfach mit einem Interface verbinden, was einer sauberen Lösung verglichen mit dem Code in Auflistung 1 und 2 gleicht.
+
 #### Listing 3: Demonstration von tweakpane.js
 
 ```JavaScript
-const triangle = {
+const triangle = { // Zielobjekt
+    nodes: [ {x:75,y:50}, {x:150,y:200}, {x:250,y:10} ] // Array beinhaltet Eckpunkte des Dreiecks
+}
+const gui = new Tweakpane();    // Erstellt neue Instanz der Tweakpane-Klasse
+gui.addInput(triangle.nodes[0], 'x', {label: 'A0x'});   // Aufrufen der nun
+gui.addInput(triangle.nodes[0], 'y', {label: 'A0y'});   // zur Verfügung
+gui.addInput(triangle.nodes[1], 'x', {label: 'B0x'});   // stehenden Funktionen
+gui.addInput(triangle.nodes[1], 'y', {label: 'B0y'});   // ...
+gui.addInput(triangle.nodes[2], 'x', {label: 'C0x'});   // ...
+gui.addInput(triangle.nodes[2], 'y', {label: 'C0x'});   // ...
+```
+
+#### Livebeispiel 1:
+
+<aside style="max-width:60%; float:left;">
+<h4>Ausgabe:</h4>
+<span id="output"><span>
+</aside>
+
+<aside>
+<h4>Tweakpane Interface</h4>
+<span id="someContainer"><span>
+</aside>
+
+<script>
+   const triangle = {
     nodes: [ {x:75,y:50}, {x:150,y:200}, {x:250,y:10} ]
 }
-const gui = new Tweakpane();
+const gui = new Tweakpane({container: document.getElementById('someContainer')}); 
 gui.addInput(triangle.nodes[0], 'x', {label: 'A0x'});
 gui.addInput(triangle.nodes[0], 'y', {label: 'A0y'});
 gui.addInput(triangle.nodes[1], 'x', {label: 'B0x'});
 gui.addInput(triangle.nodes[1], 'y', {label: 'B0y'});
 gui.addInput(triangle.nodes[2], 'x', {label: 'C0x'});
 gui.addInput(triangle.nodes[2], 'y', {label: 'C0x'});
+document.getElementById('output').innerHTML = `const triangle = { <br>&nbsp;
+    nodes: [ {x: ${triangle.nodes[0].x}, y: ${triangle.nodes[0].y}}, {x: ${triangle.nodes[1].x}, y: ${triangle.nodes[1].y}}, {x: ${triangle.nodes[2].x}, y: ${triangle.nodes[2].y}} ] <br>} `;
+gui.on('change', () => {
+  document.getElementById('output').innerHTML = `const triangle = { <br>&nbsp;
+    nodes: [ {x: ${triangle.nodes[0].x}, y: ${triangle.nodes[0].y}}, {x: ${triangle.nodes[1].x}, y: ${triangle.nodes[1].y}}, {x: ${triangle.nodes[2].x}, y: ${triangle.nodes[2].y}} ] <br>} `;
+});
+</script>
+
+<br><br><br><br><br><br><br><br>
+
+Anders als die gängigen GUI-Bibliotheken, welche dem Benutzer lediglich verschiedene Funktionen bereitstellen, beschäftigt sich diese Studienarbeit mit dem Entwurf einer minimalistischen JavaScript-Bibliothek, die dem Anwender ein benutzerdefiniertes HTML Element (engl.: custom HTML element) zur Verfügung stellt. Dieses Element, auch Webkomponente genannt, nimmt ähnlich wie GUI-Bibliotheken die Programmierung einer graphischen Steuerung weitestgehend ab und gewährt damit die geforderte Interaktivität. Jedoch bringt es zusätzlich noch einige weitere Vorteile mit sich, die diese Arbeit im weiteren Verlauf verdeutlicht.
+
+## Benutzerdefinierte Elemente
+
+* ### Shadow Dom
+
+<canvas id="cv" width="350" height="250"></canvas>
+
+<script>
+    const ctx = document.getElementById("cv").getContext("2d");
+    var model = {
+        "nodes": [
+            { "id": "A0", "x": 75, "y": 50 },
+            { "id": "B0", "x": 150, "y": 200 },
+            { "id": "C0", "x": 250, "y": 10 }
+        ],
+        "constraints": [
+        { "id": "a", "p1": "A0", "p2": "B0" }, 
+        { "id": "b", "p1": "B0", "p2": "C0" }, 
+        { "id": "c", "p1": "C0", "p2": "A0" }
+        ]
+    };
+    mec.model.extend(model);
+    model.init();
+    function render() {
+        const g = g2().del().clr().view({ cartesian: true });
+        model.draw(g);
+        g.exe(ctx);
+    return g;
+    }
+    function start() {
+        console.log('Animation is running!');
+    }
+    render()
+</script>
+
+<ctrl-ing ref="model" header="Steuerung eines Dreiecks">
+{
+    "add": [
+        { "id":"A0x","dropdown":{"label":"A0.x","default":"min","mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
+        { "id":"A0y","slider":{"min":50,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
+        { "toggle":{ "label":"B0.x", "switchTo": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
+        { "number":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
+        { "button": { "label":"Start" }, "on":{ "click":"start" } },
+        { "color": { "label": "Fill", "color":"#DE3163" } },
+        { "output": { "label":"velocity", "unit":"m/s" }, "path": "nodes/0/x" }
+    ]
+}
+</ctrl-ing>
+
+Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:
+
+<br><br><br><br>
+
+```JSON
+<ctrl-ing ref="model" header="Steuerung eines Dreiecks" id="ctrling">
+{
+    "add":[
+        { "input":{ "label":"A0.x" },"path":"nodes/0/x","on":{ "input":"render" } },
+        { "input":{ "label":"A0.y" },"path":"nodes/0/y","on":{ "input":"render" } },
+        { "input":{ "label":"B0.x" },"path":"nodes/1/x","on":{ "input":"render" } },
+        { "input":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } },
+        { "input":{ "label":"C0.x" },"path":"nodes/2/x","on":{ "input":"render" } },
+        { "input":{ "label":"C0.y" },"path":"nodes/2/y","on":{ "input":"render" } }
+    ]
+}
+</ctrl-ing>
 ```
 
-<!--
+## Anhang
 
-## Einleitung
-
-Als Human-Machine Interface (Abkürzung HMI) wird im allgemeinen Sprachgebrauch eine Benutzerschnittstelle eines meist komplexen Systems verstanden, mit dem ein Mensch interagieren kann. Ein alltägliches Beispiel stellt das Lenkrad zur Steuerung eines Autos dar. Während dieses Beispiel ... befasst sich diese Studienarbeit mit der Programmierung einer JavaScript micro library (zu deutsch Mikrobibliothek)
-
---->

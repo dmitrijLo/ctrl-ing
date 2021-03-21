@@ -13,7 +13,7 @@ Take control over objects with this minimalistic panel designed as custom HTML e
 </div>
 <ctrl-ing ref="model" xOffset=50>
 {
-    "add":[ {"input":{}},{"dropdown":{}},{"toggle":{}},{"slider":{}},{"color":{}},{"output":{}},{"button":{}} ]
+    "add":[ {"number":{}},{"dropdown":{}},{"toggle":{}},{"slider":{}},{"color":{}},{"output":{}},{"button":{}} ]
 }
 </ctrl-ing>
 
