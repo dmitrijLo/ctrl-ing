@@ -90,7 +90,7 @@
 <p><strong>e.g.:</strong> <code>&quot;on&quot;: { &quot;click&quot;: &quot;myFunction&quot; }</code><br>
 <strong>Note:</strong> Until now the events <code>click</code>, <code>input</code> and <code>change</code> are implemented. If there is no function to execute <code>on</code> can be ommited.</p>
 </blockquote>
-<h2 id="number-span-id%22number%22">Number <span id="number"></h2>
+<h2 id="number-span-id22number22">Number <span id="number"></h2>
 <p>A simple number element accepts numeric input. Optional settings are <code>label</code>, <code>min</code>, <code>max</code> and <code>step</code>. The following example shows a circle that changes its size depending on user input.</p>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;circle&quot;</span>&gt;</span>
 {
@@ -114,7 +114,7 @@
     "add": [ { "number":{"label":"Radius","min":1,"max":250,"step":0.5},"path":"r" } ]
 }
 </ctrl-ing>
-<h2 id="slider-span-id%22slider%22">Slider <span id="slider"></h2>
+<h2 id="slider-span-id22slider22">Slider <span id="slider"></h2>
 <p>The slider is suitable for adjustments within a range. The example below shows a spring-mass system. The slider allows to increase the angle of the pendulum and with it to tension the spring.</p>
 <blockquote>
 <p><strong>Note:</strong> Optional settings are the same as for number element.</p>
@@ -171,7 +171,7 @@
     "add": [ { "slider":{"label":"Angle &alpha;","min":0,"max":90,"step":0.5},"path":"phi" } ]
 }
 </ctrl-ing>
-<h2 id="dropdown-span-id%22dropdown%22">Dropdown <span id="dropdown"></h2>
+<h2 id="dropdown-span-id22dropdown22">Dropdown <span id="dropdown"></h2>
 <script>var dropdownExample = { geometry: 'triangle' }</script>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;dropdownExample&quot;</span>&gt;</span>
 {
@@ -188,7 +188,7 @@
     ]
 }
 </ctrl-ing>
-<h2 id="toggle-span-id%22toggle%22">Toggle <span id="toggle"></h2>
+<h2 id="toggle-span-id22toggle22">Toggle <span id="toggle"></h2>
 <p>A toggle button or checkbox is an essential and very important element that allows switching between two states. In most cases it is used to toggle between boolean <code>true</code> and <code>false</code>, which is also the default behavior of <code>ctrl-ing</code> when implemented equal to the code listing. But <code>ctrl-ing</code> allows also to toggle between strings or numeric values. Use the optional <code>&quot;switchTo&quot;:&quot;&lt;number or string&gt;&quot;</code> setting for this. <code>ctrl-ing</code> will store the value declared in the target object. When the toggle is pressed, the object's value will be changed to the <code>switchTo</code> value.</p>
 <script>var toggleExample = { runAnimation: false }</script>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;pendulum2&quot;</span>&gt;</span>
@@ -268,7 +268,7 @@
     "add": [ { "toggle":{ "label":"Run Animation" }, "path":"dirty" } ]
 }
 </ctrl-ing>
-<h2 id="button-span-id%22button%22">Button <span id="button"></h2>
+<h2 id="button-span-id22button22">Button <span id="button"></h2>
 <p>Buttons have the task to trigger a specific function. With <code>ctrl-ing</code> it does not take much to add a button. In the example the first button will trigger the <code>.addMass()</code> and the second button the <code>.deleteMass()</code> method of the targeted object.</p>
 <blockquote>
 <p><strong>Note:</strong> It is possible to include normal functions as well as methods of the target object. Functions must also be available in the <code>window</code>- or rather the <code>globalThis</code>-object. Therefore arrow functions or function expressions declared with <code>let</code> or <code>const</code> will not work.</p>
@@ -349,7 +349,7 @@ interactor.on('tick', (e) => { polygon/* .exe(selector) */.exe(ctxBtnEx) } )
     ]
 }
 </ctrl-ing>
-<h2 id="output-span-id%22output%22">Output <span id="output"></h2>
+<h2 id="output-span-id22output22">Output <span id="output"></h2>
 <script>var outputExample =  {momentOfInertia: 1000.123456789 }</script>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;outputExample&quot;</span>&gt;</span>
 {
@@ -365,7 +365,7 @@ interactor.on('tick', (e) => { polygon/* .exe(selector) */.exe(ctxBtnEx) } )
     "add": [{ "output": { "label":"Moment of Inertia","unit":"kg m^2", "accuracy":2 }, "path": "momentOfInertia" }]
 }
 </ctrl-ing>
-<h2 id="color-span-id%22color%22">Color <span id="color"></h2>
+<h2 id="color-span-id22color22">Color <span id="color"></h2>
 <p>Not much to say here. <code>ctrl-ing</code> provides an input of type color which is implemented as shown in the code listing. The display is strongly dependent on the browser used. The best appearance was found in chrome-browser.</p>
 <blockquote>
 <p><strong>Note:</strong> It is also possible to use rgb or rgba values. The notation is rgb(100,50,200) respectively rgba(100,50,200,0.5).</p>
@@ -403,8 +403,7 @@ interactor.on('tick', (e) => { polygon/* .exe(selector) */.exe(ctxBtnEx) } )
 </article>
 </main>
 <footer>
-  <!-- <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script> --->
-  <script src="../src/ctrling.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script>
   
   <script src="./bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>

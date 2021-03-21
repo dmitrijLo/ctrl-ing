@@ -113,7 +113,7 @@
     <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>   
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </div></code></pre>
-<h4 id="listing-2-herstellen-der-interaktivit%C3%A4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h4>
+<h4 id="listing-2-herstellen-der-interaktivitc3a4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h4>
 <pre><code class="code-line language-JavaScript"><div><span class="hljs-comment">// Erstellung der Referenzen zu den jeweiligen HTML-Elementen</span>
 <span class="hljs-keyword">const</span> input_a = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;input-a&#x27;</span>),
       input_b = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;input-b&#x27;</span>),
@@ -144,7 +144,7 @@ startButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,
 releaseK.addEventListener(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-comment">/*...*/</span> });
 resetButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,refreshPage);
 </div></code></pre>
-<h4 id=""></h4>
+<h4 id="1"></h4>
 <p>Es darf nicht unerwähnt bleiben, dass einige sogenannter GUI-Bibliotheken bereits existieren und für die zuvor beschriebene Problemstellung einen Lösungsansatz bieten. Zwei sehr gute Lösung sind zum einen dat.GUI und zum andren Tweakpane, die im Grunde sehr ähnlich funktionieren. Nach Erstellung einer Instanz der jeweiligen JavaScript-Bibliothek stehen dem Benutzer zahlreiche Funktionen zur Verfügungen, die mit wenigen Zeilen Code ein graphisches Interface implementieren. Verknüpft mit einer beliebigen Variable lässt sich diese manipulieren. Dies soll an einem einfachen Beispiel unter dem Einsatz von <code>tweakpane.js</code> demonstriert werden.</p>
 <p>Angenommen die Eckpunkte eines Dreiecks sollen durch ein Interface verstellbar sein, so kann das Dreieck durch ein Objekt, welches das Array <code>nodes</code> mit allen Eckpunkten beinhaltet, repräsentiert sein. Nach Erstellung einer neuen Instanz der Tweakpane-Klasse in der Konstanten <code>gui</code>, steht nun beispielsweise die Funktion <code>addInput()</code> zur Verfügung, die ein Input-Element erzeugt und das Steuern jener Koordinate ermöglicht. Auf diese Art und Weise lassen sich die einzelnen Koordinaten des Dreiecks, wie in der Auflistung 3 gezeigt, recht einfach mit einem Interface verbinden, was einer sauberen Lösung verglichen mit dem Code in Auflistung 1 und 2 gleicht.</p>
 <h4 id="listing-3-demonstration-von-tweakpanejs">Listing 3: Demonstration von tweakpane.js</h4>
@@ -159,7 +159,7 @@ gui.addInput(triangle.nodes[<span class="hljs-number">1</span>], <span class="hl
 gui.addInput(triangle.nodes[<span class="hljs-number">2</span>], <span class="hljs-string">&#x27;x&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;C0x&#x27;</span>});   <span class="hljs-comment">// ...</span>
 gui.addInput(triangle.nodes[<span class="hljs-number">2</span>], <span class="hljs-string">&#x27;y&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;C0x&#x27;</span>});   <span class="hljs-comment">// ...</span>
 </div></code></pre>
-<h4 id="livebeispiel">Livebeispiel 1:</h4>
+<h4 id="livebeispiel-1">Livebeispiel 1:</h4>
 <aside style="max-width:60%; float:left;">
 <h4>Ausgabe:</h4>
 <span id="output"><span>
@@ -255,8 +255,7 @@ gui.on('change', () => {
 </article>
 </main>
 <footer>
-  <!-- <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script> --->
-  <script src="../src/ctrling.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script>
   <script src="./bin/g2.html.js"></script>
   <script src="./bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>

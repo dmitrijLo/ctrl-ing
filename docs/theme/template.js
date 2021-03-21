@@ -34,8 +34,7 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
 </article>
 </main>
 <footer>
-  <!-- <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script> --->
-  <script src="../src/ctrling.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@master/src/ctrling.min.js"></script>
   ${data.g2 ? `<script src="${data.base}/bin/g2.html.js"></script>` : ''}
   <script src="${data.base}/bin/navigation.js"></script>
   <span class="left">&copy; Dmitrij</span>
