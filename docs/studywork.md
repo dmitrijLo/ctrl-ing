@@ -190,9 +190,66 @@ gui.on('change', () => {
 
 Anders als die gängigen GUI-Bibliotheken, welche dem Benutzer lediglich verschiedene Funktionen bereitstellen, beschäftigt sich diese Studienarbeit mit dem Entwurf einer minimalistischen JavaScript-Bibliothek, die dem Anwender ein benutzerdefiniertes HTML Element (engl.: custom HTML element) zur Verfügung stellt. Dieses Element, auch Webkomponente genannt, nimmt ähnlich wie GUI-Bibliotheken die Programmierung einer graphischen Steuerung weitestgehend ab und gewährt damit die geforderte Interaktivität. Jedoch bringt es zusätzlich noch einige weitere Vorteile mit sich, die diese Arbeit im weiteren Verlauf verdeutlicht.
 
-## Benutzerdefinierte Elemente
+## Document Object Model
 
-* ### Shadow Dom
+<figure>
+<img width=600px src="./DOM.png"/>
+<h4>Abb. 2: Beispiel eines Document Object Models</h4>
+</figure>
+
+Das Document Object Model (kurz DOM) ist eine elementare Webtechnologie und wichtig für das weitere Verständnis. Das DOM kann auch als Schnittstelle zwischen dem statischen HTML und dem dynamischen JavaScript aufgefasst werden[^1]. Beim Laden einer Webseite erstellen alle modernen Browser aus dem HTML, das als einfacher Text aufgefasst werden kann, ein Modell bestehend aus Knoten, die entsprechend einer Baumstruktur angeordnet sind. Abbildung 2 stellt eine mögliche Baumstruktur dar.
+
+Es wird zwischen vier Knotentypen unterschieden:
+
+* Dokumentenknoten (Blau): Ausgangspunkt für alle weiteren Aktionen.
+* Elementknoten (Grün): HTML-Elemente z.B. `<p>`, `<h1>`, `<body>` usw. werden zu Elementknoten im DOM-Baum
+* Attributeknoten (Orange): Zum Beispiel die Klasse oder ID eines Elementknoten.
+* Textknoten (Violett): Text bzw.`innerHTML` wird in Textknoten gespeichert.
+
+Jeder Knoten ist für sich ein Objekt und beinhaltet Methoden und Eigenschaften [^1]. Das heißt es ist möglich mittels JavaScript Knoten auszuwählen, zu verändern, zu entfernen und zu erzeugen. So erstellt zum Beispiel der Befehl
+
+```JavaScript
+const title = document.createElement('h1');
+```
+
+ein `<h1>`-Element in der Variable `title`, die anschließend mit
+
+```JavaScript
+title.textContent = 'Kapitel 2';
+document.getElementById('bodyID').appendChild(title);
+```
+
+einen Textknoten erhält und an das Element mit der `id = 'bodyID'` angeheftet wird. Diese beispielhafte Vorgehensweise wird auch DOM-Manipulation genannt[^1] und stellt die Grundlage aller JavaScript GUI-Bibliotheken dar.
+
+## Webkomponente
+
+Webkomponente sind im Vergleich zum world wide web eine recht junge Technologie. Erstmals vorgestellt wurde es 2011 von Alex Russell. Die Idee dahinter ist es das DOM erweiterbar zu machen und damit die Art und Weise, wie zukünftig Webanwendungen gebaut werden, zu verändern^[1].
+
+Nochmal zurück zur Codeliste 1, welche zeigt, dass eine einfache Steuerung sich durchaus mit nativen HTML-Elementen implementieren lässt. Unglücklicherweise birgt dieser Code hauptsächlich Nachteile. Der Aufwand ist groß, der Code besitzt kaum Semantik, alle Komponenten sind im DOM sichtbar, wodurch das gesamte Dokument mit jedem weiteren Element an Übersicht verliert und schlussendlich kann es nicht einmal wiederverwendet werden.
+
+Der Ansatz von `Tweakpane.js` ist besser, da es abstrakt betrachtet mittels JavaScript alle Elemente im Hintergrund erzeugt, dann in einer Komponente, meist einem `<div>` oder `<span>` bündelt und anschließend an das DOM heftet. Insofern kommt der Benutzer mit dem erzeugten HTML-Code nicht in Berührung. Dennoch kritisiert Russel diesen Ansatz, indem er sich fragt, ob es uns wirklich gut tut, wenn wir auf diese Weise alles, was keine Semantik besitzt, in JavaScript vor uns selbst verstecken, damit wir uns nicht schuldig fühlen müssen^[1]. Zudem bleibt das Problem, dass die sogenannten Kind-Elemente gleichermaßen im DOM sichtbar sind und zum Beispiel vom `CSS` des Benutzers unbeabsichtigt beeinflusst werden können, bzw. andersherum kann das `CSS` solcher Skripte die Anwendung des Benutzers beeinträchtigen.
+
+Die Webkomponente wirkt diesen Problemen entgegen, indem es seine Funktionalität in sich von außen kapselt^[3]. Anders gesagt, ermöglicht es, individuelle HTML-Elemente zu erstellen, die beispielsweise ähnlich dem `<button>`-Element, von außen betrachtet undurchsichtig sind, ungeachtet dessen eine vielseitige Funktion erfüllen. Das Ganze setzt sich aus den drei Haupttechnologien
+
+* Benutzerdefinierte Elemente
+* Shadow DOM
+* HTML-Vorlagen
+
+zusammen und wird nachfolgend näher betrachtet, wobei HTML-Vorlagen außen vor gelassen werden, da sie innerhalb dieser Arbeit nicht verwendet wurden. Sie dienen dem benutzerdefiniertem Element als Schablone und können mehrfach wiederverwendet werden [^3]. 
+
+### Benutzerdefinierte Elemente
+
+### Shadow DOM
+
+Das shadow DOM ist diejenige Technik, die die HTML-Struktur, das CSS und das Verhalten der Webkomponente von dem eigentlichen Dokument trennt[^1]. Im wesentlichen unterscheidet es sich von dem regulären DOM nicht. Die einzelnen Knoten der Baumstruktur sind genauso als Objekte mit den selben Eigenschaften und Methoden vertreten. Infolgedessen kann die Vorgehensweise aus dem Kapitel DOM analog zur Manipulation angewendet werden. Der Unterschied ist, dass 
+
+```JavaScript
+let shadowRoot = elementRef.attachShadow({mode:'open'});
+```
+
+initiiert. 
+
+Das sogenannte shadow-tree wird and das eigentliche DOM Angehängt an das
 
 <canvas id="cv" width="350" height="250"></canvas>
 
@@ -257,5 +314,8 @@ Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks ge
 </ctrl-ing>
 ```
 
-## Anhang
+## Quellen
 
+[1] https://fronteers.nl/congres/2011/sessions/web-components-and-model-driven-views-alex-russell
+[2] https://developer.mozilla.org/de/docs/Web/Web_Components
+https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM

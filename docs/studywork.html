@@ -113,7 +113,7 @@
     <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>   
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </div></code></pre>
-<h4 id="listing-2-herstellen-der-interaktivitc3a4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h4>
+<h4 id="listing-2-herstellen-der-interaktivit%C3%A4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h4>
 <pre><code class="code-line language-JavaScript"><div><span class="hljs-comment">// Erstellung der Referenzen zu den jeweiligen HTML-Elementen</span>
 <span class="hljs-keyword">const</span> input_a = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;input-a&#x27;</span>),
       input_b = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;input-b&#x27;</span>),
@@ -144,7 +144,7 @@ startButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,
 releaseK.addEventListener(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-comment">/*...*/</span> });
 resetButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,refreshPage);
 </div></code></pre>
-<h4 id="1"></h4>
+<h4 id=""></h4>
 <p>Es darf nicht unerwähnt bleiben, dass einige sogenannter GUI-Bibliotheken bereits existieren und für die zuvor beschriebene Problemstellung einen Lösungsansatz bieten. Zwei sehr gute Lösung sind zum einen dat.GUI und zum andren Tweakpane, die im Grunde sehr ähnlich funktionieren. Nach Erstellung einer Instanz der jeweiligen JavaScript-Bibliothek stehen dem Benutzer zahlreiche Funktionen zur Verfügungen, die mit wenigen Zeilen Code ein graphisches Interface implementieren. Verknüpft mit einer beliebigen Variable lässt sich diese manipulieren. Dies soll an einem einfachen Beispiel unter dem Einsatz von <code>tweakpane.js</code> demonstriert werden.</p>
 <p>Angenommen die Eckpunkte eines Dreiecks sollen durch ein Interface verstellbar sein, so kann das Dreieck durch ein Objekt, welches das Array <code>nodes</code> mit allen Eckpunkten beinhaltet, repräsentiert sein. Nach Erstellung einer neuen Instanz der Tweakpane-Klasse in der Konstanten <code>gui</code>, steht nun beispielsweise die Funktion <code>addInput()</code> zur Verfügung, die ein Input-Element erzeugt und das Steuern jener Koordinate ermöglicht. Auf diese Art und Weise lassen sich die einzelnen Koordinaten des Dreiecks, wie in der Auflistung 3 gezeigt, recht einfach mit einem Interface verbinden, was einer sauberen Lösung verglichen mit dem Code in Auflistung 1 und 2 gleicht.</p>
 <h4 id="listing-3-demonstration-von-tweakpanejs">Listing 3: Demonstration von tweakpane.js</h4>
@@ -159,7 +159,7 @@ gui.addInput(triangle.nodes[<span class="hljs-number">1</span>], <span class="hl
 gui.addInput(triangle.nodes[<span class="hljs-number">2</span>], <span class="hljs-string">&#x27;x&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;C0x&#x27;</span>});   <span class="hljs-comment">// ...</span>
 gui.addInput(triangle.nodes[<span class="hljs-number">2</span>], <span class="hljs-string">&#x27;y&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;C0x&#x27;</span>});   <span class="hljs-comment">// ...</span>
 </div></code></pre>
-<h4 id="livebeispiel-1">Livebeispiel 1:</h4>
+<h4 id="livebeispiel">Livebeispiel 1:</h4>
 <aside style="max-width:60%; float:left;">
 <h4>Ausgabe:</h4>
 <span id="output"><span>
@@ -188,12 +188,45 @@ gui.on('change', () => {
 </script>
 <p><br><br><br><br><br><br><br><br></p>
 <p>Anders als die gängigen GUI-Bibliotheken, welche dem Benutzer lediglich verschiedene Funktionen bereitstellen, beschäftigt sich diese Studienarbeit mit dem Entwurf einer minimalistischen JavaScript-Bibliothek, die dem Anwender ein benutzerdefiniertes HTML Element (engl.: custom HTML element) zur Verfügung stellt. Dieses Element, auch Webkomponente genannt, nimmt ähnlich wie GUI-Bibliotheken die Programmierung einer graphischen Steuerung weitestgehend ab und gewährt damit die geforderte Interaktivität. Jedoch bringt es zusätzlich noch einige weitere Vorteile mit sich, die diese Arbeit im weiteren Verlauf verdeutlicht.</p>
-<h2 id="benutzerdefinierte-elemente">Benutzerdefinierte Elemente</h2>
+<h2 id="document-object-model">Document Object Model</h2>
+<figure>
+<img width=600px src="./DOM.png"/>
+<h4>Abb. 2: Beispiel eines Document Object Models</h4>
+</figure>
+<p>Das Document Object Model (kurz DOM) ist eine elementare Webtechnologie und wichtig für das weitere Verständnis. Das DOM kann auch als Schnittstelle zwischen dem statischen HTML und dem dynamischen JavaScript aufgefasst werden[^1]. Beim Laden einer Webseite erstellen alle modernen Browser aus dem HTML, das als einfacher Text aufgefasst werden kann, ein Modell bestehend aus Knoten, die entsprechend einer Baumstruktur angeordnet sind. Abbildung 2 stellt eine mögliche Baumstruktur dar.</p>
+<p>Es wird zwischen vier Knotentypen unterschieden:</p>
 <ul>
-<li>
-<h3 id="shadow-dom">Shadow Dom</h3>
-</li>
+<li>Dokumentenknoten (Blau): Ausgangspunkt für alle weiteren Aktionen.</li>
+<li>Elementknoten (Grün): HTML-Elemente z.B. <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>, <code>&lt;body&gt;</code> usw. werden zu Elementknoten im DOM-Baum</li>
+<li>Attributeknoten (Orange): Zum Beispiel die Klasse oder ID eines Elementknoten.</li>
+<li>Textknoten (Violett): Text bzw.<code>innerHTML</code> wird in Textknoten gespeichert.</li>
 </ul>
+<p>Jeder Knoten ist für sich ein Objekt und beinhaltet Methoden und Eigenschaften [^1]. Das heißt es ist möglich mittels JavaScript Knoten auszuwählen, zu verändern, zu entfernen und zu erzeugen. So erstellt zum Beispiel der Befehl</p>
+<pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">const</span> title = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">&#x27;h1&#x27;</span>);
+</div></code></pre>
+<p>ein <code>&lt;h1&gt;</code>-Element in der Variable <code>title</code>, die anschließend mit</p>
+<pre><code class="code-line language-JavaScript"><div>title.textContent = <span class="hljs-string">&#x27;Kapitel 2&#x27;</span>;
+<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;bodyID&#x27;</span>).appendChild(title);
+</div></code></pre>
+<p>einen Textknoten erhält und an das Element mit der <code>id = 'bodyID'</code> angeheftet wird. Diese beispielhafte Vorgehensweise wird auch DOM-Manipulation genannt[^1] und stellt die Grundlage aller JavaScript GUI-Bibliotheken dar.</p>
+<h2 id="webkomponente">Webkomponente</h2>
+<p>Webkomponente sind im Vergleich zum world wide web eine recht junge Technologie. Erstmals vorgestellt wurde es 2011 von Alex Russell. Die Idee dahinter ist es das DOM erweiterbar zu machen und damit die Art und Weise, wie zukünftig Webanwendungen gebaut werden, zu verändern<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>.</p>
+<p>Nochmal zurück zur Codeliste 1, welche zeigt, dass eine einfache Steuerung sich durchaus mit nativen HTML-Elementen implementieren lässt. Unglücklicherweise birgt dieser Code hauptsächlich Nachteile. Der Aufwand ist groß, der Code besitzt kaum Semantik, alle Komponenten sind im DOM sichtbar, wodurch das gesamte Dokument mit jedem weiteren Element an Übersicht verliert und schlussendlich kann es nicht einmal wiederverwendet werden.</p>
+<p>Der Ansatz von <code>Tweakpane.js</code> ist besser, da es abstrakt betrachtet mittels JavaScript alle Elemente im Hintergrund erzeugt, dann in einer Komponente, meist einem <code>&lt;div&gt;</code> oder <code>&lt;span&gt;</code> bündelt und anschließend an das DOM heftet. Insofern kommt der Benutzer mit dem erzeugten HTML-Code nicht in Berührung. Dennoch kritisiert Russel diesen Ansatz, indem er sich fragt, ob es uns wirklich gut tut, wenn wir auf diese Weise alles, was keine Semantik besitzt, in JavaScript vor uns selbst verstecken, damit wir uns nicht schuldig fühlen müssen<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>. Zudem bleibt das Problem, dass die sogenannten Kind-Elemente gleichermaßen im DOM sichtbar sind und zum Beispiel vom <code>CSS</code> des Benutzers unbeabsichtigt beeinflusst werden können, bzw. andersherum kann das <code>CSS</code> solcher Skripte die Anwendung des Benutzers beeinträchtigen.</p>
+<p>Die Webkomponente wirkt diesen Problemen entgegen, indem es seine Funktionalität in sich von außen kapselt<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>. Anders gesagt, ermöglicht es, individuelle HTML-Elemente zu erstellen, die beispielsweise ähnlich dem <code>&lt;button&gt;</code>-Element, von außen betrachtet undurchsichtig sind, ungeachtet dessen eine vielseitige Funktion erfüllen. Das Ganze setzt sich aus den drei Haupttechnologien</p>
+<ul>
+<li>Benutzerdefinierte Elemente</li>
+<li>Shadow DOM</li>
+<li>HTML-Vorlagen</li>
+</ul>
+<p>zusammen und wird nachfolgend näher betrachtet, wobei HTML-Vorlagen außen vor gelassen werden, da sie innerhalb dieser Arbeit nicht verwendet wurden. Sie dienen dem benutzerdefiniertem Element als Schablone und können mehrfach wiederverwendet werden [^3].</p>
+<h3 id="benutzerdefinierte-elemente">Benutzerdefinierte Elemente</h3>
+<h3 id="shadow-dom">Shadow DOM</h3>
+<p>Das shadow DOM ist diejenige Technik, die die HTML-Struktur, das CSS und das Verhalten der Webkomponente von dem eigentlichen Dokument trennt[^1]. Im wesentlichen unterscheidet es sich von dem regulären DOM nicht. Die einzelnen Knoten der Baumstruktur sind genauso als Objekte mit den selben Eigenschaften und Methoden vertreten. Infolgedessen kann die Vorgehensweise aus dem Kapitel DOM analog zur Manipulation angewendet werden. Der Unterschied ist, dass</p>
+<pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">let</span> shadowRoot = elementRef.attachShadow({<span class="hljs-attr">mode</span>:<span class="hljs-string">&#x27;open&#x27;</span>});
+</div></code></pre>
+<p>initiiert.</p>
+<p>Das sogenannte shadow-tree wird and das eigentliche DOM Angehängt an das</p>
 <p><canvas id="cv" width="350" height="250"></canvas></p>
 <script>
     const ctx = document.getElementById("cv").getContext("2d");
@@ -250,7 +283,21 @@ gui.on('change', () => {
 }
 &lt;/ctrl-ing&gt;
 </div></code></pre>
-<h2 id="anhang">Anhang</h2>
+<h2 id="quellen">Quellen</h2>
+<p>[1] <a href="https://fronteers.nl/congres/2011/sessions/web-components-and-model-driven-views-alex-russell">https://fronteers.nl/congres/2011/sessions/web-components-and-model-driven-views-alex-russell</a>
+[2] <a href="https://developer.mozilla.org/de/docs/Web/Web_Components">https://developer.mozilla.org/de/docs/Web/Web_Components</a>
+<a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM">https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM</a></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>1 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>1 <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p>3 <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
 
 </article>
 </main>
