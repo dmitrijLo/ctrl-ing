@@ -16,10 +16,12 @@ Take control over objects with this minimalistic panel designed as custom HTML e
 <ctrl-ing id="ctrl" ref="model" header="Federpendel">
 {
     "add": [
-        { "slider":{"label":"Federkraft"},"path":"loads/0/k"}, 
+        { "dropdown":{ "label":"Mass [N]", "default":"1 kg", "2 kg":20, "5 kg": 50, "10 kg":100, "25 kg":250, "50kg": 500, "100 kg":1000}, "path":"loads/1/value"},
+        { "number":{"label":"Federkraft","min":1,"max":1000},"path":"loads/0/k"},
+        { "slider":{"label":"Angle","step":0.25,"min":-80,"max":45},"path":"angle","on":{"input":"setAngle"}}, 
         { "toggle":{ "label":"Release" },"path":"release" }, 
         { "button": { "label":"Reset" }, "on":{ "click":"reset" } },
-        { "output": { "label":"Angle", "unit":"rad","accuracy":3 }, "path": "constraints/0/_angle" }
+        { "output": { "label":"Angle", "unit":"rad","accuracy":2 }, "path": "angle" }
     ]
 }
 </ctrl-ing>
@@ -51,17 +53,25 @@ Take control over objects with this minimalistic panel designed as custom HTML e
             { "type":"fix","p":"A" }
         ],
         "views": [
-            { "show":"w","of":"a","as":"info","x":10,"y":75,"Dt":1.9,"id":"view1" }
+            {"show": "pos", "of": "C", "as": "trace",
+            "mode":"static", "stroke":"purple"}
         ]
     };
-    
+    function setAngle() {
+        const angle = model.angle * Math.PI/180;
+        model.nodes[2].x = model.constraints[0].r0 * Math.cos(angle);
+        model.nodes[2].y = model.constraints[0].r0 * Math.sin(angle);
+        model.nodes[1].x = model.nodes[2].x
+    }
     mec.model.extend(model);
     model.init();
+    model.angle = model.constraints[0]._angle * 180/ Math.PI;
     const g = g2().clr().grid().view(interactor.view);
     model.draw(g);
     interactor.on('tick', e => {
         if(model.release) {
             model.tick(1/60);
+            model.angle = model.constraints[0]._angle * 180/ Math.PI;
             ctrlUpdate();
         }
         g.exe(ctx);
