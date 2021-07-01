@@ -251,6 +251,10 @@ aside > h4 {
 }
 
 hr {
+  display:none;
+}
+
+/* hr {
   display: block;
   height: 1px;
   width: 55%;
@@ -258,7 +262,7 @@ hr {
   border-top: 1px solid #ccc;
   margin: 1em 0;
   padding: 0; 
-}
+} */
 
 h1>a.plnk,h2>a.plnk,h3>a.plnk {
   display: none;
@@ -344,9 +348,13 @@ time {
 }
 }  /* end @media screen */
 
-@media print {
+#print-header{
+  display:none;
+}
 
-  * {
+@media print {
+  
+  /* * {
     text-align: justify;
     hyphens: auto;
     -webkit-hyphens: auto;
@@ -355,40 +363,154 @@ time {
     -webkit-hyphenate-limit-lines: 4;
     -ms-hyphenate-limit-chars: auto 3;
     -ms-hyphenate-limit-lines: 4;
-  }
+  } */
   /** Setting margins */
   @page {
     size: A4;
     margin: 25mm 20mm 25mm 30mm;
   }
-  
+  /* Titlepage settings */
+  #print-header{
+    display:block;
+  }
+  #print-header > h1 {
+    font-size: 18pt;
+    text-align: center;
+    font-weight: 600;
+    font-style: normal;
+    padding-top: 40mm;
+  }
+  img#titlepage {
+    display: block !important;
+    position: relative;
+    float: left;
+    top: 0;
+    width: 25%;
+  }
+/* toc with dots */
+section#content p {
+  display: flex;
+}
+
+section#content p > a,
+section#content p {
+  flex: 1 0 auto;
+  text-decoration: none;
+}
+
+section#content p > #dots {
+  flex: 0 1 auto;
+  /*Allows too long content to be hidden.*/
+  overflow: hidden;
+}
+
+#dots::before {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  content: 
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+}
+
+section#content a {
+  color: #000;
+}
+
   body {
     float: none;
     font-family: 'Latin Modern', Georgia, Cambria, 'Times New Roman', Times, serif;
     line-height: 1.5;
     color: black;
     background-color:white;
+    counter-reset: chapter;
+    /* margin: 25mm 20mm 25mm 30mm; /*für Druckvorschau in Chrome/Firefox*/
   }
   main {
     display: inline;
     font-size: 11pt;
+    hyphens: auto; 
+	  text-align: justify;
+    counter-reset: pagenum;
   }
 
-  h1 {
+  section.new-page::before {
+    counter-increment: pagenum;
+    content: "Seite " counter(pagenum);
+    float: right;
+    font-size: 9pt;
+  }
+
+  section.new-page {
+    page-break-after: always;
+  }
+
+  section.new-page > h6 {
+    font-size: 9pt;
+    border-bottom: 1.5px solid black;
+  }
+
+  p.eq::before{
+    content: '('counter(chapter)'.'counter(equation)')';
+    float: right;
+  }
+
+  p.eq{
+    counter-increment: equation;
+  }
+
+/*   h2::before{
+    content: counter(chapter)" ";
+  }
+
+  h2 {
     font-size: 14pt;
+    counter-increment: chapter;
+    counter-reset: figure;
+    counter-reset: equation;
+    counter-reset: section;
+    counter-reset: subsection;
   }
 
-  h4 {
+  h3::before{
+    content: counter(chapter)"."counter(section)" ";
+  }
+
+  h3{
+    font-size: 13pt;
+    counter-increment: section;
+  }
+  h4::before{
+    content: counter(chapter)"."counter(section)"."counter(subsection)" ";
+  }
+  h4{
+    font-size: 12pt;
+    counter-increment: subsection;
+  } */
+
+  h5.fig::before{
+    content: "Bild "counter(chapter)"-"counter(figure)" ";
+    font-weight: 600;
+  }
+  h5.fig{
+    counter-increment: figure;
+  }
+  h5 {
     font-size: 9pt;
     font-weight: 500;
     text-align: center;
     margin: 1em 0 0.75em 0;
   }
-  
+
   main > nav {
     display: none;
   }
-
+  header, footer{
+    display: none;
+  }
   h1, h2, h3, h4, h5, h6 {
     break-after: avoid;
     break-inside: avoid;
@@ -397,12 +519,17 @@ time {
   /* toc ... */
   #content + ul li > a {
     text-decoration: none;
+    color: #000 !important;
   }
   
   a, pre, img, aside, figure, svg, canvas {
     break-inside: avoid;
   }
   
+  p {
+    font-size: 11pt;
+  }
+
   p, blockquote {
      widows: 2;
      orphans: 2;
@@ -416,11 +543,11 @@ time {
   }
   
   /* Insert Author content */
-  main:after {
+  /* main:after {
     content: "\ All rights reserved. © 2020 the authors";
     color: #aaa !important;
     font-size: 0.8em;
     padding-top: 1em;
-  }
+  } */
   
   }  /* end @media print */

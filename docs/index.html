@@ -26,6 +26,17 @@
   <nav-pane base="." detail=false></nav-pane>
 </nav>
 <article>
+<header id="print-header">
+<img id="titlepage" src="./img/FHLogo.png"/>
+<h1>ctrl-ing</h1>
+<p style="padding-bottom: 50mm"></p>
+<p style="text-align:center;font-size:14pt;font-weight:600;font-style: normal;white-space: pre-line;padding-bottom: 50mm;">ctrl-ing</p>
+
+<p>Matrikelnummer:	undefined<p>
+<p>Erstprüfer: undefined</p>
+
+<p>University of Applied Sciences And Arts, Fachhochschule Dortmund</p>
+</header>
   <script src="./bin/canvasInteractor.js"></script>
 <p><canvas id="c" width="750" height="401" style="left:0rem;border:1px solid black;"></canvas></p>
 <div style="position:relative;width:20rem;top:-29rem;left:1rem">
@@ -36,11 +47,11 @@
 {
     "add": [
         { "dropdown":{ "label":"Mass [N]", "default":"1 kg", "2 kg":20, "5 kg": 50, "10 kg":100, "25 kg":250, "50kg": 500, "100 kg":1000}, "path":"loads/1/value"},
-        { "number":{"label":"Federkraft","min":1,"max":1000},"path":"loads/0/k"},
+        { "number":{"label":"Spring rate [N/m]","min":1,"max":1000},"path":"loads/0/k"},
         { "slider":{"label":"Angle","step":0.25,"min":-80,"max":45},"path":"angle","on":{"input":"setAngle"}}, 
         { "toggle":{ "label":"Release" },"path":"release" }, 
         { "button": { "label":"Reset" }, "on":{ "click":"reset" } },
-        { "output": { "label":"Angle", "unit":"rad","accuracy":2 }, "path": "angle" }
+        { "output": { "label":"Angle", "unit":"deg","accuracy":2 }, "path": "angle" }
     ]
 }
 </ctrl-ing>

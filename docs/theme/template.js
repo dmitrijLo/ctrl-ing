@@ -30,6 +30,17 @@ ${data.math ? `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/d
   <nav-pane base="${data.base}" detail=false></nav-pane>
 </nav>
 <article>
+<header id="print-header">
+<img id="titlepage" src="./img/FHLogo.png"/>
+<h1>${data.title}</h1>
+${data.subtitle ? `<p style="text-align:center;font-size:14pt;font-weight: 400;font-style: normal;padding-bottom: 50mm;">${data.subtitle}</p>` : `<p style="padding-bottom: 50mm"></p>`}
+${data.description ? `<p style="text-align:center;font-size:14pt;font-weight:600;font-style: normal;white-space: pre-line;padding-bottom: 50mm;">${data.description}</p>` : ''}
+${data.author ? `<p>vorgelegt von: ${data.author}</p>` : ''}
+<p>Matrikelnummer:	${data.matrikelnummer}<p>
+<p>Erstprüfer: ${data.erstprüfer}</p>
+${data.date ? `<p>Abgabetermin: ${data.date}</p>` : ''}
+<p>University of Applied Sciences And Arts, Fachhochschule Dortmund</p>
+</header>
   ${data.content}
 </article>
 </main>

@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,user-scalable=no">
-<meta name="description" content="Studienarbeit">
-
-<meta name="keywords" content="">
-<title>Studienarbeit</title>
+<meta name="description" content="Studienarbeit 
+ am Fachbereich Maschinenbau 
+ Studiengang Maschinenbau">
+<meta name="date" content="Fri Jan 01 2021 00:00:00 GMT+0100 (Central European Standard Time)">
+<meta name="keywords" content="Kinematik,Mechanismentechnik,microJam">
+<title>Programmierung einer Webkomponente zur Steuerung ebener Mechanismen</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.18.1/styles/vs2015.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.css">
@@ -27,9 +29,48 @@
   <nav-pane base="." detail=false></nav-pane>
 </nav>
 <article>
-  <h3 id="abstract">Abstract</h3>
-<h2 id="einleitung">Einleitung</h2>
-<aside>
+<header id="print-header">
+<img id="titlepage" src="./img/FHLogo.png"/>
+<h1>Programmierung einer Webkomponente zur Steuerung ebener Mechanismen</h1>
+<p style="padding-bottom: 50mm"></p>
+<p style="text-align:center;font-size:14pt;font-weight:600;font-style: normal;white-space: pre-line;padding-bottom: 50mm;">Studienarbeit 
+ am Fachbereich Maschinenbau 
+ Studiengang Maschinenbau</p>
+<p>vorgelegt von: Demetrius Lorenz</p>
+<p>Matrikelnummer:	7097413<p>
+<p>Erstprüfer: Prof. Dr.-Ing. Stefan Gössner</p>
+<p>Abgabetermin: März 2021</p>
+<p>University of Applied Sciences And Arts, Fachhochschule Dortmund</p>
+</header>
+  <section class="new-page">
+<h6>&nbsp;</h6>
+<h1 id="inhalt">Inhalt</h1>
+<section id="content">
+<p><a href="#1-einf%C3%BChrung">1. Einführung</a> <span id="dots"></span> 2</p>
+<p><a href="#11-document-object-model">1.1 Document Object Model</a> <span id="dots"></span> 5</p>
+<p><a href="#2-webkomponente">2. Webkomponente</a> <span id="dots"></span> 7</p>
+<p><a href="#21-shadow-dom">2.1 Shadow DOM</a> <span id="dots"></span> 8</p>
+<p><a href="#22-benutzerdefiniertes-element">2.2 Benutzerdefiniertes Element</a> <span id="dots"></span> 8</p>
+<p><a href="#3-ctrl-ing">3 ctrl-ing</a> <span id="dots"></span> 10</p>
+<p><a href="#31">3.1 Add ctrling.js to a project</a> <span id="dots"></span> 10</p>
+<p><a href="#32">3.2 Create an object</a> <span id="dots"></span> 10</p>
+<p><a href="#33">3.3 Create a controller</a> <span id="dots"></span> 11</p>
+<p><a href="#34">3.4 Components</a> <span id="dots"></span> 11</p>
+<p><a href="#341">3.4.1 Number</a> <span id="dots"></span> 12</p>
+<p><a href="#342">3.4.2 Slider</a> <span id="dots"></span> 12</p>
+<p><a href="#343">3.4.3 Dropdown</a> <span id="dots"></span> 13</p>
+<p><a href="#344">3.4.4 Toggle</a> <span id="dots"></span> 13</p>
+<p><a href="#345">3.4.5 Button</a> <span id="dots"></span> 14</p>
+<p><a href="#346">3.4.6 Output</a> <span id="dots"></span> 15</p>
+<p><a href="#347">3.4.7 Color</a> <span id="dots"></span> 15</p>
+<p><a href="#4">4 Federpendel</a> <span id="dots"></span> 16</p>
+<p><a href="#5">5 Fazit</a> <span id="dots"></span> 19</p>
+<p><a href="#6">6 Literatur</a> <span id="dots"></span> 20</p>
+</section></section>
+<section class="new-page">
+<h6>Einführung</h6>
+<h2 id="1-einf%C3%BChrung">1 Einführung</h2>
+<aside style="min-width:40%">
 <g-2 width="250" height="200" x0="30" y0="50" cartesian>
 { 
 "main": [
@@ -46,74 +87,63 @@
 ]
 }
 </g-2>
-<h4>Abb. 1: Webbasiertes Modell eines Viergelenks mit Koppelpunkt</h4>
+<h5>Abb. 1: Webbasiertes Modell eines Viergelenks mit Koppelpunkt</h5>
 </aside>
-<p>An der Fachhochschule Dortmund vermittelt das Wahlpflichtmodul Web-Kinematik den Studiereden des Fachbereichs Maschinenbau die fundamentalen Grundlagen moderner Webtechnologien. Dabei werden Problemstellungen der technischen Mechanik mittels HTML, CSS und JavaScript in eine einfache Form einer Webanwendung überführt. Abbildung 1 zeigt beispielhaft das webbasierte Modell eines Viergelenkgetriebes, welches einer typischen Aufgabenstellung entspricht. Ist das Modell einmal überführt, lassen sich zahlreiche Eigenschaften dessen analysieren. So kann beispielweise die Umlauffähigkeit, die zurückgelegte Bahn einzelner Punkte, die Geschwindigkeit oder Beschleunigung z.B des ebenfalls dargestellten Koppelpunktes oder gar die unterschiedlichen Pole der ebenen Bewegung visualisiert werden.</p>
-<p>Um das webbasierte Modell hinreichend analysieren zu können, bedarf es interaktiver Elemente, die das Steuern und Verstellen des Modells direkt im Webbrowser ermöglichen. Andernfalls ist der häufige Eingriff in den Quelltext erforderlich, was zum einen zu Fehlern führen kann und zum andren beispielsweise während einer Präsentation undenkbar ist.</p>
-<p>HTML bietet von sich aus eine Vielzahl an Elementen, welche in Verbindung mit JavaScript die gewünschte Interaktivität gewähren. So lassen sich standardmäßig</p>
+<p>An der Fachhochschule Dortmund vermittelt das Wahlpflichtmodul Web-Kinematik den Studiereden des Fachbereichs Maschinenbau die fundamentalen Grundlagen moderner Webtechnologien. Dabei werden Problemstellungen der technischen Mechanik mittels HTML, CSS und JavaScript in eine einfache Form einer Webanwendung überführt [<a href="#1">1</a>]. Abbildung 1 zeigt beispielhaft das webbasierte Modell eines Viergelenkgetriebes, welches einer typischen Aufgabenstellung entspricht. Ist das Modell einmal überführt, lassen sich zahlreiche Eigenschaften analysieren. So kann beispielweise die Umlauffähigkeit, die zurückgelegte Bahn einzelner Punkte, die Geschwindigkeit oder Beschleunigung z.B des ebenfalls dargestellten Koppelpunktes oder gar die unterschiedlichen Pole der ebenen Bewegung visualisiert werden.</p>
+<p>Um das webbasierte Modell hinreichend analysieren zu können, bedarf es interaktiver Elemente, die das Steuern und Verstellen des Modells direkt im Webbrowser ermöglichen. Andernfalls ist der häufige Eingriff in den Quelltext erforderlich, was zum einen zu Fehlern führt und andererseits um ein Beispiel zu nennen während einer Präsentation nicht praktikabel ist.</p>
+<p>HTML bietet von sich aus eine Vielzahl von Elementen, welche in Verbindung mit JavaScript die gewünschte Interaktivität gewähren. So lassen sich standardmäßig</p>
 <ul>
 <li>Eingabefelder</li>
 <li>Schieberegler</li>
 <li>Knöpfe</li>
 <li>Checkboxen</li>
 <li>Auswahllisten</li>
-<li>u.v.m</li>
+<li>u. v. m.</li>
 </ul>
-<p>recht einfach realisieren. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiver und vor allem monotoner Codezeilen, die stetig mit der Anzahl an Eingabemöglichkeiten wachsen. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">b</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">c</span></span></span></span></eq> und <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">d</span></span></span></span></eq> jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span></span></span></span></eq> der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes. Zu allem Übel ist der Code nicht einmal wiederverwendbar.</p>
-<h4 id="listing-1-html-struktur-zur-erzeugung-einer-variation-an-bedienelementen">Listing 1: HTML Struktur zur Erzeugung einer Variation an Bedienelementen</h4>
+<p>recht einfach realisieren [<a href="#2">2</a>]. Allerdings erfordert die Implementierung dieser Elemente eine Menge repetitiver und vor allem monotoner Codezeilen, die stetig mit der Anzahl an Eingabemöglichkeiten wachsen. Die Auflistungen 1 und 2 sollen diesen Sachverhalt verdeutlichen. Für das Beispiel aus Abbildung 1 wurde zur Variation der Gliedlängen <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">b</span></span></span></span></eq>, <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">c</span></span></span></span></eq> und <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">d</span></span></span></span></eq> jeweils ein Eingabefeld, zudem ein Schieberegler zur Steuerung des Drehwinkels <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span></span></span></span></eq> der Kurbel, mehrere Checkboxen zum Aktivieren/Deaktivieren der jeweiligen Darstellung</p>
+</section>
+<section class="new-page">
+<h6>Einführung</h6>
+<p>vom Momentanpol, Wendepol, Wendekreis, Geschwindigkeitsvektor, Beschleunigungsvektor und der Koppelkurve und zwei Knöpfe zum Starten bzw. Zurücksetzen der Animation erstellt. Abgesehen von der bereits erwähnten Monotonie, schwindet insbesondere beim HTML die Übersichtlichkeit und damit die Lesbarkeit des Codes. Außerdem ist der Code auch nicht wiederverwertbar.</p>
+<h5 id="listing-1-html-struktur-zur-erzeugung-einer-variation-an-bedienelementen">Listing 1: HTML Struktur zur Erzeugung einer Variation an Bedienelementen</h5>
 <pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;display&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;display&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;input-a&quot;</span>&gt;</span>Länge a:
-        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input-a&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;feld&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;10&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;800&quot;</span> <span class="hljs-attr">step</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>mm
-    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input-a&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;feld&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;10&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;800&quot;</span> <span class="hljs-attr">step</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>mm<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;input-b&quot;</span>&gt;</span>Länge b:
-        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input-b&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;feld&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;10&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;800&quot;</span> <span class="hljs-attr">step</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>mm
-    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input-b&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;feld&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;10&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;800&quot;</span> <span class="hljs-attr">step</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>mm<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;input-c&quot;</span>&gt;</span>Lände c:
-        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input-c&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;feld&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;10&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;800&quot;</span> <span class="hljs-attr">step</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>mm
-    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input-c&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;feld&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;10&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;800&quot;</span> <span class="hljs-attr">step</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>mm<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;input-d&quot;</span>&gt;</span>Länge d:
-        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input-d&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;feld&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;10&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;800&quot;</span> <span class="hljs-attr">step</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>mm
-    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;number&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input-d&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;feld&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;10&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;800&quot;</span> <span class="hljs-attr">step</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>mm<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;phiSlider&quot;</span>&gt;</span><span class="hljs-symbol">&amp;phiv;</span>:
         <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;range&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;phiSlider&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;slider&quot;</span> <span class="hljs-attr">min</span>=<span class="hljs-string">&quot;0&quot;</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;360&quot;</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">output</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;phiOut&quot;</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;phiSlider&quot;</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">output</span>&gt;</span>°
-    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">output</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;phiOut&quot;</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;phiSlider&quot;</span>&gt;</span>0<span class="hljs-tag">&lt;/<span class="hljs-name">output</span>&gt;</span>°<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;speed&quot;</span>&gt;</span>Geschwindigkeit:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;speed&quot;</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;0.5&quot;</span>&gt;</span>0,5x<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-attr">selected</span>&gt;</span>1x<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;2&quot;</span>&gt;</span>2x<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;4&quot;</span>&gt;</span>4x<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;checkbox&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;velocity&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;velocity&quot;</span>&gt;</span> Geschwindigkeit anzeigen<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;checkbox&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;acceleration&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;acceleration&quot;</span>&gt;</span> Beschleunigung anzeigen<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;checkbox&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;path&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;path&quot;</span>&gt;</span> Bahn des Koppelpunktes anzeigen<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;checkbox&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;releaseK&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;releaseK&quot;</span>&gt;</span> Koppelpunkt lösen<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;checkbox&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;connectK&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;connectK&quot;</span>&gt;</span> Koppelpunkt verbinden<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;startButton&quot;</span>&gt;</span>Start<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;resetButton&quot;</span>&gt;</span>Reset<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">br</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;info&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>   
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </div></code></pre>
-<h4 id="listing-2-herstellen-der-interaktivit%C3%A4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h4>
+</section>
+<section class="new-page">
+<h6>Einführung</h6>
+<h5 id="listing-2-herstellen-der-interaktivit%C3%A4t-durch-kopplung-zwischen-html-und-javascript-mittels-event-handler">Listing 2: Herstellen der Interaktivität durch Kopplung zwischen HTML und JavaScript mittels Event-Handler</h5>
 <pre><code class="code-line language-JavaScript"><div><span class="hljs-comment">// Erstellung der Referenzen zu den jeweiligen HTML-Elementen</span>
 <span class="hljs-keyword">const</span> input_a = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;input-a&#x27;</span>),
       input_b = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;input-b&#x27;</span>),
@@ -130,9 +160,7 @@
       info = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;info&#x27;</span>),
       startButton = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;startButton&#x27;</span>),
       resetButton = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;resetButton&#x27;</span>);
-<span class="hljs-comment">/*
-Deklaration einiger Event-Funktionen
-*/</span>
+<span class="hljs-comment">//Deklaration einiger Event-Funktionen</span>
 <span class="hljs-comment">// Erstellung der Event-Handler</span>
 input_a.addEventListener(<span class="hljs-string">&quot;input&quot;</span>, updateInput);
 input_b.addEventListener(<span class="hljs-string">&quot;input&quot;</span>, updateInput);
@@ -144,13 +172,15 @@ startButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,
 releaseK.addEventListener(<span class="hljs-string">&quot;click&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-comment">/*...*/</span> });
 resetButton.addEventListener(<span class="hljs-string">&quot;click&quot;</span>,refreshPage);
 </div></code></pre>
-<h4 id=""></h4>
-<p>Es darf nicht unerwähnt bleiben, dass einige sogenannter GUI-Bibliotheken bereits existieren und für die zuvor beschriebene Problemstellung einen Lösungsansatz bieten. Zwei sehr gute Lösung sind zum einen dat.GUI und zum andren Tweakpane, die im Grunde sehr ähnlich funktionieren. Nach Erstellung einer Instanz der jeweiligen JavaScript-Bibliothek stehen dem Benutzer zahlreiche Funktionen zur Verfügungen, die mit wenigen Zeilen Code ein graphisches Interface implementieren. Verknüpft mit einer beliebigen Variable lässt sich diese manipulieren. Dies soll an einem einfachen Beispiel unter dem Einsatz von <code>tweakpane.js</code> demonstriert werden.</p>
-<p>Angenommen die Eckpunkte eines Dreiecks sollen durch ein Interface verstellbar sein, so kann das Dreieck durch ein Objekt, welches das Array <code>nodes</code> mit allen Eckpunkten beinhaltet, repräsentiert sein. Nach Erstellung einer neuen Instanz der Tweakpane-Klasse in der Konstanten <code>gui</code>, steht nun beispielsweise die Funktion <code>addInput()</code> zur Verfügung, die ein Input-Element erzeugt und das Steuern jener Koordinate ermöglicht. Auf diese Art und Weise lassen sich die einzelnen Koordinaten des Dreiecks, wie in der Auflistung 3 gezeigt, recht einfach mit einem Interface verbinden, was einer sauberen Lösung verglichen mit dem Code in Auflistung 1 und 2 gleicht.</p>
-<h4 id="listing-3-demonstration-von-tweakpanejs">Listing 3: Demonstration von tweakpane.js</h4>
-<pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">const</span> triangle = { <span class="hljs-comment">// Zielobjekt</span>
-    <span class="hljs-attr">nodes</span>: [ {<span class="hljs-attr">x</span>:<span class="hljs-number">75</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">50</span>}, {<span class="hljs-attr">x</span>:<span class="hljs-number">150</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">200</span>}, {<span class="hljs-attr">x</span>:<span class="hljs-number">250</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">10</span>} ] <span class="hljs-comment">// Array beinhaltet Eckpunkte des Dreiecks</span>
-}
+<p>Es darf nicht unerwähnt bleiben, dass einige sogenannter GUI-Bibliotheken bereits existieren und für die zuvor beschriebene Problemstellung einen Lösungsansatz bieten. Zwei sehr gute Lösungen sind zum einen dat.GUI [<a href="#3">3</a>] und zum anderen Tweakpane [<a href="#4">4</a>], die im Grunde sehr ähnlich funktionieren. Nach Erstellung einer Instanz der jeweiligen JavaScript-Bibliothek stehen dem Benutzer zahlreiche Funktionen zur Verfügungen, die mit wenigen Zeilen Code ein graphisches Interface implementieren. Verknüpft mit einer beliebigen Variable lässt sich diese manipulieren. Dies soll an einem einfachen Beispiel unter dem Einsatz von <code>tweakpane.js</code> demonstriert werden.</p>
+<p>Angenommen, dass die Eckpunkte eines Dreiecks durch ein Interface verstellbar sein sollen, so kann das Dreieck durch ein Objekt, welches das Array <code>nodes</code> mit allen Eckpunkten beinhaltet, repräsentiert sein. Nach Erstellung einer neuen Instanz der Tweakpane-Klasse in der Konstanten <code>gui</code>, steht nun beispielsweise die Funktion <code>addInput()</code> zur Verfügung, die ein Input-Element erzeugt und das Steuern jener Koordinate ermöglicht.</p>
+</section>
+<section class="new-page">
+<h6>Einführung</h6>
+<p>Auf diese Art lassen sich die einzelnen Koordinaten des Dreiecks, wie in der Auflistung 3 gezeigt, recht einfach mit einem Interface verbinden, was, verglichen mit dem Code in Auflistung 1 und 2, einer sauberen Lösung gleicht.</p>
+<h5 id="listing-3-demonstration-von-tweakpanejs">Listing 3: Demonstration von tweakpane.js</h5>
+<pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">const</span> triangle = { <span class="hljs-comment">// Zielobjekt                         // Array beinhaltet</span>
+    <span class="hljs-attr">nodes</span>: [ {<span class="hljs-attr">x</span>:<span class="hljs-number">75</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">50</span>}, {<span class="hljs-attr">x</span>:<span class="hljs-number">150</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">200</span>}, {<span class="hljs-attr">x</span>:<span class="hljs-number">250</span>,<span class="hljs-attr">y</span>:<span class="hljs-number">10</span>} ]} <span class="hljs-comment">//Eckpunkte des Dreiecks</span>
 <span class="hljs-keyword">const</span> gui = <span class="hljs-keyword">new</span> Tweakpane();    <span class="hljs-comment">// Erstellt neue Instanz der Tweakpane-Klasse</span>
 gui.addInput(triangle.nodes[<span class="hljs-number">0</span>], <span class="hljs-string">&#x27;x&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;A0x&#x27;</span>});   <span class="hljs-comment">// Aufrufen der nun</span>
 gui.addInput(triangle.nodes[<span class="hljs-number">0</span>], <span class="hljs-string">&#x27;y&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;A0y&#x27;</span>});   <span class="hljs-comment">// zur Verfügung</span>
@@ -159,7 +189,7 @@ gui.addInput(triangle.nodes[<span class="hljs-number">1</span>], <span class="hl
 gui.addInput(triangle.nodes[<span class="hljs-number">2</span>], <span class="hljs-string">&#x27;x&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;C0x&#x27;</span>});   <span class="hljs-comment">// ...</span>
 gui.addInput(triangle.nodes[<span class="hljs-number">2</span>], <span class="hljs-string">&#x27;y&#x27;</span>, {<span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;C0x&#x27;</span>});   <span class="hljs-comment">// ...</span>
 </div></code></pre>
-<h4 id="livebeispiel">Livebeispiel 1:</h4>
+<h5 id="livebeispiel">Livebeispiel 1:</h5>
 <aside style="max-width:60%; float:left;">
 <h4>Ausgabe:</h4>
 <span id="output"><span>
@@ -188,115 +218,318 @@ gui.on('change', () => {
 </script>
 <p><br><br><br><br><br><br><br><br></p>
 <p>Anders als die gängigen GUI-Bibliotheken, welche dem Benutzer lediglich verschiedene Funktionen bereitstellen, beschäftigt sich diese Studienarbeit mit dem Entwurf einer minimalistischen JavaScript-Bibliothek, die dem Anwender ein benutzerdefiniertes HTML Element (engl.: custom HTML element) zur Verfügung stellt. Dieses Element, auch Webkomponente genannt, nimmt ähnlich wie GUI-Bibliotheken die Programmierung einer graphischen Steuerung weitestgehend ab und gewährt damit die geforderte Interaktivität. Jedoch bringt es zusätzlich noch einige weitere Vorteile mit sich, die diese Arbeit im weiteren Verlauf verdeutlicht.</p>
-<h2 id="document-object-model">Document Object Model</h2>
+<h3 id="11-document-object-model">1.1 Document Object Model</h3>
+<p>Das Document Object Model (kurz DOM) ist eine elementare Webtechnologie und wichtig für das weitere Verständnis. Das DOM kann auch als Schnittstelle zwischen dem statischen HTML und dem dynamischen JavaScript aufgefasst werden [<a href="#5">5</a>]. Beim Laden einer Webseite erstellen alle modernen Browser aus dem HTML, das als einfacher Text</p>
+</section>
+<section class="new-page">
+<h6>Document Object Model</h6>
+<p>aufgefasst werden kann, ein Modell bestehend aus Knoten, die entsprechend einer Baumstruktur angeordnet sind [<a href="#5">5</a>]. Abbildung 2 stellt eine mögliche Baumstruktur dar.</p>
 <figure>
-<img width=600px src="./DOM.png"/>
-<h4>Abb. 2: Beispiel eines Document Object Models</h4>
+<img width="100%" src="./img/DOM.png"/>
+<h5>Abb. 2: Beispiel eines Document Object Models</h5>
 </figure>
-<p>Das Document Object Model (kurz DOM) ist eine elementare Webtechnologie und wichtig für das weitere Verständnis. Das DOM kann auch als Schnittstelle zwischen dem statischen HTML und dem dynamischen JavaScript aufgefasst werden[^1]. Beim Laden einer Webseite erstellen alle modernen Browser aus dem HTML, das als einfacher Text aufgefasst werden kann, ein Modell bestehend aus Knoten, die entsprechend einer Baumstruktur angeordnet sind. Abbildung 2 stellt eine mögliche Baumstruktur dar.</p>
 <p>Es wird zwischen vier Knotentypen unterschieden:</p>
 <ul>
 <li>Dokumentenknoten (Blau): Ausgangspunkt für alle weiteren Aktionen.</li>
-<li>Elementknoten (Grün): HTML-Elemente z.B. <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>, <code>&lt;body&gt;</code> usw. werden zu Elementknoten im DOM-Baum</li>
+<li>Elementknoten (Grün): HTML-Elemente z.B. <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>, <code>&lt;body&gt;</code> usw. werden zu Elementknoten im DOM-Baum.</li>
 <li>Attributeknoten (Orange): Zum Beispiel die Klasse oder ID eines Elementknoten.</li>
 <li>Textknoten (Violett): Text bzw.<code>innerHTML</code> wird in Textknoten gespeichert.</li>
 </ul>
-<p>Jeder Knoten ist für sich ein Objekt und beinhaltet Methoden und Eigenschaften [^1]. Das heißt es ist möglich mittels JavaScript Knoten auszuwählen, zu verändern, zu entfernen und zu erzeugen. So erstellt zum Beispiel der Befehl</p>
+<p>Jeder Knoten ist für sich ein Objekt und beinhaltet Methoden und Eigenschaften [<a href="#5">5</a>]. Das heißt, dass es möglich ist mittels JavaScript Knoten auszuwählen, zu verändern, zu entfernen und zu erzeugen. So erstellt zum Beispiel der Befehl</p>
 <pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">const</span> title = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">&#x27;h1&#x27;</span>);
 </div></code></pre>
 <p>ein <code>&lt;h1&gt;</code>-Element in der Variable <code>title</code>, die anschließend mit</p>
 <pre><code class="code-line language-JavaScript"><div>title.textContent = <span class="hljs-string">&#x27;Kapitel 2&#x27;</span>;
 <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;bodyID&#x27;</span>).appendChild(title);
 </div></code></pre>
-<p>einen Textknoten erhält und an das Element mit der <code>id = 'bodyID'</code> angeheftet wird. Diese beispielhafte Vorgehensweise wird auch DOM-Manipulation genannt[^1] und stellt die Grundlage aller JavaScript GUI-Bibliotheken dar.</p>
-<h2 id="webkomponente">Webkomponente</h2>
-<p>Webkomponente sind im Vergleich zum world wide web eine recht junge Technologie. Erstmals vorgestellt wurde es 2011 von Alex Russell. Die Idee dahinter ist es das DOM erweiterbar zu machen und damit die Art und Weise, wie zukünftig Webanwendungen gebaut werden, zu verändern<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>.</p>
-<p>Nochmal zurück zur Codeliste 1, welche zeigt, dass eine einfache Steuerung sich durchaus mit nativen HTML-Elementen implementieren lässt. Unglücklicherweise birgt dieser Code hauptsächlich Nachteile. Der Aufwand ist groß, der Code besitzt kaum Semantik, alle Komponenten sind im DOM sichtbar, wodurch das gesamte Dokument mit jedem weiteren Element an Übersicht verliert und schlussendlich kann es nicht einmal wiederverwendet werden.</p>
-<p>Der Ansatz von <code>Tweakpane.js</code> ist besser, da es abstrakt betrachtet mittels JavaScript alle Elemente im Hintergrund erzeugt, dann in einer Komponente, meist einem <code>&lt;div&gt;</code> oder <code>&lt;span&gt;</code> bündelt und anschließend an das DOM heftet. Insofern kommt der Benutzer mit dem erzeugten HTML-Code nicht in Berührung. Dennoch kritisiert Russel diesen Ansatz, indem er sich fragt, ob es uns wirklich gut tut, wenn wir auf diese Weise alles, was keine Semantik besitzt, in JavaScript vor uns selbst verstecken, damit wir uns nicht schuldig fühlen müssen<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>. Zudem bleibt das Problem, dass die sogenannten Kind-Elemente gleichermaßen im DOM sichtbar sind und zum Beispiel vom <code>CSS</code> des Benutzers unbeabsichtigt beeinflusst werden können, bzw. andersherum kann das <code>CSS</code> solcher Skripte die Anwendung des Benutzers beeinträchtigen.</p>
-<p>Die Webkomponente wirkt diesen Problemen entgegen, indem es seine Funktionalität in sich von außen kapselt<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>. Anders gesagt, ermöglicht es, individuelle HTML-Elemente zu erstellen, die beispielsweise ähnlich dem <code>&lt;button&gt;</code>-Element, von außen betrachtet undurchsichtig sind, ungeachtet dessen eine vielseitige Funktion erfüllen. Das Ganze setzt sich aus den drei Haupttechnologien</p>
+<p>einen Textknoten erhält und an das Element mit der <code>id = 'bodyID'</code> angeheftet wird. Diese beispielhafte Vorgehensweise wird auch DOM-Manipulation genannt [<a href="#5">5</a>] und stellt die Grundlage aller JavaScript GUI-Bibliotheken dar.</p>
+</section>
+<section class="new-page">
+<h6>Webkomponente</h6>
+<h2 id="2-webkomponente">2 Webkomponente</h2>
+<p>Verglichen mit dem <em>world wide web</em> ist die Webkomponente eine recht junge Technologie. Erstmals vorgestellt wurde es 2011 von Alex Russell [<a href="#6">6</a>]. Die Idee dahinter ist, das DOM erweiterbar zu machen und damit die Art und Weise, wie zukünftig Webanwendungen gebaut werden, zu verändern [<a href="#6">6</a>].</p>
+<p>Zurück zur Codeliste 1, welche zeigt, dass eine einfache Steuerung sich durchaus mit nativen HTML-Elementen implementieren lässt. Unglücklicherweise birgt dieser Code hauptsächlich Nachteile. Der Aufwand ist groß, der Code besitzt kaum Semantik, alle Komponenten sind im DOM sichtbar, wodurch das gesamte Dokument mit jedem weiteren Element an Übersicht verliert.</p>
+<p>Der Ansatz von <code>Tweakpane.js</code> ist besser, da es abstrakt betrachtet mittels JavaScript alle Elemente im Hintergrund erzeugt, dann in einer Komponente, meist einem <code>&lt;div&gt;</code> oder <code>&lt;span&gt;</code> bündelt und anschließend an das DOM heftet. Insofern kommt der Benutzer mit dem erzeugten HTML-Code nicht in Berührung. Dennoch kritisiert Russell diesen Ansatz, indem er sich fragt, ob es wirklich hilfreich ist, wenn wir auf diese Weise alles, was keine Semantik besitzt, in JavaScript vor uns selbst verstecken, damit wir uns nicht schuldig fühlen müssen [<a href="#6">6</a>]. Zudem bleibt das Problem, dass die sogenannten Kind-Elemente gleichermaßen im DOM sichtbar sind und zum Beispiel vom <code>CSS</code> des Benutzers unbeabsichtigt beeinflusst werden. Andersherum kann das <code>CSS</code> solcher Skripte die Webseite des Benutzers beeinträchtigen.</p>
+<p>Die Webkomponente wirkt diesen Problemen entgegen, indem es seine Funktionalität in sich von außen kapselt [<a href="#7">7</a>]. Anders gesagt, ermöglicht es, individuelle HTML-Elemente zu erstellen, die beispielsweise ähnlich dem <code>&lt;button&gt;</code>-Element, von außen betrachtet undurchsichtig sind, ungeachtet dessen eine vielseitige Funktion erfüllen. Das Ganze setzt sich aus den drei Haupttechnologien</p>
 <ul>
 <li>Benutzerdefinierte Elemente</li>
 <li>Shadow DOM</li>
 <li>HTML-Vorlagen</li>
 </ul>
-<p>zusammen und wird nachfolgend näher betrachtet, wobei HTML-Vorlagen außen vor gelassen werden, da sie innerhalb dieser Arbeit nicht verwendet wurden. Sie dienen dem benutzerdefiniertem Element als Schablone und können mehrfach wiederverwendet werden [^3].</p>
-<h3 id="benutzerdefinierte-elemente">Benutzerdefinierte Elemente</h3>
-<h3 id="shadow-dom">Shadow DOM</h3>
-<p>Das shadow DOM ist diejenige Technik, die die HTML-Struktur, das CSS und das Verhalten der Webkomponente von dem eigentlichen Dokument trennt[^1]. Im wesentlichen unterscheidet es sich von dem regulären DOM nicht. Die einzelnen Knoten der Baumstruktur sind genauso als Objekte mit den selben Eigenschaften und Methoden vertreten. Infolgedessen kann die Vorgehensweise aus dem Kapitel DOM analog zur Manipulation angewendet werden. Der Unterschied ist, dass</p>
+<p>zusammen [<a href="#7">7</a>]. Nachfolgend wird diese näher betrachtet, wobei HTML-Vorlagen außen vor gelassen werden, da sie innerhalb dieser Arbeit nicht verwendet wurden. Sie dienen dem benutzerdefiniertem Element als Schablone und können mehrfach wiederverwendet werden [<a href="#7">7</a>].</p>
+</section>
+<section class="new-page">
+<h6>Shadow DOM</h6>
+<h3 id="21-shadow-dom">2.1 Shadow DOM</h3>
+<p>Das <em>shadow-DOM</em> ist diejenige Technik, die die HTML-Struktur, das CSS und das Verhalten der Webkomponente von dem eigentlichen Dokument trennt [<a href="#8">8</a>]. In seinen Grundzügen unterscheidet es sich nicht von dem regulären DOM. Die einzelnen Knoten der Baumstruktur sind genauso als Objekte mit denselben Eigenschaften und Methoden vertreten. Infolgedessen kann die Vorgehensweise aus dem Kapitel 1.1 gleichermaßen zur Manipulation angewendet werden.</p>
+<p>Einer der wesentlichen Unterschiede liegt im Ausgangspunkt, welcher nach der Baumanalogie als <em>shadow-root</em> benannt und mit</p>
 <pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">let</span> shadowRoot = elementRef.attachShadow({<span class="hljs-attr">mode</span>:<span class="hljs-string">&#x27;open&#x27;</span>});
 </div></code></pre>
-<p>initiiert.</p>
-<p>Das sogenannte shadow-tree wird and das eigentliche DOM Angehängt an das</p>
-<p><canvas id="cv" width="350" height="250"></canvas></p>
-<script>
-    const ctx = document.getElementById("cv").getContext("2d");
-    var model = {
-        "nodes": [
-            { "id": "A0", "x": 75, "y": 50 },
-            { "id": "B0", "x": 150, "y": 200 },
-            { "id": "C0", "x": 250, "y": 10 }
-        ],
-        "constraints": [
-        { "id": "a", "p1": "A0", "p2": "B0" }, 
-        { "id": "b", "p1": "B0", "p2": "C0" }, 
-        { "id": "c", "p1": "C0", "p2": "A0" }
-        ]
-    };
-    mec.model.extend(model);
-    model.init();
-    function render() {
-        const g = g2().del().clr().view({ cartesian: true });
-        model.draw(g);
-        g.exe(ctx);
-    return g;
+<p>initiiert wird. Das Verhalten der darauffolgenden <em>shadow-nodes</em> bleibt identisch, allerdings wirkt der Code nur innerhalb der Grenze des <em>shadow-trees</em> [<a href="#8">8</a>], was die zweckmäßige Trennung erzielt und unerwünschte Seiteneffekte verhindert.</p>
+<p>Es ist erwähnenswert, dass dieses Konzept nicht gänzlich neu ist. Das HTML-Element <code>&lt;video&gt;</code> besitzt nativ zahlreiche Kontrollelemente, die im DOM nicht sichtbar, also im <em>shadow-DOM</em> beheimatet sind [<a href="#8">8</a>].</p>
+<h3 id="22-benutzerdefiniertes-element">2.2 Benutzerdefiniertes Element</h3>
+<p>Wenn von Webkomponenten gesprochen wird, dann wird im eigentlichen Sinne die Möglichkeit der Erstellung eigener sogenannter benutzerdefinierter Elemente gemeint. Einmal implementiert können diese, genau wie Standard-HTML-Elemente, überall im HTML-Dokument immer wieder verwendet werden.</p>
+<p>Um ein eigenes HTML-Element zu erstellen, benötigt es lediglich einen Namen, mit dem das Element aufgerufen wird, und ein Klassenobjekt, welches das Verhalten festlegt [<a href="#9">9</a>]. Der Name des Elements muss aus zwei Worten, getrennt durch einen Bindestrich, bestehen.</p>
+<p>Das Klassenobjekt erbt im einfachsten Fall vom <code>HTMLElement</code> und sieht in seiner Grundstruktur wie folgt aus:</p>
+</section>
+<section class="new-page">
+<h6>Benutzerdefiniertes Element</h6>
+<pre><code class="code-line language-JavaScript"><div><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MeinElement</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">HTMLElement</span> </span>{
+    <span class="hljs-function"><span class="hljs-title">constructor</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-built_in">super</span>();
+        <span class="hljs-comment">/*...
+        Verhalten des Elements
+        */</span>
     }
-    function start() {
-        console.log('Animation is running!');
-    }
-    render()
-</script>
-<ctrl-ing ref="model" header="Steuerung eines Dreiecks">
-{
-    "add": [
-        { "id":"A0x","dropdown":{"label":"A0.x","default":"min","mid":100,"high":200},"path":"nodes/0/x","on":{ "input":"render" } }, 
-        { "id":"A0y","slider":{"min":50,"max":350,"step":0.5,"label":"A0.y"},"path":"nodes/0/y","on":{ "change":"render" } }, 
-        { "toggle":{ "label":"B0.x", "switchTo": 220 },"path":"nodes/1/x","on":{ "click":"render" } }, 
-        { "number":{ "label":"B0.y" },"path":"nodes/1/y","on":{ "input":"render" } }, 
-        { "button": { "label":"Start" }, "on":{ "click":"start" } },
-        { "color": { "label": "Fill", "color":"#DE3163" } },
-        { "output": { "label":"velocity", "unit":"m/s" }, "path": "nodes/0/x" }
-    ]
 }
-</ctrl-ing>
-<p>Zur Implementierung einer Steuerung für das einfache Beispiel eines Dreiecks genügt dieser HTML-Code:</p>
-<p><br><br><br><br></p>
-<pre><code class="code-line language-JSON"><div>&lt;ctrl-ing ref=<span class="hljs-string">&quot;model&quot;</span> header=<span class="hljs-string">&quot;Steuerung eines Dreiecks&quot;</span> id=<span class="hljs-string">&quot;ctrling&quot;</span>&gt;
-{
-    <span class="hljs-attr">&quot;add&quot;</span>:[
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;A0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/0/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;A0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/0/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;B0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/1/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;B0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/1/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;C0.x&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/2/x&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } },
-        { <span class="hljs-attr">&quot;input&quot;</span>:{ <span class="hljs-attr">&quot;label&quot;</span>:<span class="hljs-string">&quot;C0.y&quot;</span> },<span class="hljs-attr">&quot;path&quot;</span>:<span class="hljs-string">&quot;nodes/2/y&quot;</span>,<span class="hljs-attr">&quot;on&quot;</span>:{ <span class="hljs-attr">&quot;input&quot;</span>:<span class="hljs-string">&quot;render&quot;</span> } }
-    ]
-}
-&lt;/ctrl-ing&gt;
 </div></code></pre>
-<h2 id="quellen">Quellen</h2>
-<p>[1] <a href="https://fronteers.nl/congres/2011/sessions/web-components-and-model-driven-views-alex-russell">https://fronteers.nl/congres/2011/sessions/web-components-and-model-driven-views-alex-russell</a>
-[2] <a href="https://developer.mozilla.org/de/docs/Web/Web_Components">https://developer.mozilla.org/de/docs/Web/Web_Components</a>
-<a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM">https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM</a></p>
-<hr class="footnotes-sep">
-<section class="footnotes">
-<ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p>1 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
-</li>
-<li id="fn2" class="footnote-item"><p>1 <a href="#fnref2" class="footnote-backref">↩︎</a></p>
-</li>
-<li id="fn3" class="footnote-item"><p>3 <a href="#fnref3" class="footnote-backref">↩︎</a></p>
-</li>
-</ol>
+<p>Im <code>constructor()</code> kann theoretisch die gesamte Funktionalität definiert werden, da jede neue Instanz von <code>MeinElement</code> als erstes den Konstruktor aufrufen wird. Es bietet sich an, die in Kapitel 2.1 behandelte <em>shadow-DOM</em> Struktur bereits im Konstruktor zu erstellen.</p>
+<p>Demgegenüber kann die Funktionalität auf die zur Verfügung stehenden <em>lifecycle</em> Funktionen aufgeteilt werden. Man kann zwischen diesen vier Funktionen unterschieden, die zu verschiedenen Zeitpunkten aufgerufen werden [<a href="#9">9</a>]:</p>
+<ul>
+<li><code>connectedCallback</code>: Beim ersten Anbinden an das DOM.</li>
+<li><code>disconnectedCallback</code>: Beim Trennen vom DOM.</li>
+<li><code>adoptedCallback</code>: Wenn das Element zu einem anderen DOM bewegt wird.</li>
+<li><code>attributeChangedCallback</code>: Wenn sich ein Attribut des Elementes ändert.</li>
+</ul>
+<p>Zu guter Letzt muss das benutzerdefinierte Element in der <code>CustomElementRegistry</code> des Dokuments registriert werden, damit es im HTML-Dokument aufgerufen werden kann. Dies wird mit dem Befehl</p>
+<pre><code class="code-line language-JavaScript"><div>customElements.define(<span class="hljs-string">&#x27;mein-element&#x27;</span>, MeinElement);
+</div></code></pre>
+<p>erreicht. Das erste Argument entspricht dem Namen des Elements und legt auch seinen HTML-Tag fest. Das zweite Argument entspricht dem Klassenobjekt, das die gesamte Funktionalität beinhaltet und von der Außenwelt verborgen hält. Das so erzeugte Element kann also, von nun an mit dem eigenen HTML-Tag <code>&lt;mein-element&gt;</code> überall im HTML-Dokument aufgerufen werden.</p>
+</section>
+<section class="new-page">
+<h6>ctrl-ing</h6>
+<h2 id="3-ctrl-ing">3 ctrl-ing</h2>
+<p>Diese Arbeit wurde im Sinne eines Webprojektes bearbeitet. Infolgedessen wurde für die Versionierung des Quelltextes ein eigenes GitHub-Repository erstellt — <code>https://github.com/dmitrijLo/ctrl-ing</code> — und zur Präsentation eine einfache statische <em>github-pages</em> Website unter <code>https://dmitrijlo.github.io/ctrl-ing/components.html</code> angelegt.</p>
+<p>Die aus dieser Arbeit heraus entstandene Webkomponente nennt sich <code>&lt;ctrl-ing&gt;</code>, bestehend aus der Abkürzung des englischen Wortes <em>control</em> (ctrl) und dem deutschen Wort Ingenieur (ing), was in Summe ausgesprochen dem englischen Wort <em>controlling</em> ähnelt und übersetzt — steuern, regeln oder lenken — genau der Funktion der Webkomponente entspricht.</p>
+<p>Nachfolgend ist die Funktionsweise anhand einiger Beispiele, für die breite Masse auf englischer Sprache, beschrieben. Die Beispiele sind auch auf der zuvor genannten <em>github-page</em> zu finden.</p>
+<h3 id="31-add-ctrlingjs-to-a-project">3.1 Add ctrling.js to a project</h3>
+<p>Use the convenience of CDN to add <code>&lt;ctrl-ing&gt;</code>:</p>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://cdn.jsdelivr.net/gh/dmitrijLo/ctrl-ing@1.0.0/src/ctrling.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</div></code></pre>
+<p>Or, <a target="_blank" rel="noopener noreferrer" href='https://github.com/dmitrijLo/ctrl-ing/releases' download>download the latest ctrling.js version</a> and import it to your web page:</p>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;./path/to/ctrling.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</div></code></pre>
+<blockquote>
+<p><strong>Note:</strong> Since <code>&lt;ctrl-ing&gt;</code> is a custom html element which is a young web technology. It was found through this work that ctrling.js should be imported after declaration of the object you want to control. This will ensure that <code>&lt;ctrl-ing&gt;</code> is displayed properly cross different browser.</p>
+</blockquote>
+<h3 id="32-create-an-object-which-needs-to-be-controlled">3.2 Create an object which needs to be controlled</h3>
+<p>The declaration of an object is up to you. However, there is just one limitation. It must be available in the <code>window</code>- or rather the <code>globalThis</code>-object. With this in mind use the <code>var</code>-keyword or the <code>globalThis</code>.</p>
+</section>
+<section class="new-page">
+<h6>Components</h6>
+<h3 id="33-create-a-controller">3.3 Create a controller</h3>
+<p>Use the <code>&lt;ctrl-ing&gt;</code>-tag directly on your HTML page.</p>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;myObject&quot;</span>&gt;</span>
+{ &quot;add&quot;: [ { &quot;number&quot;:{},&quot;path&quot;:&quot;frequency&quot; } ] }
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<h3 id="34-components">3.4 Components</h3>
+<p>Add components by writing into the <code>innerHtml</code> of the <code>ctrl-ing</code>-element. The <code>ctrl-ing</code>-element interprets its <code>innerHTML</code> using the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> format.</p>
+<p>Start with:</p>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;targetObject&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<blockquote>
+<p><strong>Note:</strong> <code>&quot;add&quot;</code> defines the array containing all components which are in turn represented as objects.</p>
+</blockquote>
+<p>Until now the component object accepts the following properties:</p>
+<ul>
+<li><code>type</code> or name of component: <code>number</code>, <code>slider</code>, <code>dropdown</code>, <code>toggle</code>, <code>button</code>, <code>output</code>, <code>color</code></li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> Value of type is an object that accepts some optional settings. For now left it empty (<code>{}</code>), possible settings will be explained in the examples.</p>
+</blockquote>
+<ul>
+<li><code>path</code> accepts a string which represents the way to the targeted value</li>
+</ul>
+<blockquote>
+<p><strong>e.g.:</strong> Let the targeted object be</p>
+<pre><code class="code-line language-JavaScript"><div><span class="hljs-keyword">var</span> model = {
+  <span class="hljs-attr">nodes</span>: [ { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-attr">x</span>:<span class="hljs-number">100</span>, <span class="hljs-attr">y</span>:<span class="hljs-number">50</span> },
+           { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;B&#x27;</span>, <span class="hljs-attr">x</span>:<span class="hljs-number">0</span>, <span class="hljs-attr">y</span>:<span class="hljs-number">100</span> },
+           { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;C&#x27;</span>, <span class="hljs-attr">x</span>:<span class="hljs-number">75</span>, <span class="hljs-attr">y</span>:<span class="hljs-number">75</span> } ]
+}
+</div></code></pre>
+<p>then the path to the y-value of node C is <code>&quot;nodes/2/y&quot;</code>. Don't forget since <code>nodes</code> is an array its index begins at <code>0</code>.</p>
+</blockquote>
+</section>
+<section class="new-page">
+<h6>Number</h6>
+<ul>
+<li><code>on</code> takes an object whose property matches an event and the value matches a function that will be executed.</li>
+</ul>
+<blockquote>
+<p><strong>e.g.:</strong> <code>&quot;on&quot;: { &quot;click&quot;: &quot;myFunction&quot; }</code><br>
+<strong>Note:</strong> Until now the events <code>click</code>, <code>input</code> and <code>change</code> are implemented. If there is no function to execute <code>on</code> can be ommitted.</p>
+</blockquote>
+<h4 id="341-number-span-id%22number%22">3.4.1 Number <span id="number"></h4>
+<p>A simple number element accepts numeric input. Optional settings are <code>label</code>, <code>min</code>, <code>max</code> and <code>step</code>. The following example shows a circle that changes its size depending on user input.</p>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;circle&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [
+        { &quot;number&quot;:{ &quot;label&quot;:&quot;Radius&quot;,&quot;min&quot;:1,&quot;max&quot;:250,&quot;step&quot;:0.5 }, &quot;path&quot;:&quot;r&quot; }]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<figure style="width:80%">
+<img style="width:100%" src="./img/number.png"/>
+<h5>Abb. 3: Example of input of type number</h5>
+</figure>
+<h4 id="342-slider-span-id%22slider%22">3.4.2 Slider <span id="slider"></h4>
+<p>The slider is suitable for adjustments within a range. The example below shows a spring-mass system. The slider allows to increase the angle of the pendulum and with it to tension the spring.</p>
+<blockquote>
+<p><strong>Note:</strong> Optional settings are the same as for number element.</p>
+</blockquote>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;pendulum&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [
+        { &quot;slider&quot;:{ &quot;label&quot;:&quot;Angle <span class="hljs-symbol">&amp;alpha;</span>&quot;,&quot;min&quot;:10,&quot;max&quot;:100,&quot;step&quot;:0.5 },
+          &quot;path&quot;:&quot;x&quot;,&quot;on&quot;:{&quot;input&quot;:&quot;myFunc&quot;} }]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+</section>
+<section class="new-page">
+<h6>Dropdown</h6>
+<figure style="width:100%">
+<img style="width:100%" src="./img/Slider.png"/>
+<h5>Abb. 4: Example of input of type range</h5>
+</figure>
+<h4 id="343-dropdown-span-id%22dropdown%22">3.4.3 Dropdown <span id="dropdown"></h4>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;dropdownExample&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [
+        { &quot;dropdown&quot;:{ &quot;label&quot;:&quot;Geometry Area&quot;, &quot;default&quot;:&quot;triangle&quot;,
+          &quot;circle&quot;:&quot;circle&quot;, &quot;rectangle&quot;:&quot;rectangle&quot;,
+          &quot;pentagon&quot;:&quot;pentagon&quot; }, &quot;path&quot;:&quot;geometry&quot; } 
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<h4 id="344-toggle-span-id%22toggle%22">3.4.4 Toggle <span id="toggle"></h4>
+<p>A toggle button or checkbox is an essential and very important element that allows switching between two states. In most cases it is used to toggle between boolean <code>true</code> and <code>false</code>, which is also the default behavior of <code>ctrl-ing</code> when implemented equal to the code listing. But <code>ctrl-ing</code> allows also to toggle between strings or numeric values. Use the optional <code>&quot;switchTo&quot;:&quot;&lt;number or string&gt;&quot;</code> setting for this. <code>ctrl-ing</code> will store the value declared in the target object. When the toggle is pressed, the object's value will be changed to the <code>switchTo</code> value.</p>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;pendulum2&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ 
+        { &quot;toggle&quot;:{ &quot;label&quot;:&quot;Run Animation&quot; }, &quot;path&quot;:&quot;dirty&quot; } 
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+</section>
+<section class="new-page">
+<h6>Button</h6>
+<figure>
+<img style="width:100%" src="./img/toggle.png"/>
+<h5>Abb. 5: Example of toggle</h5>
+</figure>
+<h4 id="345-button-span-id%22button%22">3.4.5 Button <span id="button"></h4>
+<p>Buttons have the task to trigger a specific function. With <code>ctrl-ing</code> it does not take much to add a button. In the example the first button will trigger the <code>.addMass()</code> and the second button the <code>.deleteMass()</code> method of the targeted object.</p>
+<blockquote>
+<p><strong>Note:</strong> It is possible to include normal functions as well as methods of the target object. Functions must also be available in the <code>window</code>- or rather the <code>globalThis</code>-object. Therefore arrow functions or function expressions declared with <code>let</code> or <code>const</code> will not work.</p>
+</blockquote>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;model&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ 
+        { &quot;button&quot;:{ &quot;label&quot;:&quot;Add mass&quot; }, &quot;on&quot;:{ &quot;click&quot;:&quot;addMass&quot; }},
+        { &quot;button&quot;:{ &quot;label&quot;:&quot;Delete mass&quot;}, &quot;on&quot;:{&quot;click&quot;:&quot;deleteMass&quot; }} 
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<figure>
+<img style="width:100%" src="./img/button.png"/>
+<h5>Abb. 6: Example of buttons</h5>
+</figure>
+</section>
+<section class="new-page">
+<h6>Color</h6>
+<h4 id="346-output-span-id%22output%22">3.4.6 Output <span id="output"></h4>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;outputExample&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ 
+        { &quot;output&quot;: { &quot;label&quot;:&quot;Moment of Inertia&quot;,
+          &quot;unit&quot;:&quot;kg m^2&quot;, &quot;accuracy&quot;:2 }, &quot;path&quot;: &quot;momentOfInertia&quot; }
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<h4 id="347-color-span-id%22color%22">3.4.7 Color <span id="color"></h4>
+<p><code>ctrl-ing</code> provides an input of type color which is implemented as shown in the code listing. The display is strongly dependent on the browser used. The best appearance was found in chrome-browser.</p>
+<blockquote>
+<p><strong>Note:</strong> It is also possible to use rgb or rgba values. The notation is rgb(100,50,200) respectively rgba(100,50,200,0.5).</p>
+</blockquote>
+<pre><code class="code-line language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ctrl-ing</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;points&quot;</span>&gt;</span>
+{
+    &quot;add&quot;: [ 
+        { &quot;color&quot;: { &quot;label&quot;: &quot;Color of linestroke&quot;, &quot;color&quot;:&quot;#DE3163&quot; }, &quot;path&quot;: &quot;ls&quot; }
+    ]
+}
+<span class="hljs-tag">&lt;/<span class="hljs-name">ctrl-ing</span>&gt;</span>
+</div></code></pre>
+<figure>
+<img style="width:100%" src="./img/color.png"/>
+<h5>Abb. 7: Example of the color input</h5>
+</figure>
+</section>
+<section class="new-page">
+<h6>Federpendel</h6>
+<h2 id="4-federpendel">4 Federpendel</h2>
+<p>Nachfolgend soll ein komplexeres Beispiel und zwar ein Federpendel, dargestellt in Abbildung 8, mittels der <code>&lt;ctrl-ing&gt;</code>-Webkomponente untersucht werden.</p>
+<figure>
+<img style="width:100%" src="./img/Federpendel.png"/>
+<h5>Abb. 8: Federpendel</h5>
+</figure>
+<p>Lässt man das gespannte Federpendel los, wird es mit hoher Wahrscheinlichkeit in seiner stabilen Gleichgewichtslage zum Stehen kommen. Formal lässt sich die Lage durch den Winkel zwischen der Länge <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span></span></span></span></eq> und der horizontalen Linie im Festlager A0, dem Nullniveau, beschreiben. Wo genau das Pendel zum Stehen kommt, hängt hauptsächlich von der Federrate <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">c</span></span></span></span></eq>, dem Gewicht der Masse <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">m</span></span></span></span></eq>, der unbelasteten Federlänge <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">L_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></eq> und der Pendellänge <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span></span></span></span></eq> ab.</p>
+<p>Mit dem Satz</p>
+<blockquote>
+<p><em>„Eine mechanische Struktur befindet sich im statischen Gleichgewicht, wenn die Summe aller potentiellen Energien einen Extremwert erreicht.“</em> (vgl. [<a href="#10">10</a>], S.188)</p>
+</blockquote>
+<p>kann die Gleichgewichtslage analytisch bestimmt werden.</p>
+<p>Das Potential einer Linearfeder wird mit</p>
+<section class="eqno"><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>E</mi><mi>S</mi></msub><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mtext> </mtext><mi>c</mi><mtext> </mtext><msup><mi>s</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">E_S = \frac{1}{2}\,c\,s^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.00744em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.32144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></eqn><span>(1)</span></section><p>beschrieben.</p>
+</section>
+<section class="new-page">
+<h6>Federpendel</h6>
+<p>Nimmt man das Potential der am Pendel befestigeten Masse hinzu und vernachlässigt gleichzeitig das als infinitisimal angenommene Gewicht des Pendelstabes, resultiert dies in die gesuchte Potentialfunktion</p>
+<section class="eqno"><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>U</mi><mo stretchy="false">(</mo><mi>φ</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mtext> </mtext><mi>c</mi><mtext> </mtext><msup><mi>s</mi><mn>2</mn></msup><mo>−</mo><mi>m</mi><mtext> </mtext><mi>g</mi><mtext> </mtext><mi>a</mi><mtext> </mtext><mi>sin</mi><mo>⁡</mo><mi>φ</mi></mrow><annotation encoding="application/x-tex">U(\varphi) = \frac{1}{2}\,c\,s^2 - m\,g\,a\,\sin\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mopen">(</span><span class="mord mathnormal">φ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.00744em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.32144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8623000000000001em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">φ</span></span></span></span></span></eqn><span>(2)</span></section><p>wobei <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">s</span></span></span></span></eq> als <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>−</mo><msub><mi>L</mi><mn>0</mn></msub><mo>=</mo><mi>a</mi><mtext> </mtext><mi>sin</mi><mo>⁡</mo><mi>φ</mi></mrow><annotation encoding="application/x-tex">L - L_0 = a\,\sin\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8623000000000001em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">φ</span></span></span></span></eq> beschrieben werden kann und damit auch gilt:</p>
+<section class="eqno"><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>U</mi><mo stretchy="false">(</mo><mi>φ</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mtext> </mtext><mi>c</mi><mtext> </mtext><mi>a</mi><mtext> </mtext><mi>sin</mi><mo>⁡</mo><msup><mi>φ</mi><mn>2</mn></msup><mo>−</mo><mi>m</mi><mtext> </mtext><mi>g</mi><mtext> </mtext><mi>a</mi><mtext> </mtext><mi>sin</mi><mo>⁡</mo><mi>φ</mi></mrow><annotation encoding="application/x-tex">U(\varphi) = \frac{1}{2}\,c\,a\,\sin\varphi^2 - m\,g\,a\,\sin\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mopen">(</span><span class="mord mathnormal">φ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.00744em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.32144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal">φ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8623000000000001em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">φ</span></span></span></span></span></eqn><span>(3)</span></section><p>Die Federrate <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">c</span></span></span></span></eq> wird mit Hilfe der Energieerhaltung <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false">(</mo><mi>φ</mi><mo>=</mo><mn>0</mn><mo stretchy="false">)</mo><mo><mover><mo><mo>=</mo></mo><mo stretchy="false" lspace="0em" rspace="0em">!</mo></mover></mo><mi>E</mi><mo stretchy="false">(</mo><mi>φ</mi><mo>=</mo><mn>30</mn><mi mathvariant="normal">°</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">E(\varphi = 0) \stackrel{!}{=} E(\varphi = 30°)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord mathnormal">φ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.402978em;vertical-align:-0.25em;"></span><span class="mord">0</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span class="mop op-limits"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.152978em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span><span class="mop">=</span></span></span><span style="top:-3.5668699999999998em;margin-left:0em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mclose mtight">!</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord mathnormal">φ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">3</span><span class="mord">0</span><span class="mord">°</span><span class="mclose">)</span></span></span></span></eq> gewonnen. Mit <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>sin</mi><mo>⁡</mo><mn>0</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\sin 0 = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66786em;vertical-align:0em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span></eq> folgt:</p>
+<section><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>0</mn><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mtext> </mtext><mi>c</mi><mtext> </mtext><mo stretchy="false">(</mo><mi>a</mi><mi>sin</mi><mo>⁡</mo><mn>30</mn><mi mathvariant="normal">°</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>−</mo><mi>m</mi><mtext> </mtext><mi>g</mi><mtext> </mtext><mi>a</mi><mtext> </mtext><mi>sin</mi><mo>⁡</mo><mn>30</mn><mi mathvariant="normal">°</mi></mrow><annotation encoding="application/x-tex">0 = \frac{1}{2}\,c\,(a\sin 30°)^2 - m\,g\,a\,\sin 30°</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.00744em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.32144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">3</span><span class="mord">0</span><span class="mord">°</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">3</span><span class="mord">0</span><span class="mord">°</span></span></span></span></span></eqn></section><section class="eqno"><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>c</mi><mo>=</mo><mn>4</mn><mfrac><mrow><mi>m</mi><mi>g</mi></mrow><mi>a</mi></mfrac></mrow><annotation encoding="application/x-tex">c = 4\frac{mg}{a}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.7935599999999998em;vertical-align:-0.686em;"></span><span class="mord">4</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1075599999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">a</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">m</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></eqn><span>(4)</span></section><p>Gleichung 4 wird zur Vereinfachung der Potentialfunktion in Gleichung 3 verwendet und anschließend abgeleitet. Das Potential <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span></span></span></span></eq> erreicht seinen Extremwert, wenn die erste Ableitung null entspricht.</p>
+<section class="eqno"><eqn><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>U</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">(</mo><mi>φ</mi><mo stretchy="false">)</mo><mo>=</mo><mi>m</mi><mtext> </mtext><mi>g</mi><mtext> </mtext><mi>a</mi><mtext> </mtext><mo stretchy="false">(</mo><mn>4</mn><mtext> </mtext><mi>sin</mi><mo>⁡</mo><mi>φ</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo><mtext> </mtext><mi>cos</mi><mo>⁡</mo><mi>φ</mi></mrow><annotation encoding="application/x-tex">U&#x27;(\varphi) = m\,g\,a\,(4\,\sin\varphi - 1)\,\cos\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.051892em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.801892em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">φ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mopen">(</span><span class="mord">4</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">φ</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">φ</span></span></span></span></span></eqn><span>(5)</span></section><p>Damit gilt <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>U</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">(</mo><mi>φ</mi><mo stretchy="false">)</mo><mo><mover><mo><mo>=</mo></mo><mo stretchy="false" lspace="0em" rspace="0em">!</mo></mover></mo><mn>0</mn></mrow><annotation encoding="application/x-tex">U&#x27;(\varphi) \stackrel{!}{=} 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.402978em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">φ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span class="mop op-limits"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.152978em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span><span class="mop">=</span></span></span><span style="top:-3.5668699999999998em;margin-left:0em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mclose mtight">!</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span></eq>, wenn <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>4</mn><mtext> </mtext><mi>sin</mi><mo>⁡</mo><mi>φ</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(4\,\sin\varphi - 1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">4</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">φ</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></eq> oder <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>cos</mi><mo>⁡</mo><mi>φ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\cos\varphi)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mop">cos</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">φ</span><span class="mclose">)</span></span></span></span></eq> gleich null ist. Der Zweite Fall tritt für <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi><mo>=</mo><mo>±</mo><mn>90</mn><mi mathvariant="normal">°</mi></mrow><annotation encoding="application/x-tex">\varphi = \pm 90°</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord">±</span><span class="mord">9</span><span class="mord">0</span><span class="mord">°</span></span></span></span></eq> ein. Dieser Fall entspricht einer instabilen Gleichgewichtslage und erscheint bei näherer Betrachtung logisch — wenn das Pendel in der Vertikalen verkantet — aber für die weitere Untersuchung uninteressant.</p>
+<p>Auflösen von <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>4</mn><mtext> </mtext><mi>sin</mi><mo>⁡</mo><mi>φ</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(4\,\sin\varphi - 1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">4</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">φ</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></eq> nach <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span></span></span></span></eq> liefert die gesuchte stabile Gleichgewichtslage bei <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi><mo>=</mo><mn>14</mn><mo separator="true">,</mo><mn>477</mn><mi mathvariant="normal">°</mi></mrow><annotation encoding="application/x-tex">\varphi = 14,477°</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mord">4</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">4</span><span class="mord">7</span><span class="mord">7</span><span class="mord">°</span></span></span></span></eq>. Um diesen Wert zu überprüfen wurde entsprechend der Abbildung 8 ein Modell erstellt und mit der <code>ctr-ling</code>-Webkomponente verbunden. Das Beispiel in seiner dynamischen Form ist unter <a href="https://dmitrijlo.github.io/ctrl-ing/">https://dmitrijlo.github.io/ctrl-ing/</a> zu finden.</p>
+<p>Der Kippschalter lässt das Federpendel sinnbildlich los und startet die Animation.</p>
+</section>
+<section class="new-page">
+<h6>Federpendel</h6>
+<figure>
+<img style="width:100%" src="./img/Federpendel2.png"/>
+<h5>Abb. 9: Die stabile Gleichgewichtslage eines Federpendels</h5>
+</figure>
+<p>Das Federpendel bleibt in seiner Gleichgewichts bei <eq><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi><mo>=</mo><mn>14</mn><mo separator="true">,</mo><mn>48</mn><mi mathvariant="normal">°</mi></mrow><annotation encoding="application/x-tex">\varphi = 14,48°</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">φ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">1</span><span class="mord">4</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">4</span><span class="mord">8</span><span class="mord">°</span></span></span></span></eq> entsprechend der Ausgabe in Abbildung 9 stehen, was zu beweisen war.</p>
+<p>Ebenfalls der Abbildung 9 zu entnehmen, sind weitere Elemente, die es erlauben die Masse, die Federrate und den Winkel zu verstellen. Dadurch lassen sich unterschiedliche Konfigurationen ausprobieren. Ein <em>reset</em>-Knopf bringt das System in seine Ausgangslage. Auch denkbar wären weitere Elemente, die z.B. die Federlänge oder die Gravitationskraft steuern. Letzteres würde das Verhalten des Pendels auf einem anderen Planeten simulieren.</p>
+</section>
+<section class="new-page">
+<h6>&nbsp;</h6>
+<h2 id="5-fazit">5 Fazit</h2>
+<p>Im Zuge dieser Arbeit wurde eine Webkomponente programmiert, die das Erstellen graphischer Oberflächen zur Steuerung von Objekten stark vereinfacht. Dies wird insbesondere durch Kapitel 3 anhand einiger einfacher Beispiele verdeutlicht. Das benutzerdefinierte HTML-Element besteht im wesentlichen aus einer Vielzahl von mehr oder weniger einfachen HTML-Elementen, was durch das Konzept des <em>shadow</em>-DOMs im Verborgenen bleibt und die Übersicht und Semantik des regulären DOMs aufrechterhält. Die Funktionalität wird durch JavaScript-Code beschrieben. Die Kapselung der eigenen Funktionalität vermeidet unerwünschte Nebeneffekten und zeichnet diese Webtechnologie aus. Kapitel 4 demonstriert anhand eines Federpendelmodells, dass das <code>ctrl-ing</code>-Element zur Untersuchung ebener Mechanismen geeignet ist. Das Element selbst ist wiederverwendbar, lässt sich einfach erweitern und verkützt damit deutlich die Programmierungszeit.</p>
+</section>
+<section class="new-page">
+<h6>&nbsp;</h6>
+<h2 id="6-literaturverzeichnis">6 Literaturverzeichnis</h2>
+<p><span id="1">[1] FACHHOCHSCHULE DORTMUND. Modulhandbuch S.210 [Online].<br>  [Zugriff am: 22. März 2021]. Verfügbar unter:<br>  <span style="font-size:9pt"><a href="https://www.fh-dortmund.de/de/fb/5/studangeb/_medien/Modulhandbuch_MB_PO14_20190313.pdf">https://www.fh-dortmund.de/de/fb/5/studangeb/_medien/Modulhandbuch_MB_PO14_20190313.pdf</a></span></p>
+<p><span id="2">[2] SELFHTML. InteraktiveElemente [Online].<br>  [Zugriff am: 22. März 2021]. Verfügbar unter:<br>  <span style="font-size:9pt"><a href="https://wiki.selfhtml.org/wiki/HTML/Kategorien_von_Elementen#Interaktive_Elemente">https://wiki.selfhtml.org/wiki/HTML/Kategorien_von_Elementen#Interaktive_Elemente</a></span></p>
+<p><span id="3">[3] DAT.GUI. JavaScript Bibliothek [Online]. [Zugriff am: 22. März 2021].<br>  <span>Verfügbar unter: <a href="https://github.com/dataarts/dat.gui">https://github.com/dataarts/dat.gui</a></span></p>
+<p><span id="4">[4] TWEAKPANE. JavaScript Bibliothek [Online]. [Zugriff am: 22. März 2021].<br>  <span>Verfügbar unter: <a href="https://cocopon.github.io/tweakpane/">https://cocopon.github.io/tweakpane/</a>
+</span></p>
+<p><span id="5">[5] SELFHTML. Document Object Model [Online]. [Zugriff am: 22. März 2021].<br>  <span>Verfügbar unter: <a href="https://wiki.selfhtml.org/wiki/JavaScript/DOM">https://wiki.selfhtml.org/wiki/JavaScript/DOM</a></span></p>
+<p><span id="6">[6] FRONTEERS. Congres 2011 [Online].<br>  [Zugriff am: 22. März 2021]. Verfügbar unter:<br>  <span style="font-size:9pt"><a href="https://fronteers.nl/congres/2011/sessions/web-components-and-model-driven-views-alex-russell">https://fronteers.nl/congres/2011/sessions/web-components-and-model-driven-views-alex-russell</a></span></p>
+<p><span id="7">[7] MDN WEB DOCS. Webkomponente [Online]. [Zugriff am: 22. März 2021].<br>  <span>Verfügbar unter: <a href="https://developer.mozilla.org/de/docs/Web/Web_Components">https://developer.mozilla.org/de/docs/Web/Web_Components</a></span></p>
+<p><span id="8">[8] MDN WEB DOCS. Shadow DOM [Online].<br>  [Zugriff am: 22. März 2021]. Verfügbar unter:<br>  <span style="font-size:9pt"><a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM">https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM</a></span></p>
+<p><span id="9">[9] MDN WEB DOCS. Custom Elements [Online].<br>  [Zugriff am: 22. März 2021]. Verfügbar unter:<br>  <span style="font-size:9pt"><a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements">https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements</a></span></p>
+<p><span id="10">[10] Gössner, S., 2017. Mechanismentechnik: Vektorielle Analyse ebener Mechanismen. Berlin: Logos</p>
 </section>
 
 </article>

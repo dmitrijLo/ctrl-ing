@@ -17,11 +17,11 @@ Take control over objects with this minimalistic panel designed as custom HTML e
 {
     "add": [
         { "dropdown":{ "label":"Mass [N]", "default":"1 kg", "2 kg":20, "5 kg": 50, "10 kg":100, "25 kg":250, "50kg": 500, "100 kg":1000}, "path":"loads/1/value"},
-        { "number":{"label":"Federkraft","min":1,"max":1000},"path":"loads/0/k"},
+        { "number":{"label":"Spring rate [N/m]","min":1,"max":1000},"path":"loads/0/k"},
         { "slider":{"label":"Angle","step":0.25,"min":-80,"max":45},"path":"angle","on":{"input":"setAngle"}}, 
         { "toggle":{ "label":"Release" },"path":"release" }, 
         { "button": { "label":"Reset" }, "on":{ "click":"reset" } },
-        { "output": { "label":"Angle", "unit":"rad","accuracy":2 }, "path": "angle" }
+        { "output": { "label":"Angle", "unit":"deg","accuracy":2 }, "path": "angle" }
     ]
 }
 </ctrl-ing>
