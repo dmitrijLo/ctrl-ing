@@ -3,6 +3,7 @@ class CtrlElement {
         this.options = {};
         this.label = input.options.label;
         this.id = input.id;
+        this.type = input.options.type;
         Object.assign(this.options, input.options);
         delete this.options.label;
         delete this.options.type;
@@ -17,7 +18,7 @@ class CtrlElement {
         }
         this.targetAccess = new Proxy(this.props.reduce((ref, prop) => ref[prop], target), {});
         this.state = this.targetAccess[this.lastProp];
-        this._children = [];
+        this._children = [];    // observer objects
         this._self = document.createElement('div');
         this._self.setAttribute('class', 'ctrl-element');
     }
@@ -74,13 +75,12 @@ class CtrlElement {
                   max = this.options.max ? this.options.max : value;
             if(Math.max(min,value) === value && Math.min(max,value) === value || typeof value === 'string' || typeof value === 'boolean'){
                 this.state = value;
-                this.targetAccess[this.lastProp] = this.state;
                 this.notify();
             }
         }
     }
     reviewState(){
-        if(this.targetAccess[this.lastProp] !== this.state) {
+        if(this.targetAccess[this.lastProp] !== this.state && this.type !== 'dropdown') {
             this.state = this.targetAccess[this.lastProp];
             this.notify();
         }
@@ -153,13 +153,18 @@ class CtrlNumberInput extends CtrlElement {
         super(input, target);
         const wrapper = this.createWrapper(), numInput = this.createDisplay(), label = this.createLabel(),
               attributes = [{ el: numInput, name: ['type','class','min','max','step'], val: ['number', 'ctrl-input',this.options.min || Infinity, this.options.max || Infinity, this.options.step || 1] }];
+        const updateSelf = this.updateSelf.bind(this);
         numInput.update = function (context) {
             this.value = context.state;
+            updateSelf();
         }
         this.setAttributes(attributes);
         this.appendElements(wrapper, numInput);
         this.appendElements(this.self, label, wrapper);
         this.children = [numInput];
+    }
+    updateSelf(){
+        this.targetAccess[this.lastProp] = this.state;
     }
 }
 
@@ -169,8 +174,10 @@ class CtrlSlider extends CtrlElement {
         const wrapper = this.createWrapper(), slider = document.createElement('input'), display = this.createDisplay(), label = this.createLabel(),
               attributes = [{ el: slider, name: ['class', 'id', 'type', 'min', 'max', 'step', 'value'], val: ['ctrl-slider', this.id, 'range', this.options.min || 0, this.options.max || 100, this.options.step || 1, this.options.defaultValue || this.options.value] },
                             { el: display, name: ['min', 'max', 'step'], val: [this.options.min || 0, this.options.max || 100, this.options.step || 1] }];
+        const updateSelf = this.updateSelf.bind(this);
         slider.update = function (context) {
             this.value = context.state;
+            updateSelf();
         }
         display.update = function (context) {
             this.value = context.state;
@@ -179,6 +186,9 @@ class CtrlSlider extends CtrlElement {
         this.appendElements(wrapper, display, slider);
         this.appendElements(this.self, label, wrapper);
         this.children = [display, slider];
+    }
+    updateSelf(){
+        this.targetAccess[this.lastProp] = this.state;
     }
 }
 
@@ -190,6 +200,7 @@ class CtrlToggle extends CtrlElement {
                             { el: checkbox, name: ['type'], val: ['checkbox'] },
                             { el: display, name: ['type', 'readonly'], val: ['', true] },
                             { el: toggle, name: ['class', 'id'], val: ['ctrl-toggle', this.id] }];
+        const updateSelf = this.updateSelf.bind(this);
         toggle.default = this.options.defaultValue || false;
         toggle.switchTo = this.options.switchTo || true;
         toggle.value = toggle.switchTo;
@@ -201,6 +212,7 @@ class CtrlToggle extends CtrlElement {
             }
             display.value = context.state;
             this.checked = context.state;
+            updateSelf();
         }
         display.update = function () {
             //render()
@@ -211,6 +223,9 @@ class CtrlToggle extends CtrlElement {
         this.appendElements(this.self, label, wrapper);
         this.children = [display, toggle];
     }
+    updateSelf(){
+        this.targetAccess[this.lastProp] = this.state;
+    }
 }
 
 class CtrlDropdown extends CtrlElement {
@@ -218,27 +233,32 @@ class CtrlDropdown extends CtrlElement {
         super(input, target);
         const wrapper = this.createWrapper(), dropdown = document.createElement('select'), menuWrapper = this.createWrapper('ctrl-dropdown-wrapper'), display = this.createDisplay(), label = this.createLabel(),
               attributes = [{ el: dropdown, name: ['class', 'id'], val: ['ctrl-dropdown', this.id] },
-                            { el: display, name: ['type', 'readonly'], val: ["", true] }],
-              items = Reflect.ownKeys(this.options);
-        for (let item of items) {
-            if (item === 'default') { continue; }
+                            { el: display, name: ['type', 'readonly'], val: ["", true] }];
+        const items = this.options['defaultValue'].list || [];
+        const updateSelf = this.updateSelf.bind(this);
+        let isSelected = false;
+        for (const option of Reflect.ownKeys(this.options)) {
+            if (option === 'default' || option === 'defaultValue') { continue; }
+            items.push({text: option, value: this.options[option]});
+        }
+        for(const item of items){
             const option = document.createElement('option');
-            option.textContent = item;
-            option.value = this.options[item];
-            if (item === 'defaultValue') {
+            if(item.selected) {
                 option.selected = true;
-                option.textContent = this.options['default'] || 'default';
-                display.value = this.options[item];
+                display.value = item.value;
+                isSelected = true;
             }
+            option.textContent = item.text;
+            option.value = item.value;
             dropdown.appendChild(option);
         }
-
+        if(!isSelected) items[0].selected = true, display.value = items[0].value; 
+        this.state = items.find(el => el.selected).value;
+        this.targetAccess[this.lastProp]['value'] = this.state;
+        
         dropdown.update = function (context) {
-            for (let child of this.children) {
-                if (context.state === +child.value) {
-                    child.selected = true;
-                }
-            }
+            for (let child of this.children) if (context.state === +child.value) child.selected = true;
+            updateSelf();
         }
         display.update = function (context) {
             this.value = context.state;
@@ -248,6 +268,12 @@ class CtrlDropdown extends CtrlElement {
         this.appendElements(wrapper,display,menuWrapper)
         this.appendElements(this.self, label, wrapper);
         this.children = [display, dropdown];
+    }
+    updateSelf(){
+        for(const entrie of this.targetAccess[this.lastProp]['list']){
+            this.state === entrie.value ? entrie.selected = true : delete entrie.selected;
+            this.targetAccess[this.lastProp]['value'] = this.state;
+        }
     }
 }
 
