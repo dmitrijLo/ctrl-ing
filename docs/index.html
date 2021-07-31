@@ -46,7 +46,7 @@
 <ctrl-ing id="ctrl" ref="model" header="Federpendel">
 {
     "add": [
-        { "dropdown":{ "label":"Mass [N]", "default":"1 kg", "2 kg":20, "5 kg": 50, "10 kg":100, "25 kg":250, "50kg": 500, "100 kg":1000}, "path":"loads/1/value"},
+        { "dropdown":{ "label":"Mass [N]", "1 kg":10, "2 kg":20, "5 kg": 50, "10 kg":100, "25 kg":250, "50kg": 500, "100 kg":1000}, "path":"loads/1/value"},
         { "number":{"label":"Spring rate [N/m]","min":1,"max":1000},"path":"loads/0/k"},
         { "slider":{"label":"Angle","step":0.25,"min":-80,"max":45},"path":"angle","on":{"input":"setAngle"}}, 
         { "toggle":{ "label":"Release" },"path":"release" }, 
@@ -58,7 +58,6 @@
 <script>
     const ctx = document.getElementById("c").getContext("2d");
     const interactor = canvasInteractor.create(ctx,{ x:200,y:110,cartesian: true });
-    console.log(document.getElementById('ctrl'));
     const ctrlUpdate = () => document.getElementById('ctrl').update(); //ctrl-ing API for manual update
     var model = {
         "release": false,
@@ -75,7 +74,7 @@
         ],
         "loads": [
             { "type":"spring","id":"S1","p1":"B","p2":"C", "k":33.983576,"len0":100 },
-            { "id":"mg","type":"force","p":"C","w0":-Math.PI/2,"value":9.81 }
+            { "list":[],"id":"mg","type":"force","p":"C","w0":-Math.PI/2,"value":9.81 }
         ],
         "shapes": [
             { "type":"flt","p":"B","w0":-Math.PI },
